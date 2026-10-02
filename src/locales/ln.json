@@ -1,0 +1,664 @@
+{
+  "nav": {
+    "accueil": "Boyei",
+    "tickets": "Ba tickets",
+    "direction": "Direction",
+    "rh": "Basali ya bato",
+    "finance": "Mbongo",
+    "documents": "Mikanda",
+    "compte": "Konti na ngai",
+    "cnn": "Talatala ya mosala",
+    "mdr": "Talatala média",
+    "admin": "Bokonzi ya système",
+    "users": "Kobongisa ba utilisateurs",
+    "access": "Kobongisa ba accès",
+    "permissions": "Kobongisa ba permissions",
+    "commercial": "Commercial",
+    "fleet": "Carte flotte",
+    "incidents": "Ba incidents",
+    "couriers": "Ba coursiers",
+    "enterprises": "Ba comptes",
+    "finance-home": "Mbongo",
+    "subscriptions": "Ba abonnements",
+    "invoicing": "Ba factures",
+    "b2c": "B2C",
+    "agents-hr": "Ba agents",
+    "leaves": "Congé",
+    "payroll": "Lifuta",
+    "partners": "Ba partenaires",
+    "compliance": "Conformité",
+    "mkt": "Performance",
+    "media": "Médiathèque",
+    "monitoring": "Monitoring",
+    "bugs": "Tickets technique",
+    "audit": "Journal",
+    "societes": "Sociétés",
+    "rapports": "Rapports",
+    "stats": "Statistiques ya mokili mobimba",
+    "departements": "Départements",
+    "section": {
+      "ops": "Opérations",
+      "tickets": "Ba tickets",
+      "commercial": "Commercial",
+      "finance": "Finance",
+      "hr": "Ba ressources humaines",
+      "legal": "Juridique",
+      "marketing": "Marketing mpe média",
+      "tech": "Technique",
+      "direction": "DIRECTION",
+      "admin": "Administration",
+      "operations": "Opérations",
+      "tickets-sec": "Ba tickets"
+    },
+    "main": "Navigation ya liboso",
+    "assistant": "Assistant IA"
+  },
+  "topbar": {
+    "project": "Projet",
+    "companyWide": "Kompani mobimba",
+    "search": "Luka ticket to agent…",
+    "systemsOk": "Ba systèmes ezali kosala",
+    "notifications": "Ba notifications",
+    "themeToLight": "Kota na thème ya polele",
+    "themeToDark": "Kota na thème ya molili",
+    "language": "Monoko",
+    "myProfile": "Profil na ngai",
+    "signOut": "Bima",
+    "collapse": "Fongola",
+    "expandMenu": "Fungola menu",
+    "collapseMenu": "Kanga menu",
+    "closeMenu": "Kanga menu"
+  },
+  "language": {
+    "fr": "Français",
+    "frHint": "Ya Leta",
+    "en": "English",
+    "enHint": "International",
+    "ln": "Lingála",
+    "lnHint": "Kinshasa",
+    "sw": "Kiswahili",
+    "swHint": "Est"
+  },
+  "login": {
+    "brand": "MINDSET ALLIANCE",
+    "title": "MA Workspace",
+    "subtitle": "Esika ya mosala ya kati",
+    "footer": "© 2026 Mindset Alliance",
+    "email": "Email ya mosala",
+    "password": "Mot de passe",
+    "submit": "Kota",
+    "submitting": "Ozali kokota…",
+    "forgot": "Obosani mot de passe?",
+    "showPassword": "Lakisa mot de passe",
+    "hidePassword": "Bomba mot de passe",
+    "otpHint": "Code ya 6 chiffres etindamaki na email na yo ya mosala.",
+    "otpWait": "Tinda lisusu code na {{time}}",
+    "otpExpired": "Kota lisusu mpo na kozwa code ya sika.",
+    "verify": "Tala",
+    "verifying": "Ezali kotala…",
+    "emailInvalid": "Tya email ya mosala oyo ezali malamu.",
+    "passwordRequired": "Mot de passe esengeli.",
+    "failed": "Identifiant to mot de passe eza mabe.",
+    "otpInvalid": "Code ya vérification eza mabe.",
+    "forgotTitle": "Obosani mot de passe",
+    "forgotBody": "Tya email na yo ya mosala. Soki compte ezali, okozwa email na lien ya 24h.",
+    "forgotSubmit": "Tinda lien",
+    "forgotSubmitting": "Ezali kotinda…",
+    "forgotSent": "Soki compte ezali, email ya kozongisa mot de passe etindami. Tala mpe spam.",
+    "backToLogin": "Zonga na connexion"
+  },
+  "firstLogin": {
+    "title": "Kobongola mot de passe esengeli",
+    "subtitle": "Mpo na sécurité, tya mot de passe na yo liboso ya kokota na MA Workspace.",
+    "current": "Mot de passe ya ntango moke",
+    "next": "Mot de passe ya sika",
+    "confirm": "Dimoisa mot de passe ya sika",
+    "submit": "Bomba pe kende",
+    "submitting": "Ezali kobomba…"
+  },
+  "setupPassword": {
+    "title": "Tya mot de passe na yo",
+    "subtitle": "Lien oyo ezali na ntango ya 24h. Tya mot de passe ya 8 caractères, lettre mpe chiffre.",
+    "missingToken": "Lien ezali mabe. Salela lien oyo euti na email.",
+    "submit": "Tya mot de passe",
+    "done": "Mot de passe ebombi. Okoki kokota."
+  },
+  "home": {
+    "workspace": "Esika ya mosala",
+    "hello": "Mbote",
+    "helloNamed": "Mbote {{name}}",
+    "openTickets": "Ba tickets na ngai oyo eza kofungwama",
+    "seeAll": "Tala nyonso",
+    "noOpenTickets": "Ticket ya kofungwama ezali te.",
+    "emptyTicketsHint": "Ba tickets ya sika ekomonana awa.",
+    "ticketsLoadError": "Tokoki te kozwa ba tickets.",
+    "dueToday": "Ba échéances ya lelo",
+    "noDueToday": "Échéance ya lelo ezali te.",
+    "emptyDueHint": "Eloko te ya kosala lelo.",
+    "unreadNotifs": "Ba notifications oyo otangi te",
+    "noUnread": "Notification ya kotanga ezali te.",
+    "emptyNotifsHint": "Ozali na nsuka.",
+    "kpis": "Ba indicateurs ya département na ngai",
+    "noKpis": "Indicateur moko te na esika oyo.",
+    "emptyKpisHint": "Ba indicateurs ekomonana tango ezali.",
+    "analytics": "Talatala ya ba graphiques",
+    "loading": "Ezali kozala…",
+    "noContextData": "Donnée te mpo na contexte oyo.",
+    "times": "×{{count}}",
+    "fullAccess": "Accès complet"
+  },
+  "profile": {
+    "title": "Profil na ngai",
+    "photo": "Foto ya profil",
+    "changePhoto": "Bongola foto",
+    "nom": "Nkómbó ya libota",
+    "prenom": "Nkómbó ya liboso",
+    "email": "Email ya mosala",
+    "emailHint": "Identifiant ya connexion — bokoki kobongola yango te.",
+    "telephone": "Nimero ya telefoni",
+    "departement": "Département",
+    "roles": "Rôle(s)",
+    "hrHint": "Département mpe ba rôles ezali kaka na maboko ya RH.",
+    "passwordSection": "Bongola mot de passe",
+    "currentPassword": "Mot de passe ya sikoyo",
+    "newPassword": "Mot de passe ya sika",
+    "confirmPassword": "Dimela mot de passe ya sika",
+    "complexity": "Ata lettres 8, lettre moko mpe chiffre moko.",
+    "save": "Bomba ba changements",
+    "saving": "Ezali kobomba…",
+    "cancel": "Tika",
+    "loadError": "Tokoki te kozwa profil na yo. Meká lisusu.",
+    "saved": "Ba changements ebomami malamu.",
+    "passwordSaved": "Mot de passe ebomami malamu.",
+    "saveError": "Kobomba elongi te. Meká lisusu.",
+    "currentRequired": "Tya mot de passe ya sikoyo.",
+    "newRequired": "Tya mot de passe ya sika.",
+    "complexityFail": "Mot de passe ya sika esengeli ata lettres 8, lettre moko mpe chiffre moko.",
+    "confirmMismatch": "Confirmation ekokani te na mot de passe ya sika.",
+    "samePassword": "Mot de passe ya sika esengeli kozala ndenge mosusu.",
+    "partialPassword": "Mpo na kobongola mot de passe, tya oyo ya sikoyo, oyo ya sika mpe confirmation."
+  },
+  "rbac": {
+    "deniedTitle": "Nzela epekisami",
+    "deniedBody": "Rôle to projet oyo oponi epesi nzela te na esika oyo."
+  },
+  "tickets": {
+    "title": "Support"
+  },
+  "documents": {
+    "title": "Mikanda"
+  },
+  "cnn": {
+    "title": "Talatala ya mosala",
+    "subtitle": "Kotanga ba indicateurs. Ba applications ya telefoni ezali te na esika oyo.",
+    "empty": "Data ezali te mpo na contexte oyo."
+  },
+  "authErrors": {
+    "disabled": "Compte oyo ezimisi. Benga administrateur na yo.",
+    "badCredentials": "Email to mot de passe ezali mabe.",
+    "sessionExpired": "Session esili. Kota lisusu.",
+    "tooMany": "Okomeka mingi. Meka lisusu sima.",
+    "forbidden": "Kokɔta ekangami. Tala soki backend Core ezali kosala.",
+    "smtp": "Kotinda email ezali te. Tala configuration SMTP.",
+    "unavailable": "Serveur ya authentification ezali te. Meka lisusu noki.",
+    "failed": "Kokɔta esili te. Meka lisusu."
+  },
+  "common": {
+    "wholeCompany": "Société mobimba",
+    "save": "Bomba",
+    "saving": "Ezali kobomba…",
+    "cancel": "Tika",
+    "close": "Kanga",
+    "confirm": "Kondima",
+    "edit": "Bongola",
+    "retry": "Meka lisusu",
+    "search": "Luka",
+    "status": "Statut",
+    "department": "Département",
+    "allDepartments": "Ba départements nyonso",
+    "allStatuses": "Ba statuts nyonso",
+    "active": "Actif",
+    "suspended": "Esimami",
+    "period": "Ntango",
+    "title": "Titre",
+    "description": "Description",
+    "project": "Projet",
+    "reason": "Motif",
+    "inactive": "Inactif",
+    "deactivate": "Zimisa",
+    "actions": "Ba actions"
+  },
+  "roles": {
+    "SUPPORT": "Support",
+    "FINANCE": "Finance",
+    "RH": "RH",
+    "JURIDIQUE": "Juridique",
+    "MARKETING": "Marketing",
+    "DEV": "Développement",
+    "DIRECTION": "Direction",
+    "COMMERCIAL": "Commercial",
+    "ADMIN_SYSTEME": "Admin système",
+    "CONSEIL_ADMINISTRATION": "Conseil d’administration"
+  },
+  "reports": {
+    "kicker": "ADMINISTRATION",
+    "title": "Rapports ya mosala",
+    "subtitle": "Sala ba PDF ya ofisi na data ya solo ya MA Workspace. Fichier moko moko ezali na couverture, ba tableaux mpe historique ya audit.",
+    "generate": "Sala PDF",
+    "generating": "Ezali kosala…",
+    "generated": "PDF esalami!",
+    "toast": "PDF esalami!",
+    "failed": "Kosala PDF esili te.",
+    "historyTitle": "Ba rapports oyo esalami sika",
+    "historyHint": "Uta na journal ya audit (EXPORT_REPORT).",
+    "historyEmpty": "Génération moko te naino.",
+    "regenerate": "Sala lisusu",
+    "regenerateFail": "Kosala rapport oyo lisusu esili te.",
+    "unknownType": "Lolenge ya rapport eyebani te.",
+    "kinds": {
+      "utilisateurs": {
+        "title": "Gestion ya ba utilisateurs",
+        "description": "Annuaire mobimba ya ba agents, na ba KPI ndenge moko na page Utilisateurs.",
+        "b1": "Nkombo, email, département, ba rôles, périmètre, statut, mokolo ya création",
+        "b2": "Motango actifs / inactifs mpe répartition na périmètre"
+      },
+      "permissions": {
+        "title": "Matrice ya ba permissions",
+        "description": "Matrice ba rôles × ba permissions, na module, format paysage.",
+        "b1": "Ligne moko mpo na permission moko",
+        "b2": "Iyo / — mpo na rôle moko moko"
+      },
+      "acces": {
+        "title": "Ba accès mpe ba périmètres",
+        "description": "Détail ya accès na agent, na GRANT / DENY.",
+        "b1": "Ba rôles na société to société mobimba",
+        "b2": "Motif mpe mokolo ya dérogation moko moko"
+      },
+      "organisation": {
+        "title": "Ba départements mpe ba sociétés",
+        "description": "Organisation ya kati : ba départements, ba rôles ya liboso mpe ba sociétés.",
+        "b1": "Ba agents oyo batalisami na département",
+        "b2": "Statut mpe motango ya ba agents na société"
+      },
+      "statistiques": {
+        "title": "Statistiques ya mokili mobimba",
+        "description": "Ba tableaux ndenge moko na ba graphiques ya /admin/statistiques.",
+        "b1": "KPI, ba départements, ba tickets, ancienneté, funnel, ba permissions",
+        "b2": "Ntango oyo oponi emonisami na document"
+      }
+    }
+  },
+  "pages": {
+    "users": {
+      "kicker": "ADMINISTRATION",
+      "title": "Ba agents",
+      "subtitle": "Ba comptes, ba rôles mpe statut — bolongoli physique te."
+    },
+    "permissions": {
+      "kicker": "ADMINISTRATION",
+      "title": "Ba permissions",
+      "subtitle": "Matrice ya ba rôles mpe ba permissions ya ba modules."
+    },
+    "access": {
+      "kicker": "ADMINISTRATION",
+      "title": "Gestion ya accès",
+      "subtitle": "Ba rôles ya société mpe ya projet mpo na agent moko moko."
+    },
+    "companies": {
+      "kicker": "ADMINISTRATION",
+      "title": "Ba sociétés",
+      "subtitle": "Ba sociétés oyo bazali na MA Workspace."
+    },
+    "departments": {
+      "kicker": "ADMINISTRATION",
+      "title": "Ba départements",
+      "subtitle": "Organisation ya kati mpe ba rôles ya liboso."
+    },
+    "audit": {
+      "kicker": "AUDIT",
+      "title": "Audit",
+      "subtitle": "Ba événements oyo ekomami na système."
+    },
+    "documents": {
+      "kicker": "BA DOCUMENTS",
+      "title": "Ba documents",
+      "subtitle": "Ba fichiers oyo esanganaki mpe ba pièces ya ba modules."
+    },
+    "account": {
+      "kicker": "COMPTE",
+      "title": "Compte na ngai",
+      "subtitle": "Profil, 2FA mpe ba préférences."
+    },
+    "stats": {
+      "kicker": "DIRECTION",
+      "title": "Statistiques ya mokili mobimba",
+      "subtitle": "Ba indicateurs ya solo uta na base ya données — Kinshasa (UTC+1)."
+    },
+    "tickets": {
+      "kicker": "INFORMATIQUE",
+      "title": "Ba tickets informatique",
+      "subtitle": "Ba demandes, ba tâches mpe suivi ya SLA."
+    },
+    "bugs": {
+      "kicker": "TECHNIQUE",
+      "title": "Ba anomalies techniques",
+      "subtitle": "Nzela ya noki na ba tickets ya anomalie technique, na système moko ya tickets."
+    },
+    "hr": {
+      "kicker": "RH",
+      "title": "Ba ressources humaines",
+      "subtitle": "Ba agents, ba contrats mpe suivi."
+    },
+    "payroll": {
+      "kicker": "RH",
+      "title": "Paie",
+      "subtitle": "Ba périodes ya lifuta mpe ba listings."
+    },
+    "finance": {
+      "kicker": "FINANCE",
+      "title": "Finance",
+      "subtitle": "Ba transactions, ba soldes mpe validation."
+    },
+    "media": {
+      "kicker": "MARKETING",
+      "title": "Vue média",
+      "subtitle": "Ba indicateurs média — {{name}}."
+    },
+    "ops": {
+      "kicker": "OPÉRATIONS",
+      "title": "Opérations",
+      "subtitle": "Ba modules ya mosala ya société oyo oponi."
+    },
+    "direction": {
+      "kicker": "DIRECTION",
+      "title": "Tableau de bord ya direction",
+      "subtitle": "Résumé ya ba indicateurs mpe ba alertes."
+    },
+    "admin": {
+      "kicker": "ADMINISTRATION",
+      "title": "Administration",
+      "subtitle": "Ba paramètres ya système mpe IAM."
+    },
+    "commercial": {
+      "kicker": "COMMERCIAL",
+      "title": "Commercial",
+      "subtitle": "Ba clients, ba opportunités mpe suivi."
+    }
+  },
+  "stats": {
+    "export": "Bimisa data",
+    "empty": "Data ezali te mpo na ntango oyo.",
+    "loadError": "Statistiques echarger te.",
+    "period": {
+      "7": "Mikolo 7",
+      "30": "Mikolo 30",
+      "90": "Mikolo 90",
+      "ALL": "Nyonso"
+    },
+    "agentsAccess": "Ba agents mpe ba accès",
+    "ticketsActivity": "Ba tickets mpe activité",
+    "permissions": "Ba permissions",
+    "activeRate": "Taux ya ba comptes actifs",
+    "byScope": "Ba agents na périmètre",
+    "byDept": "Ba agents na département",
+    "seniority": "Ancienneté ya ba comptes",
+    "rolesByCompany": "Ba rôles na société",
+    "newVsTickets": "Ba agents ya sika vs ba tickets esalami",
+    "ticketStatus": "Ba statuts ya ba tickets",
+    "ticketTrend": "Évolution ya ba tickets esalami",
+    "ticketCatPrio": "Ba tickets na catégorie mpe priorité",
+    "funnel": "Cycle ya bomoi ya ba tickets",
+    "resolution": "Ntango ya résolution vs priorité",
+    "heatmap": "Activité ya connexion (mokolo × ngonga)",
+    "permTop": "Ba permissions oyo epesami mingi",
+    "coverage": "Couverture ya ba permissions na rôle"
+  },
+  "crud": {
+    "archive": "Archiver",
+    "new": "Ya sika",
+    "saved": "Enregistrement esali.",
+    "updated": "Ebongwani.",
+    "courseSaved": "Course ebombami.",
+    "saveFail": "Kobomba esili te.",
+    "actionFail": "Action esili te.",
+    "loadFail": "Chargement esili te.",
+    "empty": "Data te mpo na “{{scope}}” na module oyo.",
+    "statusHint": "Soki obongoli te, valeur ya liboso “{{status}}” esalelami.",
+    "motifRequired": "{{action}} — motif esengeli",
+    "titleRequired": "Titre esengeli.",
+    "descriptionRequired": "Description esengeli."
+  },
+  "ops": {
+    "fleet": {
+      "title": "Cartographie flotte",
+      "subtitle": "Ba courses mpe ba zones actifs.",
+      "subtitleCity": "Ba courses mpe ba zones — {{ville}}.",
+      "create": "Course ya sika"
+    },
+    "incidents": {
+      "title": "Ba incidents",
+      "subtitle": "Ba incidents flotte mpe livraison.",
+      "create": "Incident ya sika"
+    },
+    "couriers": {
+      "title": "Ba coursiers mpe affiliations",
+      "subtitle": "Ba dossiers coursiers mpe validation.",
+      "create": "Dossier ya sika",
+      "archive": "Boya"
+    },
+    "enterprises": {
+      "title": "Ba comptes entreprises",
+      "subtitle": "Ba clients B2B, ba contrats mpe résiliation na motif.",
+      "create": "Client ya sika",
+      "archive": "Tika contrat"
+    },
+    "subscriptions": {
+      "title": "Ba abonnements",
+      "subtitle": "Ba plans mpe ba renouvellements.",
+      "create": "Abonnement ya sika",
+      "archive": "Tika contrat"
+    },
+    "invoicing": {
+      "title": "Facturation",
+      "subtitle": "Ba factures mpe ba encaissements.",
+      "create": "Facture ya sika"
+    },
+    "b2c": {
+      "title": "Suivi B2C",
+      "subtitle": "Volume mpe ba canaux ya encaissement.",
+      "create": "Encaissement ya sika"
+    },
+    "leaves": {
+      "title": "Personnel mpe ba congés",
+      "subtitle": "Ba demandes na niveaux mibale ya validation.",
+      "create": "Demande ya sika",
+      "archive": "Tika"
+    },
+    "partners": {
+      "title": "Registre ya ba partenaires",
+      "subtitle": "Ba associations mpe ba conventions.",
+      "create": "Association ya sika",
+      "archive": "Tika contrat"
+    },
+    "compliance": {
+      "title": "Conformité",
+      "subtitle": "Ba dossiers ya conformité ya kati.",
+      "create": "Dossier ya sika"
+    },
+    "marketing": {
+      "title": "Performance",
+      "subtitle": "Ba campagnes mpe ba indicateurs média.",
+      "create": "Campagne ya sika"
+    },
+    "media": {
+      "title": "Médiathèque",
+      "subtitle": "Ba pièces créatives — kolongola na motif.",
+      "create": "Bakisa média",
+      "archive": "Longola"
+    },
+    "monitoring": {
+      "title": "Monitoring",
+      "subtitle": "Ba signaux techniques mpe disponibilité.",
+      "create": "Signal ya sika"
+    },
+    "bugs": {
+      "title": "Ba tickets techniques",
+      "subtitle": "Ba anomalies ya plateforme.",
+      "create": "Ticket technique ya sika"
+    }
+  },
+  "adminUi": {
+    "administration": "Administration",
+    "newDepartment": "Département ya sika",
+    "newCompany": "Société ya sika",
+    "totalDepartments": "Motango ya ba départements",
+    "allStatuses": "Ba statuts nyonso",
+    "activeDepartments": "Ba départements actifs",
+    "offeredToAgents": "Epesami na ba agents ya sika",
+    "attachedAgents": "Ba agents oyo batalisami",
+    "allDepartmentsTogether": "Ba départements nyonso elongo",
+    "noAgentAttached": "Na agent te",
+    "toStaffOrDisable": "Kotondisa to kozimisa",
+    "allHaveAgent": "Nyonso ezali na agent moko",
+    "deptName": "Nkombo ya département",
+    "defaultRoles": "Ba rôles ya liboso",
+    "noDept": "Département moko te.",
+    "deptCreated": "Département esali.",
+    "deptUpdated": "Département ebongwani.",
+    "deptDisabled": "Département ezimisi. Elongolami te.",
+    "nameRequired": "Nkombo ya département esengeli.",
+    "nameTaken": "Département na nkombo oyo ezali déjà.",
+    "totalCompanies": "Motango ya ba sociétés",
+    "activeCompanies": "Ba sociétés actives",
+    "inPreparation": "Na préparation",
+    "allCompaniesTogether": "Ba sociétés nyonso elongo",
+    "city": "Engumba",
+    "code": "Code",
+    "noCompany": "Société moko te.",
+    "companyCreated": "Société esali.",
+    "companyUpdated": "Société ebongwani.",
+    "companyDisabled": "Société ezimisi. Elongolami te.",
+    "totalAgents": "Motango ya ba agents",
+    "allAccounts": "Ba comptes nyonso",
+    "activeAgents": "Ba agents actifs",
+    "accountsInService": "Ba comptes oyo ezali na mosala",
+    "wholeCompany": "Société mobimba",
+    "crossAccess": "Accès ya transveral",
+    "oneProject": "Projet moko kaka",
+    "limitedAccess": "Accès ya moke",
+    "searchAgent": "Luka agent (nkombo to email)",
+    "allDepartments": "Ba départements nyonso",
+    "allRoles": "Ba rôles nyonso",
+    "accessUpdated": "Accès ebongwani.",
+    "denyReasonRequired": "Raison esengeli mpo na: {{list}}.",
+    "historyAssign": "Kopesa {{role}} · {{scope}}",
+    "historyRevoke": "Kolongola {{role}} · {{scope}}",
+    "historyCreate": "Création ya compte agent",
+    "roleWord": "rôle",
+    "wholeEnterprise": "société mobimba",
+    "saveChanges": "Bomba ba changements",
+    "analyzing": "Ezali ko analyser…",
+    "noPending": "Changement oyo ezali kozela te.",
+    "pendingChanges": "Ba changements oyo ezali kozela",
+    "matrixSaved": "Matrice ya ba permissions ebombami.",
+    "general": "Général",
+    "editDepartment": "Bongola département",
+    "editCompany": "Bongola société",
+    "nameStar": "Nkombo *",
+    "projectCode": "Code ya projet",
+    "cityOptional": "Engumba ya référence (soki olingi)",
+    "defaultRolesShort": "Ba rôles ya liboso",
+    "roleChangeWarning": "Bobongoli oyo ekokoma na kopesa ba rôles automatique mpo na ba agents {{count}} ya département oyo. Ba rôles oyo epesami na maboko ekozala kobongwana te na nsima. Finá Bomba lisusu mpo na kondima.",
+    "deactivateDeptTitle": "Zimisa département oyo?",
+    "deactivateDeptBody": "« {{name}} » ekolakisama te lisusu na formulaire Agent ya sika. Ba agents {{count}} oyo batalisami already bakobatela département oyo. Bolongoli physique te.",
+    "confirmDeactivate": "Kondima kozimisa",
+    "confirmation": "Confirmation",
+    "noCompanyRegistered": "Société moko te ekomami.",
+    "deactivateCompanyTitle": "Zimisa société oyo?",
+    "deactivateCompanyBody": "« {{name}} » ({{code}}) ekokoma inactif. Data ebatelami. Yango ezali bolongoli ya nsuka te.",
+    "perimeter": "Périmètre",
+    "manageAccess": "Gérer ba accès",
+    "loadAgentsFail": "Ko charger ba agents esili te.",
+    "noAgentsFilter": "Agent moko te mpo na ba filtres oyo.",
+    "previous": "Oyo eleki",
+    "next": "Oyo elandi",
+    "accessAgent": "Accès ya agent",
+    "enable": "Pesela",
+    "chooseCompanyRole": "Pona rôle ya société",
+    "accessByProject": "Accès na projet / société",
+    "coveredByWide": "Ezipami na accès transverse",
+    "noAccess": "Accès te",
+    "projectAccessInactive": "Section oyo ezali kosala te pona ete agent azali déjà na accès transverse na ba sociétés nyonso. Zimisa accès transverse likolo mpo na kopona ba rôles na projet.",
+    "confirmWide": "Agent oyo akokende uta na accès ya moke na ba projets tii na accès ya société mobimba. Finá Bomba lisusu mpo na kondima.",
+    "accessHistory": "Historique ya ba changements ya accès",
+    "noAccessHistory": "Changement ya accès moko te ekomami mpo na agent oyo.",
+    "crossAccessHint": "Agent amonaka ba sociétés nyonso soki accès oyo epesami.",
+    "permissionCol": "Permission",
+    "matrixTitle": "Matrice ba rôles × ba permissions",
+    "confirmMatrix": "Kondima mise à jour ya matrice",
+    "agentsCount": "Ba agents {{count}}",
+    "newTicket": "Ticket ya sika",
+    "total": "Motango",
+    "open": "Ba oyo eza kangami te",
+    "inProgress": "Ezali kosala",
+    "resolved": "Esilisi",
+    "toHandle": "Ya kosala",
+    "waitingIncluded": "Na ba oyo ezali kozela",
+    "closedIncluded": "Na ba oyo ekangami",
+    "allTypes": "Ba types nyonso",
+    "allPriorities": "Ba priorités nyonso",
+    "allAgents": "Ba agents nyonso",
+    "allCategories": "Ba catégories nyonso",
+    "reference": "Référence",
+    "type": "Type",
+    "priority": "Priorité",
+    "agent": "Agent",
+    "export": "Bimisa",
+    "filterByStatus": "Filtrer na statut",
+    "name": "Nkombo",
+    "email": "Email"
+  },
+  "ticketsUi": {
+    "status": {
+      "all": "Nyonso",
+      "waiting": "Ezali kozela",
+      "closed": "Ekangami",
+      "cancelled": "Etikami"
+    }
+  },
+  "assistant": {
+    "kicker": "Administration",
+    "title": "ASSISTANT IA",
+    "subtitle": "Tuna mituna na système, ba utilisateurs mpe ba accès, zwa ba conseils.",
+    "newChat": "Conversation ya sika",
+    "send": "Tinda",
+    "placeholder": "Motuna na yo…",
+    "suggested": "Ba mituna ya liboso",
+    "empty": "Pona motuna to loba oyo olingi koyeba na Workspace.",
+    "unavailable": "Assistant IA ezali te sikoyo",
+    "unconfigured": "Clé Groq ezali te. Tya GROQ_API_KEY na ma-core-backend/.env, sima bandela Core.",
+    "notConfigured": "Assistant IA ezalisi te — benga administrateur.",
+    "invalidKey": "Clé Groq ezali mabe — tala GROQ_API_KEY.",
+    "transient": "Erreur ya ntango moke, meka lisusu noki.",
+    "history": "Historique",
+    "searchHistory": "Luka…",
+    "emptyHistory": "Conversation ezali te.",
+    "seeMore": "Tala mingi",
+    "deleteConfirm": "Longola conversation oyo na historique?",
+    "copy": "Kopi réponse",
+    "copied": "Ekopi",
+    "typing": "Assistant azali kokoma…",
+    "showHistory": "Historique",
+    "hideHistory": "Bomba historique",
+    "showSuggested": "Ba mituna",
+    "hideSuggested": "Bomba ba mituna",
+    "suggestions": {
+      "q1": "Tozali na ba utilisateurs actifs boni?",
+      "q2": "Bato boni bazali na rôle Finance?",
+      "q3": "Nani akɔtaki na nsuka?",
+      "q4": "Résumé ya ba accès transverses",
+      "q5": "Ba permissions nini ya rôle Support?",
+      "q6": "Nini tokoki kosala mpo ba tickets esilisa malamu?"
+    }
+  }
+}

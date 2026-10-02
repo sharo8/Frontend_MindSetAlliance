@@ -1,0 +1,664 @@
+{
+  "nav": {
+    "accueil": "Home",
+    "tickets": "Tickets",
+    "direction": "Dashboard",
+    "rh": "Human resources",
+    "finance": "Finance",
+    "documents": "Documents",
+    "compte": "My account",
+    "cnn": "Operational supervision",
+    "mdr": "Media view",
+    "admin": "Administration",
+    "users": "User management",
+    "access": "Access management",
+    "permissions": "Permission management",
+    "commercial": "Sales",
+    "fleet": "Fleet map",
+    "incidents": "Incidents",
+    "couriers": "Couriers",
+    "enterprises": "Enterprise accounts",
+    "finance-home": "Finance overview",
+    "subscriptions": "Subscriptions",
+    "invoicing": "Invoicing",
+    "b2c": "B2C tracking",
+    "agents-hr": "Internal agents",
+    "leaves": "Leave",
+    "payroll": "Payroll",
+    "partners": "Partner registry",
+    "compliance": "Compliance",
+    "mkt": "Performance",
+    "media": "Media library",
+    "monitoring": "Monitoring",
+    "bugs": "Bugs & deployments",
+    "audit": "Audit log",
+    "societes": "Companies",
+    "rapports": "Reports",
+    "stats": "Global statistics",
+    "departements": "Departments",
+    "section": {
+      "ops": "Operations",
+      "tickets": "Ticketing",
+      "commercial": "Sales",
+      "finance": "Finance",
+      "hr": "Human resources",
+      "legal": "Legal",
+      "marketing": "Marketing & media",
+      "tech": "Technical",
+      "direction": "Leadership",
+      "admin": "Administration",
+      "operations": "Operations",
+      "tickets-sec": "Ticketing"
+    },
+    "main": "Main navigation",
+    "assistant": "AI assistant"
+  },
+  "topbar": {
+    "project": "Project",
+    "companyWide": "Whole company",
+    "search": "Search a ticket, an agent…",
+    "systemsOk": "Systems operational",
+    "notifications": "Notifications",
+    "themeToLight": "Switch to light theme",
+    "themeToDark": "Switch to dark theme",
+    "language": "Language",
+    "myProfile": "My profile",
+    "signOut": "Sign out",
+    "collapse": "Collapse",
+    "expandMenu": "Expand menu",
+    "collapseMenu": "Collapse menu",
+    "closeMenu": "Close menu"
+  },
+  "language": {
+    "fr": "Français",
+    "frHint": "Official",
+    "en": "English",
+    "enHint": "International",
+    "ln": "Lingála",
+    "lnHint": "Kinshasa",
+    "sw": "Kiswahili",
+    "swHint": "East"
+  },
+  "login": {
+    "brand": "MINDSET ALLIANCE",
+    "title": "MA Workspace",
+    "subtitle": "Internal operations platform",
+    "footer": "© 2026 Mindset Alliance",
+    "email": "Work email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "forgot": "Forgot password?",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "otpHint": "A 6-digit verification code was sent to your work email.",
+    "otpWait": "Resend the code in {{time}}",
+    "otpExpired": "Sign in again to receive a new code.",
+    "verify": "Verify",
+    "verifying": "Verifying…",
+    "emailInvalid": "Enter a valid work email.",
+    "passwordRequired": "Password is required.",
+    "failed": "Incorrect identifier or password.",
+    "otpInvalid": "Invalid verification code.",
+    "forgotTitle": "Forgot password",
+    "forgotBody": "Enter your work email. If an account exists, you will receive a reset link valid for 24 hours.",
+    "forgotSubmit": "Send the link",
+    "forgotSubmitting": "Sending…",
+    "forgotSent": "If an account exists for this identifier, a reset email has just been sent. Also check your spam folder.",
+    "backToLogin": "Back to sign in"
+  },
+  "firstLogin": {
+    "title": "Password change required",
+    "subtitle": "For security, set a personal password before accessing MA Workspace.",
+    "current": "Temporary password",
+    "next": "New password",
+    "confirm": "Confirm new password",
+    "submit": "Save and continue",
+    "submitting": "Saving…"
+  },
+  "setupPassword": {
+    "title": "Set your password",
+    "subtitle": "This link is valid for 24 hours. Use at least 8 characters, including a letter and a number.",
+    "missingToken": "Incomplete link. Use the link from your email.",
+    "submit": "Set password",
+    "done": "Password saved. You can sign in."
+  },
+  "home": {
+    "workspace": "Workspace",
+    "hello": "Hello",
+    "helloNamed": "Hello {{name}}",
+    "openTickets": "My open tickets",
+    "seeAll": "See all",
+    "noOpenTickets": "No open tickets.",
+    "emptyTicketsHint": "New tickets will appear here.",
+    "ticketsLoadError": "Unable to load tickets.",
+    "dueToday": "Due today",
+    "noDueToday": "No due dates today.",
+    "emptyDueHint": "Nothing due today.",
+    "unreadNotifs": "Unread notifications",
+    "noUnread": "No unread notifications.",
+    "emptyNotifsHint": "You are up to date.",
+    "kpis": "My department indicators",
+    "noKpis": "No indicators for this scope.",
+    "emptyKpisHint": "Indicators will appear when available.",
+    "analytics": "Analytical overview",
+    "loading": "Loading…",
+    "noContextData": "No data for this context.",
+    "times": "×{{count}}",
+    "fullAccess": "Full access"
+  },
+  "profile": {
+    "title": "My profile",
+    "photo": "Profile photo",
+    "changePhoto": "Change photo",
+    "nom": "Last name",
+    "prenom": "First name",
+    "email": "Work email",
+    "emailHint": "Sign-in identifier — cannot be changed.",
+    "telephone": "Phone",
+    "departement": "Department",
+    "roles": "Role(s)",
+    "hrHint": "Department and roles are managed only by HR.",
+    "passwordSection": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "complexity": "At least 8 characters, one letter and one digit.",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "loadError": "Unable to load your profile. Please try again.",
+    "saved": "Your changes have been saved.",
+    "passwordSaved": "Your password has been saved.",
+    "saveError": "Save failed. Please try again.",
+    "currentRequired": "Enter your current password.",
+    "newRequired": "Enter the new password.",
+    "complexityFail": "The new password must contain at least 8 characters, one letter and one digit.",
+    "confirmMismatch": "Confirmation does not match the new password.",
+    "samePassword": "The new password must be different from the current one.",
+    "partialPassword": "To change the password, enter the current, new and confirmation values."
+  },
+  "rbac": {
+    "deniedTitle": "Access denied",
+    "deniedBody": "Your role or selected project does not allow this section."
+  },
+  "tickets": {
+    "title": "Ticketing"
+  },
+  "documents": {
+    "title": "Documents"
+  },
+  "cnn": {
+    "title": "Operational supervision",
+    "subtitle": "Trips, zones and incidents.",
+    "empty": "No data for this context."
+  },
+  "authErrors": {
+    "disabled": "This account has been disabled. Contact your administrator.",
+    "badCredentials": "Incorrect email or password.",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "tooMany": "Too many attempts. Try again later.",
+    "forbidden": "Sign-in refused. Check that the Core backend is running.",
+    "smtp": "Email sending is unavailable. Check the SMTP configuration.",
+    "unavailable": "The authentication server is unavailable. Try again shortly.",
+    "failed": "Sign-in failed. Please try again."
+  },
+  "common": {
+    "wholeCompany": "Whole company",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "edit": "Edit",
+    "retry": "Retry",
+    "search": "Search",
+    "status": "Status",
+    "department": "Department",
+    "allDepartments": "All departments",
+    "allStatuses": "All statuses",
+    "active": "Active",
+    "suspended": "Suspended",
+    "period": "Period",
+    "title": "Title",
+    "description": "Description",
+    "project": "Project",
+    "reason": "Reason",
+    "inactive": "Inactive",
+    "deactivate": "Deactivate",
+    "actions": "Actions"
+  },
+  "roles": {
+    "SUPPORT": "Support",
+    "FINANCE": "Finance",
+    "RH": "Human resources",
+    "JURIDIQUE": "Legal",
+    "MARKETING": "Marketing",
+    "DEV": "Development",
+    "DIRECTION": "Leadership",
+    "COMMERCIAL": "Sales",
+    "ADMIN_SYSTEME": "System administration",
+    "CONSEIL_ADMINISTRATION": "Board of directors"
+  },
+  "reports": {
+    "kicker": "Administration",
+    "title": "REPORTS",
+    "subtitle": "Generate and download professional PDF reports for your audits and presentations.",
+    "generate": "Generate PDF",
+    "generating": "Generating…",
+    "generated": "PDF generated!",
+    "toast": "PDF generated!",
+    "failed": "PDF generation failed.",
+    "historyTitle": "Recently generated reports",
+    "historyHint": "PDF files are not stored on the server. The list below shows the last 5 generations from the audit log. You can generate the same report again to download it.",
+    "historyEmpty": "No generation recorded yet.",
+    "regenerate": "Generate again",
+    "regenerateFail": "Unable to regenerate this report.",
+    "unknownType": "Unknown report type.",
+    "kinds": {
+      "utilisateurs": {
+        "title": "User management",
+        "description": "Complete agent directory, with the same KPIs as the Users page.",
+        "b1": "Name, email, department, roles, scope, status, creation date",
+        "b2": "Active / inactive totals and breakdown by scope"
+      },
+      "permissions": {
+        "title": "Permissions matrix",
+        "description": "Roles × permissions matrix, grouped by module, in landscape format.",
+        "b1": "One row per permission",
+        "b2": "Yes / — for each role in the matrix"
+      },
+      "acces": {
+        "title": "Access and scopes",
+        "description": "Per-agent access detail, including GRANT / DENY exceptions.",
+        "b1": "Roles by company or whole company",
+        "b2": "Reason and date of each exception"
+      },
+      "organisation": {
+        "title": "Departments and companies",
+        "description": "Internal organisation: departments, default roles and companies.",
+        "b1": "Agents attached per department",
+        "b2": "Status and agent volume per company"
+      },
+      "statistiques": {
+        "title": "Global statistics",
+        "description": "Data tables equivalent to the charts on /admin/statistiques.",
+        "b1": "KPIs, departments, tickets, seniority, funnel, permissions",
+        "b2": "Selected period is printed on the document"
+      }
+    }
+  },
+  "pages": {
+    "users": {
+      "kicker": "Security",
+      "title": "User management",
+      "subtitle": "Agent directory, roles by company and individual GRANT / DENY exceptions."
+    },
+    "permissions": {
+      "kicker": "Security",
+      "title": "Permission management",
+      "subtitle": "Roles × permissions matrix, saved on the server. A unique email is sent to each affected agent."
+    },
+    "access": {
+      "kicker": "Administration",
+      "title": "Access management",
+      "subtitle": "Assign or revoke roles by project. Every action is logged."
+    },
+    "companies": {
+      "kicker": "Administration",
+      "title": "Companies",
+      "subtitle": "Create, update and deactivate multi-company contexts. No permanent deletion."
+    },
+    "departments": {
+      "kicker": "Administration",
+      "title": "Departments",
+      "subtitle": "Names, default roles and activation. No physical deletion."
+    },
+    "audit": {
+      "kicker": "Administration",
+      "title": "Audit log",
+      "subtitle": "Write traceability — read only."
+    },
+    "documents": {
+      "kicker": "Resources",
+      "title": "Documents",
+      "subtitle": "Deposit, preview and archive with a reason — never a deletion."
+    },
+    "account": {
+      "kicker": "Account",
+      "title": "My profile",
+      "subtitle": "Identity, contact details, password and access."
+    },
+    "stats": {
+      "kicker": "Leadership",
+      "title": "GLOBAL STATISTICS",
+      "subtitle": "System-wide data overview, updated in real time."
+    },
+    "tickets": {
+      "kicker": "Ticketing",
+      "title": "Tickets",
+      "subtitle": "Track, prioritise and close all work requests across the company."
+    },
+    "bugs": {
+      "kicker": "Technical",
+      "title": "Technical issues",
+      "subtitle": "Shortcut to technical anomaly tickets, in the same ticketing system."
+    },
+    "hr": {
+      "kicker": "HR",
+      "title": "Human resources",
+      "subtitle": "Headcount, attendance and leave."
+    },
+    "payroll": {
+      "kicker": "HR",
+      "title": "Payroll",
+      "subtitle": "Remuneration indicators — no deletion."
+    },
+    "finance": {
+      "kicker": "Finance",
+      "title": "Finance overview",
+      "subtitle": "Revenue, channels and outstanding amounts."
+    },
+    "media": {
+      "kicker": "Marketing",
+      "title": "Media view",
+      "subtitle": "Media indicators — {{name}}."
+    },
+    "ops": {
+      "kicker": "Operations",
+      "title": "Operational supervision",
+      "subtitle": "Trips, zones and incidents — {{name}}."
+    },
+    "direction": {
+      "kicker": "Leadership",
+      "title": "Executive leadership",
+      "subtitle": ""
+    },
+    "admin": {
+      "kicker": "System",
+      "title": "Administration",
+      "subtitle": "Agents and roles already provisioned."
+    },
+    "commercial": {
+      "kicker": "Sales",
+      "title": "Enterprise accounts",
+      "subtitle": "Courier validation and B2B accounts — {{name}}."
+    }
+  },
+  "stats": {
+    "export": "Export data",
+    "empty": "No data available for this period",
+    "loadError": "Unable to load statistics.",
+    "period": {
+      "7": "7 days",
+      "30": "30 days",
+      "90": "90 days",
+      "ALL": "All"
+    },
+    "agentsAccess": "Agents & access",
+    "ticketsActivity": "Tickets & activity",
+    "permissions": "Permissions",
+    "activeRate": "Active account rate",
+    "byScope": "Agents by scope",
+    "byDept": "Agents by department",
+    "seniority": "Account seniority",
+    "rolesByCompany": "Roles by company",
+    "newVsTickets": "New agents vs tickets created",
+    "ticketStatus": "Ticket statuses",
+    "ticketTrend": "Created tickets over time",
+    "ticketCatPrio": "Tickets by category and priority",
+    "funnel": "Ticket lifecycle",
+    "resolution": "Resolution time vs priority",
+    "heatmap": "Login activity (day × hour)",
+    "permTop": "Most assigned permissions",
+    "coverage": "Permission coverage by role"
+  },
+  "crud": {
+    "archive": "Archive",
+    "new": "New",
+    "saved": "Record created.",
+    "updated": "Changes saved.",
+    "courseSaved": "Trip saved.",
+    "saveFail": "Unable to save.",
+    "actionFail": "Action failed.",
+    "loadFail": "Unable to load.",
+    "empty": "No data for “{{scope}}” in this module.",
+    "statusHint": "Optional: if you leave this unchanged, the default “{{status}}” is applied.",
+    "motifRequired": "{{action}} — reason required",
+    "titleRequired": "Title is required.",
+    "descriptionRequired": "Description is required."
+  },
+  "ops": {
+    "fleet": {
+      "title": "Fleet map",
+      "subtitle": "Trips and active zones.",
+      "subtitleCity": "Trips and zones — {{ville}}.",
+      "create": "New trip"
+    },
+    "incidents": {
+      "title": "Incidents",
+      "subtitle": "Fleet and delivery incidents.",
+      "create": "New incident"
+    },
+    "couriers": {
+      "title": "Couriers & affiliations",
+      "subtitle": "Courier files and validation workflow.",
+      "create": "New file",
+      "archive": "Reject"
+    },
+    "enterprises": {
+      "title": "Enterprise accounts",
+      "subtitle": "B2B clients, contracts and termination with a reason.",
+      "create": "New client",
+      "archive": "Terminate"
+    },
+    "subscriptions": {
+      "title": "Subscriptions",
+      "subtitle": "Plans and renewals.",
+      "create": "New subscription",
+      "archive": "Terminate"
+    },
+    "invoicing": {
+      "title": "Invoicing",
+      "subtitle": "Invoices and collections.",
+      "create": "New invoice"
+    },
+    "b2c": {
+      "title": "B2C tracking",
+      "subtitle": "Volume and collection channels.",
+      "create": "New collection"
+    },
+    "leaves": {
+      "title": "Staff & leave",
+      "subtitle": "Requests with two validation levels.",
+      "create": "New request",
+      "archive": "Cancel"
+    },
+    "partners": {
+      "title": "Partner registry",
+      "subtitle": "Associations and agreements.",
+      "create": "New association",
+      "archive": "Terminate"
+    },
+    "compliance": {
+      "title": "Compliance",
+      "subtitle": "Internal compliance files.",
+      "create": "New file"
+    },
+    "marketing": {
+      "title": "Performance",
+      "subtitle": "Campaigns and media indicators.",
+      "create": "New campaign"
+    },
+    "media": {
+      "title": "Media library",
+      "subtitle": "Creative assets — withdrawal with a reason.",
+      "create": "Add media",
+      "archive": "Remove"
+    },
+    "monitoring": {
+      "title": "Monitoring",
+      "subtitle": "Technical signals and availability.",
+      "create": "New signal"
+    },
+    "bugs": {
+      "title": "Technical tickets",
+      "subtitle": "Platform issues.",
+      "create": "New technical ticket"
+    }
+  },
+  "adminUi": {
+    "administration": "Administration",
+    "newDepartment": "New department",
+    "newCompany": "New company",
+    "totalDepartments": "Total departments",
+    "allStatuses": "All statuses",
+    "activeDepartments": "Active departments",
+    "offeredToAgents": "Offered to new agents",
+    "attachedAgents": "Assigned agents",
+    "allDepartmentsTogether": "All departments combined",
+    "noAgentAttached": "No assigned agent",
+    "toStaffOrDisable": "To staff or deactivate",
+    "allHaveAgent": "Each has at least one agent",
+    "deptName": "Department name",
+    "defaultRoles": "Default associated role(s)",
+    "noDept": "No department.",
+    "deptCreated": "Department created.",
+    "deptUpdated": "Department updated.",
+    "deptDisabled": "Department deactivated. It was not deleted.",
+    "nameRequired": "Department name is required.",
+    "nameTaken": "A department already has this name.",
+    "totalCompanies": "Total companies",
+    "activeCompanies": "Active companies",
+    "inPreparation": "In preparation",
+    "allCompaniesTogether": "All companies combined",
+    "city": "City",
+    "code": "Code",
+    "noCompany": "No company.",
+    "companyCreated": "Company created.",
+    "companyUpdated": "Company updated.",
+    "companyDisabled": "Company deactivated. It was not deleted.",
+    "totalAgents": "Total agents",
+    "allAccounts": "All accounts",
+    "activeAgents": "Active agents",
+    "accountsInService": "Accounts in service",
+    "wholeCompany": "Whole company",
+    "crossAccess": "Cross-cutting access",
+    "oneProject": "Single project",
+    "limitedAccess": "Limited access",
+    "searchAgent": "Search an agent (name or email)",
+    "allDepartments": "All departments",
+    "allRoles": "All roles",
+    "accessUpdated": "Access updated.",
+    "denyReasonRequired": "Cannot save: a reason is required for {{list}}.",
+    "historyAssign": "Assigned {{role}} · {{scope}}",
+    "historyRevoke": "Revoked {{role}} · {{scope}}",
+    "historyCreate": "Agent account created",
+    "roleWord": "role",
+    "wholeEnterprise": "the whole company",
+    "saveChanges": "Save changes",
+    "analyzing": "Analyzing…",
+    "noPending": "No pending changes.",
+    "pendingChanges": "Pending changes",
+    "matrixSaved": "Permission matrix saved.",
+    "general": "General",
+    "editDepartment": "Edit department",
+    "editCompany": "Edit company",
+    "nameStar": "Name *",
+    "projectCode": "Project code",
+    "cityOptional": "Reference city (optional)",
+    "defaultRolesShort": "Default roles",
+    "roleChangeWarning": "This change will affect automatic role assignment for the {{count}} agent(s) in this department. Roles already assigned manually will not be changed retroactively. Click Save again to confirm.",
+    "deactivateDeptTitle": "Deactivate this department?",
+    "deactivateDeptBody": "“{{name}}” will no longer be offered in the New agent form. The {{count}} already assigned agent(s) keep this department. No physical deletion.",
+    "confirmDeactivate": "Confirm deactivation",
+    "confirmation": "Confirmation",
+    "noCompanyRegistered": "No company registered.",
+    "deactivateCompanyTitle": "Deactivate this company?",
+    "deactivateCompanyBody": "“{{name}}” ({{code}}) will be marked inactive. Data is kept. This is not a permanent deletion.",
+    "perimeter": "Scope",
+    "manageAccess": "Manage access",
+    "loadAgentsFail": "Unable to load agents.",
+    "noAgentsFilter": "No agent for these filters.",
+    "previous": "Previous",
+    "next": "Next",
+    "accessAgent": "Agent access",
+    "enable": "Enable",
+    "chooseCompanyRole": "Choose a company-wide role",
+    "accessByProject": "Access by project / company",
+    "coveredByWide": "Covered by company-wide access",
+    "noAccess": "No access",
+    "projectAccessInactive": "This section is inactive because the agent already has company-wide access. Turn off company-wide access above to set roles per project.",
+    "confirmWide": "This agent will move from limited project access to whole-company access. Click Save again to confirm.",
+    "accessHistory": "Access change history",
+    "noAccessHistory": "No access change logged for this agent.",
+    "crossAccessHint": "The agent sees every company when this access is enabled.",
+    "permissionCol": "Permission",
+    "matrixTitle": "Roles × permissions matrix",
+    "confirmMatrix": "Confirm matrix update",
+    "agentsCount": "{{count}} agent(s)",
+    "newTicket": "New ticket",
+    "total": "Total",
+    "open": "Open",
+    "inProgress": "In progress",
+    "resolved": "Resolved",
+    "toHandle": "To handle",
+    "waitingIncluded": "Including waiting",
+    "closedIncluded": "Including closed",
+    "allTypes": "All types",
+    "allPriorities": "All priorities",
+    "allAgents": "All agents",
+    "allCategories": "All categories",
+    "reference": "Reference",
+    "type": "Type",
+    "priority": "Priority",
+    "agent": "Agent",
+    "export": "Export",
+    "filterByStatus": "Filter by status",
+    "name": "Name",
+    "email": "Email"
+  },
+  "ticketsUi": {
+    "status": {
+      "all": "All",
+      "waiting": "Waiting",
+      "closed": "Closed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "assistant": {
+    "kicker": "Administration",
+    "title": "AI ASSISTANT",
+    "subtitle": "Ask about the system, users and access, and get recommendations.",
+    "newChat": "New conversation",
+    "send": "Send",
+    "placeholder": "Your question…",
+    "suggested": "Suggested questions",
+    "empty": "Pick a question or describe what you want to know about the Workspace.",
+    "unavailable": "AI assistant temporarily unavailable",
+    "unconfigured": "No Groq key configured. Set GROQ_API_KEY in ma-core-backend/.env, then restart Core.",
+    "notConfigured": "AI assistant is not configured — contact the system administrator.",
+    "invalidKey": "Invalid Groq API key — check GROQ_API_KEY.",
+    "transient": "Temporary error, try again in a moment.",
+    "history": "History",
+    "searchHistory": "Search…",
+    "emptyHistory": "No conversations yet.",
+    "seeMore": "See more",
+    "deleteConfirm": "Remove this conversation from your history?",
+    "copy": "Copy answer",
+    "copied": "Copied",
+    "typing": "Assistant is typing…",
+    "showHistory": "History",
+    "hideHistory": "Hide history",
+    "showSuggested": "Suggestions",
+    "hideSuggested": "Hide suggestions",
+    "suggestions": {
+      "q1": "How many active users do we have?",
+      "q2": "How many people have the Finance role?",
+      "q3": "Who signed in last?",
+      "q4": "Summary of company-wide access",
+      "q5": "What permissions does the Support role have?",
+      "q6": "How can we improve our ticket resolution rate?"
+    }
+  }
+}

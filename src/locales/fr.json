@@ -1,0 +1,664 @@
+{
+  "nav": {
+    "accueil": "Accueil",
+    "tickets": "Tickets",
+    "direction": "Tableau de bord",
+    "rh": "Ressources humaines",
+    "finance": "Finance",
+    "documents": "Documents",
+    "compte": "Mon compte",
+    "cnn": "Supervision opérationnelle",
+    "mdr": "Vue média",
+    "admin": "Administration",
+    "users": "Gestion des utilisateurs",
+    "access": "Gestion des accès",
+    "permissions": "Gestion des permissions",
+    "commercial": "Commercial",
+    "fleet": "Cartographie flotte",
+    "incidents": "Incidents",
+    "couriers": "Coursiers & affiliations",
+    "enterprises": "Comptes entreprises",
+    "finance-home": "Pilotage financier",
+    "subscriptions": "Abonnements",
+    "invoicing": "Facturation",
+    "b2c": "Suivi B2C",
+    "agents-hr": "Agents internes",
+    "leaves": "Personnel & congés",
+    "payroll": "Paie",
+    "partners": "Registre partenaires",
+    "compliance": "Conformité",
+    "mkt": "Performance",
+    "media": "Médiathèque",
+    "monitoring": "Monitoring",
+    "bugs": "Bugs & Déploiements",
+    "audit": "Journal d’audit",
+    "societes": "Sociétés",
+    "rapports": "Rapports",
+    "stats": "Statistiques globales",
+    "departements": "Départements",
+    "section": {
+      "ops": "Opérations",
+      "tickets": "Billetterie",
+      "commercial": "Commercial",
+      "finance": "Finance",
+      "hr": "Ressources humaines",
+      "legal": "Juridique",
+      "marketing": "Marketing & média",
+      "tech": "Technique",
+      "direction": "Direction",
+      "admin": "Administration",
+      "operations": "Opérations",
+      "tickets-sec": "Billetterie"
+    },
+    "main": "Navigation principale",
+    "assistant": "Assistant IA"
+  },
+  "topbar": {
+    "project": "Projet",
+    "companyWide": "Toute l’entreprise",
+    "search": "Rechercher un ticket, un agent…",
+    "systemsOk": "Systèmes opérationnels",
+    "notifications": "Notifications",
+    "themeToLight": "Passer en thème clair",
+    "themeToDark": "Passer en thème sombre",
+    "language": "Langue",
+    "myProfile": "Mon profil",
+    "signOut": "Déconnexion",
+    "collapse": "Réduire",
+    "expandMenu": "Déplier le menu",
+    "collapseMenu": "Réduire le menu",
+    "closeMenu": "Fermer le menu"
+  },
+  "language": {
+    "fr": "Français",
+    "frHint": "Officielle",
+    "en": "English",
+    "enHint": "International",
+    "ln": "Lingála",
+    "lnHint": "Kinshasa",
+    "sw": "Kiswahili",
+    "swHint": "Est"
+  },
+  "login": {
+    "brand": "MINDSET ALLIANCE",
+    "title": "MA Workspace",
+    "subtitle": "Plateforme interne de gestion",
+    "footer": "© 2026 Mindset Alliance",
+    "email": "Identifiant professionnel",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "forgot": "Mot de passe oublié ?",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "otpHint": "Un code à 6 chiffres a été envoyé à votre adresse e-mail professionnelle.",
+    "otpWait": "Renvoyer le code dans {{time}}",
+    "otpExpired": "Reconnectez-vous pour obtenir un nouveau code.",
+    "verify": "Vérifier",
+    "verifying": "Vérification…",
+    "emailInvalid": "Saisissez un identifiant professionnel valide.",
+    "passwordRequired": "Le mot de passe est obligatoire.",
+    "failed": "Identifiant ou mot de passe incorrect.",
+    "otpInvalid": "Code de vérification invalide.",
+    "forgotTitle": "Mot de passe oublié",
+    "forgotBody": "Saisissez votre identifiant professionnel. Si un compte existe, vous recevrez un e-mail avec un lien valable 24 heures.",
+    "forgotSubmit": "Envoyer le lien",
+    "forgotSubmitting": "Envoi…",
+    "forgotSent": "Si un compte existe pour cet identifiant, un e-mail de réinitialisation vient d’être envoyé. Vérifiez aussi les courriers indésirables.",
+    "backToLogin": "Retour à la connexion"
+  },
+  "firstLogin": {
+    "title": "Changement de mot de passe obligatoire",
+    "subtitle": "Pour des raisons de sécurité, définissez un mot de passe personnel avant d’accéder à MA Workspace.",
+    "current": "Mot de passe temporaire",
+    "next": "Nouveau mot de passe",
+    "confirm": "Confirmer le nouveau mot de passe",
+    "submit": "Enregistrer et continuer",
+    "submitting": "Enregistrement…"
+  },
+  "setupPassword": {
+    "title": "Définir votre mot de passe",
+    "subtitle": "Ce lien est valable 24 heures. Choisissez un mot de passe d’au moins 8 caractères, avec une lettre et un chiffre.",
+    "missingToken": "Lien incomplet. Utilisez le lien reçu par e-mail.",
+    "submit": "Définir le mot de passe",
+    "done": "Mot de passe enregistré. Vous pouvez vous connecter."
+  },
+  "home": {
+    "workspace": "Espace de travail",
+    "hello": "Bonjour",
+    "helloNamed": "Bonjour {{name}}",
+    "openTickets": "Mes tickets ouverts",
+    "seeAll": "Voir tout",
+    "noOpenTickets": "Aucun ticket ouvert.",
+    "emptyTicketsHint": "Les nouveaux tickets apparaîtront ici.",
+    "ticketsLoadError": "Impossible de charger les tickets.",
+    "dueToday": "À échéance aujourd’hui",
+    "noDueToday": "Aucune échéance aujourd’hui.",
+    "emptyDueHint": "Rien à traiter pour aujourd’hui.",
+    "unreadNotifs": "Notifications non lues",
+    "noUnread": "Aucune notification non lue.",
+    "emptyNotifsHint": "Vous êtes à jour.",
+    "kpis": "Indicateurs de mon département",
+    "noKpis": "Aucun indicateur pour ce périmètre.",
+    "emptyKpisHint": "Les indicateurs s’afficheront dès qu’ils seront disponibles.",
+    "analytics": "Vue analytique",
+    "loading": "Chargement…",
+    "noContextData": "Aucune donnée pour ce contexte.",
+    "times": "×{{count}}",
+    "fullAccess": "Accès complet"
+  },
+  "profile": {
+    "title": "Mon profil",
+    "photo": "Photo de profil",
+    "changePhoto": "Changer la photo",
+    "nom": "Nom",
+    "prenom": "Prénom",
+    "email": "E-mail professionnel",
+    "emailHint": "Identifiant de connexion — non modifiable.",
+    "telephone": "Téléphone",
+    "departement": "Département",
+    "roles": "Rôle(s)",
+    "hrHint": "Le département et les rôles sont gérés uniquement par les RH.",
+    "passwordSection": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmation du nouveau mot de passe",
+    "complexity": "Au moins 8 caractères, une lettre et un chiffre.",
+    "save": "Enregistrer les modifications",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "loadError": "Impossible de charger votre profil. Réessayez.",
+    "saved": "Vos modifications ont été enregistrées.",
+    "passwordSaved": "Votre mot de passe a été enregistré.",
+    "saveError": "L’enregistrement a échoué. Réessayez.",
+    "currentRequired": "Saisissez votre mot de passe actuel.",
+    "newRequired": "Saisissez le nouveau mot de passe.",
+    "complexityFail": "Le nouveau mot de passe doit contenir au moins 8 caractères, une lettre et un chiffre.",
+    "confirmMismatch": "La confirmation ne correspond pas au nouveau mot de passe.",
+    "samePassword": "Le nouveau mot de passe doit être différent de l’actuel.",
+    "partialPassword": "Pour changer le mot de passe, saisissez l’actuel, le nouveau et la confirmation."
+  },
+  "rbac": {
+    "deniedTitle": "Accès non autorisé",
+    "deniedBody": "Votre rôle ou le projet sélectionné ne permet pas d’afficher cette section."
+  },
+  "tickets": {
+    "title": "Billetterie"
+  },
+  "documents": {
+    "title": "Documents"
+  },
+  "cnn": {
+    "title": "Supervision opérationnelle",
+    "subtitle": "Courses, zones et incidents.",
+    "empty": "Aucune donnée pour ce contexte."
+  },
+  "authErrors": {
+    "disabled": "Ce compte a été désactivé, contactez votre administrateur.",
+    "badCredentials": "E-mail ou mot de passe incorrect.",
+    "sessionExpired": "Votre session a expiré. Reconnectez-vous.",
+    "tooMany": "Trop de tentatives. Réessayez plus tard.",
+    "forbidden": "Connexion refusée. Vérifiez que le backend Core est démarré et accessible.",
+    "smtp": "Envoi d’e-mail indisponible. Vérifiez la configuration SMTP.",
+    "unavailable": "Le serveur d’authentification est indisponible. Réessayez dans un instant.",
+    "failed": "La connexion a échoué. Réessayez."
+  },
+  "common": {
+    "wholeCompany": "Toute l’entreprise",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "edit": "Modifier",
+    "retry": "Réessayer",
+    "search": "Rechercher",
+    "status": "Statut",
+    "department": "Département",
+    "allDepartments": "Tous les départements",
+    "allStatuses": "Tous les statuts",
+    "active": "Actif",
+    "suspended": "Suspendu",
+    "period": "Période",
+    "title": "Titre",
+    "description": "Description",
+    "project": "Projet",
+    "reason": "Motif",
+    "inactive": "Inactif",
+    "deactivate": "Désactiver",
+    "actions": "Actions"
+  },
+  "roles": {
+    "SUPPORT": "Support",
+    "FINANCE": "Finance",
+    "RH": "Ressources humaines",
+    "JURIDIQUE": "Juridique",
+    "MARKETING": "Marketing",
+    "DEV": "Développement",
+    "DIRECTION": "Direction",
+    "COMMERCIAL": "Commercial",
+    "ADMIN_SYSTEME": "Administration système",
+    "CONSEIL_ADMINISTRATION": "Conseil d’administration"
+  },
+  "reports": {
+    "kicker": "Administration",
+    "title": "RAPPORTS",
+    "subtitle": "Générez et téléchargez des rapports PDF professionnels pour vos audits et présentations.",
+    "generate": "Générer le PDF",
+    "generating": "Génération en cours...",
+    "generated": "PDF généré !",
+    "toast": "PDF généré !",
+    "failed": "La génération du PDF a échoué.",
+    "historyTitle": "Rapports récemment générés",
+    "historyHint": "Les fichiers PDF ne sont pas conservés sur le serveur. L’historique ci-dessous reprend les 5 dernières générations (journal d’audit). Vous pouvez régénérer un rapport pour le télécharger à nouveau.",
+    "historyEmpty": "Aucune génération enregistrée pour le moment.",
+    "regenerate": "Générer à nouveau",
+    "regenerateFail": "Impossible de régénérer ce rapport.",
+    "unknownType": "Type de rapport inconnu.",
+    "kinds": {
+      "utilisateurs": {
+        "title": "Gestion des utilisateurs",
+        "description": "Annuaire complet des agents, avec les mêmes KPI que la page Utilisateurs.",
+        "b1": "Nom, e-mail, département, rôles, périmètre, statut, date de création",
+        "b2": "Totaux actifs / inactifs et répartition par périmètre"
+      },
+      "permissions": {
+        "title": "Matrice des permissions",
+        "description": "Matrice rôles × permissions, regroupée par module, en format paysage.",
+        "b1": "Une ligne par permission",
+        "b2": "Oui / — pour chaque rôle de la matrice"
+      },
+      "acces": {
+        "title": "Accès et périmètres",
+        "description": "Détail des accès par agent, y compris les dérogations GRANT / DENY.",
+        "b1": "Rôles par société ou toute l’entreprise",
+        "b2": "Motif et date de chaque dérogation"
+      },
+      "organisation": {
+        "title": "Départements et sociétés",
+        "description": "Organisation interne : départements, rôles par défaut et sociétés.",
+        "b1": "Agents rattachés par département",
+        "b2": "Statut et volume d’agents par société"
+      },
+      "statistiques": {
+        "title": "Statistiques globales",
+        "description": "Tableaux de données équivalents aux graphiques de /admin/statistiques.",
+        "b1": "KPI, départements, tickets, ancienneté, funnel, permissions",
+        "b2": "La période sélectionnée est indiquée sur le document"
+      }
+    }
+  },
+  "pages": {
+    "users": {
+      "kicker": "Sécurité",
+      "title": "Gestion des utilisateurs",
+      "subtitle": "Annuaire des agents, rôles par société et dérogations individuelles (GRANT / DENY)."
+    },
+    "permissions": {
+      "kicker": "Sécurité",
+      "title": "Gestion des permissions",
+      "subtitle": "Matrice rôles × permissions, enregistrée côté serveur. Un e-mail unique est envoyé à chaque agent concerné."
+    },
+    "access": {
+      "kicker": "Administration",
+      "title": "Gestion des accès",
+      "subtitle": "Attribuez ou révoquez les rôles par projet. Chaque action est journalisée."
+    },
+    "companies": {
+      "kicker": "Administration",
+      "title": "Sociétés",
+      "subtitle": "Création, modification et désactivation des contextes multi-société. Aucune suppression définitive."
+    },
+    "departments": {
+      "kicker": "Administration",
+      "title": "Départements",
+      "subtitle": "Noms, rôles par défaut et activation. Aucune suppression physique."
+    },
+    "audit": {
+      "kicker": "Administration",
+      "title": "Journal d’audit",
+      "subtitle": "Traçabilité des écritures — lecture seule."
+    },
+    "documents": {
+      "kicker": "Ressources",
+      "title": "Documents",
+      "subtitle": "Dépôt, aperçu et archivage avec motif — jamais de suppression."
+    },
+    "account": {
+      "kicker": "Compte",
+      "title": "Mon profil",
+      "subtitle": "Identité, coordonnées, mot de passe et accès."
+    },
+    "stats": {
+      "kicker": "Direction",
+      "title": "STATISTIQUES GLOBALES",
+      "subtitle": "Vue d’ensemble des données du système, mise à jour en temps réel."
+    },
+    "tickets": {
+      "kicker": "Billetterie",
+      "title": "Tickets",
+      "subtitle": "Suivez, priorisez et clôturez toutes les demandes de travail de l’entreprise, quel que soit le département."
+    },
+    "bugs": {
+      "kicker": "Technique",
+      "title": "Anomalies techniques",
+      "subtitle": "Raccourci vers les tickets de type anomalie technique, dans le même système de billetterie."
+    },
+    "hr": {
+      "kicker": "RH",
+      "title": "Ressources humaines",
+      "subtitle": "Effectifs, présence et congés."
+    },
+    "payroll": {
+      "kicker": "RH",
+      "title": "Paie",
+      "subtitle": "Consultation des indicateurs de rémunération — pas de suppression."
+    },
+    "finance": {
+      "kicker": "Finance",
+      "title": "Pilotage financier",
+      "subtitle": "Recettes, canaux et encours."
+    },
+    "media": {
+      "kicker": "Marketing",
+      "title": "Vue média",
+      "subtitle": "Indicateurs média — {{name}}."
+    },
+    "ops": {
+      "kicker": "Opérations",
+      "title": "Supervision opérationnelle",
+      "subtitle": "Courses, zones et incidents — {{name}}."
+    },
+    "direction": {
+      "kicker": "Direction",
+      "title": "Direction générale",
+      "subtitle": ""
+    },
+    "admin": {
+      "kicker": "Système",
+      "title": "Administration",
+      "subtitle": "Agents et rôles déjà provisionnés."
+    },
+    "commercial": {
+      "kicker": "Commercial",
+      "title": "Comptes entreprises",
+      "subtitle": "Validation coursiers et comptes B2B — {{name}}."
+    }
+  },
+  "stats": {
+    "export": "Exporter les données",
+    "empty": "Aucune donnée disponible pour cette période",
+    "loadError": "Impossible de charger les statistiques.",
+    "period": {
+      "7": "7 jours",
+      "30": "30 jours",
+      "90": "90 jours",
+      "ALL": "Tout"
+    },
+    "agentsAccess": "Agents & accès",
+    "ticketsActivity": "Tickets & activité",
+    "permissions": "Permissions",
+    "activeRate": "Taux de comptes actifs",
+    "byScope": "Répartition des agents par périmètre",
+    "byDept": "Agents par département",
+    "seniority": "Ancienneté des comptes",
+    "rolesByCompany": "Rôles par société",
+    "newVsTickets": "Nouveaux agents vs tickets créés",
+    "ticketStatus": "Statuts des tickets",
+    "ticketTrend": "Évolution des tickets créés",
+    "ticketCatPrio": "Tickets par catégorie et priorité",
+    "funnel": "Cycle de vie des tickets",
+    "resolution": "Délai de résolution vs priorité",
+    "heatmap": "Activité de connexion (jour × heure)",
+    "permTop": "Permissions les plus attribuées",
+    "coverage": "Couverture des permissions par rôle"
+  },
+  "crud": {
+    "archive": "Archiver",
+    "new": "Nouveau",
+    "saved": "Enregistrement créé.",
+    "updated": "Modifications enregistrées.",
+    "courseSaved": "Course enregistrée.",
+    "saveFail": "Enregistrement impossible.",
+    "actionFail": "Action impossible.",
+    "loadFail": "Chargement impossible.",
+    "empty": "Aucune donnée pour « {{scope}} » sur ce module.",
+    "statusHint": "Optionnel : si vous ne changez rien, la valeur par défaut « {{status}} » est appliquée.",
+    "motifRequired": "{{action}} — motif obligatoire",
+    "titleRequired": "Le titre est obligatoire.",
+    "descriptionRequired": "La description est obligatoire."
+  },
+  "ops": {
+    "fleet": {
+      "title": "Cartographie flotte",
+      "subtitle": "Courses et zones actives.",
+      "subtitleCity": "Courses et zones — {{ville}}.",
+      "create": "Nouvelle course"
+    },
+    "incidents": {
+      "title": "Incidents",
+      "subtitle": "Incidents flotte et livraison.",
+      "create": "Nouvel incident"
+    },
+    "couriers": {
+      "title": "Coursiers & affiliations",
+      "subtitle": "Dossiers coursiers et circuit de validation.",
+      "create": "Nouveau dossier",
+      "archive": "Rejeter"
+    },
+    "enterprises": {
+      "title": "Comptes entreprises",
+      "subtitle": "Clients B2B, contrats et résiliation avec motif.",
+      "create": "Nouveau client",
+      "archive": "Résilier"
+    },
+    "subscriptions": {
+      "title": "Abonnements",
+      "subtitle": "Plans et renouvellements.",
+      "create": "Nouvel abonnement",
+      "archive": "Résilier"
+    },
+    "invoicing": {
+      "title": "Facturation",
+      "subtitle": "Factures et encaissements.",
+      "create": "Nouvelle facture"
+    },
+    "b2c": {
+      "title": "Suivi B2C",
+      "subtitle": "Volume et canaux d’encaissement.",
+      "create": "Nouvel encaissement"
+    },
+    "leaves": {
+      "title": "Personnel & congés",
+      "subtitle": "Demandes à deux niveaux de validation.",
+      "create": "Nouvelle demande",
+      "archive": "Annuler"
+    },
+    "partners": {
+      "title": "Registre partenaires",
+      "subtitle": "Associations et conventions.",
+      "create": "Nouvelle association",
+      "archive": "Résilier"
+    },
+    "compliance": {
+      "title": "Conformité",
+      "subtitle": "Dossiers de conformité interne.",
+      "create": "Nouveau dossier"
+    },
+    "marketing": {
+      "title": "Performance",
+      "subtitle": "Campagnes et indicateurs média.",
+      "create": "Nouvelle campagne"
+    },
+    "media": {
+      "title": "Médiathèque",
+      "subtitle": "Pièces créatives — retrait avec motif.",
+      "create": "Ajouter un média",
+      "archive": "Retirer"
+    },
+    "monitoring": {
+      "title": "Monitoring",
+      "subtitle": "Signaux techniques et disponibilité.",
+      "create": "Nouveau signal"
+    },
+    "bugs": {
+      "title": "Tickets techniques",
+      "subtitle": "Anomalies plateforme.",
+      "create": "Nouveau ticket technique"
+    }
+  },
+  "adminUi": {
+    "administration": "Administration",
+    "newDepartment": "Nouveau département",
+    "newCompany": "Nouvelle société",
+    "totalDepartments": "Total départements",
+    "allStatuses": "Tous statuts",
+    "activeDepartments": "Départements actifs",
+    "offeredToAgents": "Proposés aux nouveaux agents",
+    "attachedAgents": "Agents rattachés",
+    "allDepartmentsTogether": "Tous départements confondus",
+    "noAgentAttached": "Sans agent rattaché",
+    "toStaffOrDisable": "À pourvoir ou à désactiver",
+    "allHaveAgent": "Tous ont au moins un agent",
+    "deptName": "Nom du département",
+    "defaultRoles": "Rôle(s) associé(s) par défaut",
+    "noDept": "Aucun département.",
+    "deptCreated": "Département créé.",
+    "deptUpdated": "Département mis à jour.",
+    "deptDisabled": "Département désactivé. Il n’a pas été supprimé.",
+    "nameRequired": "Le nom du département est obligatoire.",
+    "nameTaken": "Un département porte déjà ce nom.",
+    "totalCompanies": "Total sociétés",
+    "activeCompanies": "Sociétés actives",
+    "inPreparation": "En préparation",
+    "allCompaniesTogether": "Toutes sociétés confondues",
+    "city": "Ville",
+    "code": "Code",
+    "noCompany": "Aucune société.",
+    "companyCreated": "Société créée.",
+    "companyUpdated": "Société mise à jour.",
+    "companyDisabled": "Société désactivée. Elle n’a pas été supprimée.",
+    "totalAgents": "Total agents",
+    "allAccounts": "Tous comptes",
+    "activeAgents": "Agents actifs",
+    "accountsInService": "Comptes en service",
+    "wholeCompany": "Toute l’entreprise",
+    "crossAccess": "Accès transverse",
+    "oneProject": "Un seul projet",
+    "limitedAccess": "Accès limité",
+    "searchAgent": "Rechercher un agent (nom ou e-mail)",
+    "allDepartments": "Tous les départements",
+    "allRoles": "Tous les rôles",
+    "accessUpdated": "Accès mis à jour.",
+    "denyReasonRequired": "Impossible d’enregistrer : un motif est obligatoire pour {{list}}.",
+    "historyAssign": "Attribution de {{role}} · {{scope}}",
+    "historyRevoke": "Révocation de {{role}} · {{scope}}",
+    "historyCreate": "Création du compte agent",
+    "roleWord": "rôle",
+    "wholeEnterprise": "toute l’entreprise",
+    "saveChanges": "Enregistrer les modifications",
+    "analyzing": "Analyse…",
+    "noPending": "Aucun changement en attente.",
+    "pendingChanges": "Changements en attente",
+    "matrixSaved": "Matrice de permissions enregistrée.",
+    "general": "Général",
+    "editDepartment": "Modifier le département",
+    "editCompany": "Modifier la société",
+    "nameStar": "Nom *",
+    "projectCode": "Code projet",
+    "cityOptional": "Ville de référence (optionnel)",
+    "defaultRolesShort": "Rôles par défaut",
+    "roleChangeWarning": "Cette modification affectera l’attribution automatique des rôles pour les {{count}} agent(s) de ce département. Les rôles déjà attribués manuellement ne seront pas modifiés rétroactivement. Cliquez à nouveau sur Enregistrer pour confirmer.",
+    "deactivateDeptTitle": "Désactiver ce département ?",
+    "deactivateDeptBody": "« {{name}} » ne sera plus proposé dans le formulaire Nouvel agent. Les {{count}} agent(s) déjà rattachés conservent ce département. Aucune suppression physique.",
+    "confirmDeactivate": "Confirmer la désactivation",
+    "confirmation": "Confirmation",
+    "noCompanyRegistered": "Aucune société enregistrée.",
+    "deactivateCompanyTitle": "Désactiver cette société ?",
+    "deactivateCompanyBody": "« {{name}} » ({{code}}) sera marquée inactive. Les données sont conservées. Cette action n’est pas une suppression définitive.",
+    "perimeter": "Périmètre",
+    "manageAccess": "Gérer les accès",
+    "loadAgentsFail": "Impossible de charger les agents.",
+    "noAgentsFilter": "Aucun agent pour ces filtres.",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "accessAgent": "Accès agent",
+    "enable": "Activer",
+    "chooseCompanyRole": "Choisir un rôle entreprise",
+    "accessByProject": "Accès par projet / société",
+    "coveredByWide": "Couvert par l’accès transverse",
+    "noAccess": "Aucun accès",
+    "projectAccessInactive": "Cette section est inactive car l’agent bénéficie déjà d’un accès transverse à toutes les sociétés. Désactivez l’accès transverse ci-dessus pour définir des rôles par projet.",
+    "confirmWide": "Cet agent passera d’un accès limité à un ou plusieurs projets vers un accès toute l’entreprise. Cliquez à nouveau sur Enregistrer pour confirmer.",
+    "accessHistory": "Historique des modifications d’accès",
+    "noAccessHistory": "Aucun changement d’accès journalisé pour cet agent.",
+    "crossAccessHint": "L’agent voit toutes les sociétés si cet accès est activé.",
+    "permissionCol": "Permission",
+    "matrixTitle": "Matrice rôles × permissions",
+    "confirmMatrix": "Confirmer la mise à jour de la matrice",
+    "agentsCount": "{{count}} agent(s)",
+    "newTicket": "Nouveau ticket",
+    "total": "Total",
+    "open": "Ouverts",
+    "inProgress": "En cours",
+    "resolved": "Résolus",
+    "toHandle": "À traiter",
+    "waitingIncluded": "En attente inclus",
+    "closedIncluded": "Clôturés inclus",
+    "allTypes": "Tous les types",
+    "allPriorities": "Toutes priorités",
+    "allAgents": "Tous les agents",
+    "allCategories": "Toutes catégories",
+    "reference": "Référence",
+    "type": "Type",
+    "priority": "Priorité",
+    "agent": "Agent",
+    "export": "Exporter",
+    "filterByStatus": "Filtrer par statut",
+    "name": "Nom",
+    "email": "E-mail"
+  },
+  "ticketsUi": {
+    "status": {
+      "all": "Tous",
+      "waiting": "En attente",
+      "closed": "Clôturés",
+      "cancelled": "Annulés"
+    }
+  },
+  "assistant": {
+    "kicker": "Administration",
+    "title": "ASSISTANT IA",
+    "subtitle": "Posez vos questions sur le système, les utilisateurs, les accès et obtenez des recommandations.",
+    "newChat": "Nouvelle conversation",
+    "send": "Envoyer",
+    "placeholder": "Votre question…",
+    "suggested": "Questions suggérées",
+    "empty": "Choisissez une question ou décrivez ce que vous voulez savoir sur le Workspace.",
+    "unavailable": "Assistant IA temporairement indisponible",
+    "unconfigured": "Aucune clé Groq configurée. Définissez GROQ_API_KEY dans ma-core-backend/.env, puis redémarrez Core.",
+    "notConfigured": "Assistant IA non configuré — contactez l’administrateur système.",
+    "invalidKey": "Clé API Groq invalide — vérifiez GROQ_API_KEY.",
+    "transient": "Erreur temporaire, réessayez dans quelques instants.",
+    "history": "Historique",
+    "searchHistory": "Rechercher…",
+    "emptyHistory": "Aucune conversation pour le moment.",
+    "seeMore": "Voir plus",
+    "deleteConfirm": "Retirer cette conversation de votre historique ?",
+    "copy": "Copier la réponse",
+    "copied": "Copié",
+    "typing": "L’assistant écrit…",
+    "showHistory": "Historique",
+    "hideHistory": "Masquer l’historique",
+    "showSuggested": "Suggestions",
+    "hideSuggested": "Masquer les suggestions",
+    "suggestions": {
+      "q1": "Combien d’utilisateurs actifs avons-nous ?",
+      "q2": "Combien de personnes ont le rôle Finance ?",
+      "q3": "Qui s’est connecté en dernier ?",
+      "q4": "Résumé des accès transverses",
+      "q5": "Quelles permissions a le rôle Support ?",
+      "q6": "Comment améliorer notre taux de résolution de tickets ?"
+    }
+  }
+}

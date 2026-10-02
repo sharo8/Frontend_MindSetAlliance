@@ -1,0 +1,664 @@
+{
+  "nav": {
+    "accueil": "Nyumbani",
+    "tickets": "Tiketi",
+    "direction": "Uongozi",
+    "rh": "Rasilimali watu",
+    "finance": "Fedha",
+    "documents": "Nyaraka",
+    "compte": "Akaunti yangu",
+    "cnn": "Usimamizi wa uendeshaji",
+    "mdr": "Mwonekano wa media",
+    "admin": "Utawala",
+    "users": "Usimamizi wa watumiaji",
+    "access": "Usimamizi wa ufikiaji",
+    "permissions": "Usimamizi wa ruhusa",
+    "commercial": "Biashara",
+    "fleet": "Ramani ya meli",
+    "incidents": "Matukio",
+    "couriers": "Wasafirishaji",
+    "enterprises": "Akaunti za kampuni",
+    "finance-home": "Fedha",
+    "subscriptions": "Usajili",
+    "invoicing": "Ankara",
+    "b2c": "B2C",
+    "agents-hr": "Mawakala",
+    "leaves": "Likizo",
+    "payroll": "Mishahara",
+    "partners": "Washirika",
+    "compliance": "Uzingatifu",
+    "mkt": "Utendaji",
+    "media": "Maktaba",
+    "monitoring": "Ufuatiliaji",
+    "bugs": "Tiketi za tekinolojia",
+    "audit": "Ukaguzi",
+    "societes": "Kampuni",
+    "rapports": "Ripoti",
+    "stats": "Takwimu za jumla",
+    "departements": "Idara",
+    "section": {
+      "ops": "Uendeshaji",
+      "tickets": "Tiketi",
+      "commercial": "Mauzo",
+      "finance": "Fedha",
+      "hr": "Rasilimali watu",
+      "legal": "Sheria",
+      "marketing": "Masoko na midia",
+      "tech": "Teknolojia",
+      "direction": "UONGOZI",
+      "admin": "Utawala",
+      "operations": "Uendeshaji",
+      "tickets-sec": "Tiketi"
+    },
+    "main": "Urambazaji kuu",
+    "assistant": "Msaidizi wa AI"
+  },
+  "topbar": {
+    "project": "Mradi",
+    "companyWide": "Kampuni nzima",
+    "search": "Tafuta tiketi au wakala…",
+    "systemsOk": "Mifumo inafanya kazi",
+    "notifications": "Arifa",
+    "themeToLight": "Badilisha kuwa mandhari angavu",
+    "themeToDark": "Badilisha kuwa mandhari ya giza",
+    "language": "Lugha",
+    "myProfile": "Wasifu wangu",
+    "signOut": "Toka",
+    "collapse": "Funga",
+    "expandMenu": "Panua menyu",
+    "collapseMenu": "Funga menyu",
+    "closeMenu": "Funga menyu"
+  },
+  "language": {
+    "fr": "Français",
+    "frHint": "Rasmi",
+    "en": "English",
+    "enHint": "Kimataifa",
+    "ln": "Lingála",
+    "lnHint": "Kinshasa",
+    "sw": "Kiswahili",
+    "swHint": "Mashariki"
+  },
+  "login": {
+    "brand": "MINDSET ALLIANCE",
+    "title": "MA Workspace",
+    "subtitle": "Jukwaa la ndani la uendeshaji",
+    "footer": "© 2026 Mindset Alliance",
+    "email": "Barua pepe ya kazi",
+    "password": "Nenosiri",
+    "submit": "Ingia",
+    "submitting": "Inaingia…",
+    "forgot": "Umesahau nenosiri?",
+    "showPassword": "Onyesha nenosiri",
+    "hidePassword": "Ficha nenosiri",
+    "otpHint": "Nambari ya tarakimu 6 imetumwa kwa barua pepe yako ya kazi.",
+    "otpWait": "Tuma tena nambari baada ya {{time}}",
+    "otpExpired": "Ingia tena ili upate nambari mpya.",
+    "verify": "Thibitisha",
+    "verifying": "Inathibitisha…",
+    "emailInvalid": "Weka barua pepe sahihi ya kazi.",
+    "passwordRequired": "Nenosiri linahitajika.",
+    "failed": "Kitambulisho au nenosiri si sahihi.",
+    "otpInvalid": "Nambari ya uthibitisho si sahihi.",
+    "forgotTitle": "Nenosiri limesahaulika",
+    "forgotBody": "Weka barua pepe yako ya kazi. Ikiwa akaunti ipo, utapokea kiungo cha saa 24.",
+    "forgotSubmit": "Tuma kiungo",
+    "forgotSubmitting": "Inatuma…",
+    "forgotSent": "Ikiwa akaunti ipo, barua pepe ya kurejesha nenosiri imetumwa. Angalia pia spam.",
+    "backToLogin": "Rudi kwenye kuingia"
+  },
+  "firstLogin": {
+    "title": "Badilisha nenosiri lazima",
+    "subtitle": "Kwa usalama, weka nenosiri lako kabla ya kuingia MA Workspace.",
+    "current": "Nenosiri la muda",
+    "next": "Nenosiri jipya",
+    "confirm": "Thibitisha nenosiri jipya",
+    "submit": "Hifadhi na endelea",
+    "submitting": "Inahifadhi…"
+  },
+  "setupPassword": {
+    "title": "Weka nenosiri lako",
+    "subtitle": "Kiungo hiki ni halali kwa saa 24. Tumia angalau herufi 8, herufi na nambari.",
+    "missingToken": "Kiungo si kamili. Tumia kiungo kutoka barua pepe.",
+    "submit": "Weka nenosiri",
+    "done": "Nenosiri limehifadhiwa. Unaweza kuingia."
+  },
+  "home": {
+    "workspace": "Nafasi ya kazi",
+    "hello": "Habari",
+    "helloNamed": "Habari {{name}}",
+    "openTickets": "Tiketi zangu zilizo wazi",
+    "seeAll": "Ona zote",
+    "noOpenTickets": "Hakuna tiketi iliyo wazi.",
+    "emptyTicketsHint": "Tiketi mpya zitaonekana hapa.",
+    "ticketsLoadError": "Imeshindwa kupakia tiketi.",
+    "dueToday": "Tarehe za leo",
+    "noDueToday": "Hakuna tarehe ya leo.",
+    "emptyDueHint": "Hakuna cha kushughulikia leo.",
+    "unreadNotifs": "Arifa ambazo hazijasomwa",
+    "noUnread": "Hakuna arifa ambayo haijasomwa.",
+    "emptyNotifsHint": "Uko sawa.",
+    "kpis": "Viashiria vya idara yangu",
+    "noKpis": "Hakuna kiashiria katika eneo hili.",
+    "emptyKpisHint": "Viashiria vitaonekana vinapopatikana.",
+    "analytics": "Muhtasari wa uchambuzi",
+    "loading": "Inapakia…",
+    "noContextData": "Hakuna data kwa muktadha huu.",
+    "times": "×{{count}}",
+    "fullAccess": "Ufikiaji kamili"
+  },
+  "profile": {
+    "title": "Wasifu wangu",
+    "photo": "Picha ya wasifu",
+    "changePhoto": "Badilisha picha",
+    "nom": "Jina la ukoo",
+    "prenom": "Jina la kwanza",
+    "email": "Barua pepe ya kazi",
+    "emailHint": "Kitambulisho cha kuingia — hakiwezi kubadilishwa.",
+    "telephone": "Nambari ya simu",
+    "departement": "Idara",
+    "roles": "Jukumu",
+    "hrHint": "Idara na majukumu yanadhibitiwa na HR pekee.",
+    "passwordSection": "Badilisha nenosiri",
+    "currentPassword": "Nenosiri la sasa",
+    "newPassword": "Nenosiri jipya",
+    "confirmPassword": "Thibitisha nenosiri jipya",
+    "complexity": "Angalau herufi 8, herufi moja na nambari moja.",
+    "save": "Hifadhi mabadiliko",
+    "saving": "Inahifadhi…",
+    "cancel": "Ghairi",
+    "loadError": "Imeshindwa kupakia wasifu. Jaribu tena.",
+    "saved": "Mabadiliko yako yamehifadhiwa.",
+    "passwordSaved": "Nenosiri lako limehifadhiwa.",
+    "saveError": "Kuhifadhi kumeshindwa. Jaribu tena.",
+    "currentRequired": "Weka nenosiri la sasa.",
+    "newRequired": "Weka nenosiri jipya.",
+    "complexityFail": "Nenosiri jipya lazima liwe na herufi 8, herufi moja na nambari moja.",
+    "confirmMismatch": "Uthibitisho haufanani na nenosiri jipya.",
+    "samePassword": "Nenosiri jipya lazima liwe tofauti na la sasa.",
+    "partialPassword": "Ili kubadilisha nenosiri, weka la sasa, jipya na uthibitisho."
+  },
+  "rbac": {
+    "deniedTitle": "Ufikiaji umekataliwa",
+    "deniedBody": "Jukumu au mradi uliochaguliwa hauruhusu sehemu hii."
+  },
+  "tickets": {
+    "title": "Tiketi"
+  },
+  "documents": {
+    "title": "Nyaraka"
+  },
+  "cnn": {
+    "title": "Usimamizi wa uendeshaji",
+    "subtitle": "Viashiria vilivyojumuishwa (kusoma tu). Programu za simu hazisimamiwi hapa.",
+    "empty": "Hakuna data kwa muktadha huu."
+  },
+  "authErrors": {
+    "disabled": "Akaunti hii imezimwa. Wasiliana na msimamizi.",
+    "badCredentials": "Barua pepe au nenosiri si sahihi.",
+    "sessionExpired": "Kipindi chako kimeisha. Ingia tena.",
+    "tooMany": "Majaribio mengi. Jaribu tena baadaye.",
+    "forbidden": "Kuingia kumekataliwa. Hakiki kuwa backend Core inafanya kazi.",
+    "smtp": "Kutuma barua pepe hakupatikani. Hakiki usanidi wa SMTP.",
+    "unavailable": "Seva ya uthibitishaji haipatikani. Jaribu tena baadaye kidogo.",
+    "failed": "Kuingia kumeshindwa. Jaribu tena."
+  },
+  "common": {
+    "wholeCompany": "Kampuni nzima",
+    "save": "Hifadhi",
+    "saving": "Inahifadhi…",
+    "cancel": "Ghairi",
+    "close": "Funga",
+    "confirm": "Thibitisha",
+    "edit": "Hariri",
+    "retry": "Jaribu tena",
+    "search": "Tafuta",
+    "status": "Hali",
+    "department": "Idara",
+    "allDepartments": "Idara zote",
+    "allStatuses": "Hali zote",
+    "active": "Hai",
+    "suspended": "Imesimamishwa",
+    "period": "Kipindi",
+    "title": "Kichwa",
+    "description": "Maelezo",
+    "project": "Mradi",
+    "reason": "Sababu",
+    "inactive": "Si hai",
+    "deactivate": "Zima",
+    "actions": "Vitendo"
+  },
+  "roles": {
+    "SUPPORT": "Msaada",
+    "FINANCE": "Fedha",
+    "RH": "Rasilimali watu",
+    "JURIDIQUE": "Sheria",
+    "MARKETING": "Masoko",
+    "DEV": "Maendeleo",
+    "DIRECTION": "Uongozi",
+    "COMMERCIAL": "Mauzo",
+    "ADMIN_SYSTEME": "Msimamizi wa mfumo",
+    "CONSEIL_ADMINISTRATION": "Bodi ya usimamizi"
+  },
+  "reports": {
+    "kicker": "UTAWALA",
+    "title": "Ripoti za uendeshaji",
+    "subtitle": "Tengeneza PDF rasmi kutoka data halisi ya MA Workspace. Kila faili ina jalada, jedwali, na rekodi ya ukaguzi.",
+    "generate": "Tengeneza PDF",
+    "generating": "Inatengeneza…",
+    "generated": "PDF imetengenezwa!",
+    "toast": "PDF imetengenezwa!",
+    "failed": "Kutengeneza PDF kumeshindwa.",
+    "historyTitle": "Ripoti zilizotengenezwa hivi karibuni",
+    "historyHint": "Kutoka kumbukumbu ya ukaguzi (EXPORT_REPORT).",
+    "historyEmpty": "Bado hakuna ripoti iliyorekodiwa.",
+    "regenerate": "Tengeneza tena",
+    "regenerateFail": "Imeshindwa kutengeneza ripoti hii tena.",
+    "unknownType": "Aina ya ripoti haijulikani.",
+    "kinds": {
+      "utilisateurs": {
+        "title": "Usimamizi wa watumiaji",
+        "description": "Orodha kamili ya mawakala, na KPI zilezile za ukurasa wa Watumiaji.",
+        "b1": "Jina, barua pepe, idara, majukumu, upeo, hali, tarehe ya kuundwa",
+        "b2": "Jumla hai / si hai na mgawanyo kwa upeo"
+      },
+      "permissions": {
+        "title": "Jedwali la ruhusa",
+        "description": "Jedwali majukumu × ruhusa, kwa moduli, muundo mlalo.",
+        "b1": "Mstari mmoja kwa kila ruhusa",
+        "b2": "Ndiyo / — kwa kila wajibu katika jedwali"
+      },
+      "acces": {
+        "title": "Ufikiaji na upeo",
+        "description": "Maelezo ya ufikiaji kwa wakala, pamoja na GRANT / DENY.",
+        "b1": "Majukumu kwa kampuni au kampuni nzima",
+        "b2": "Sababu na tarehe ya kila ubaguzi"
+      },
+      "organisation": {
+        "title": "Idara na kampuni",
+        "description": "Muundo wa ndani: idara, majukumu chaguomsingi na kampuni.",
+        "b1": "Mawakala walioambatishwa kwa idara",
+        "b2": "Hali na idadi ya mawakala kwa kampuni"
+      },
+      "statistiques": {
+        "title": "Takwimu za jumla",
+        "description": "Jedwali sawa na grafu za /admin/statistiques.",
+        "b1": "KPI, idara, tiketi, uzee, funnel, ruhusa",
+        "b2": "Kipindi kilichochaguliwa kinaonyeshwa kwenye hati"
+      }
+    }
+  },
+  "pages": {
+    "users": {
+      "kicker": "UTAWALA",
+      "title": "Mawakala",
+      "subtitle": "Akaunti, majukumu na hali — bila kufuta kimwili."
+    },
+    "permissions": {
+      "kicker": "UTAWALA",
+      "title": "Ruhusa",
+      "subtitle": "Jedwali la majukumu na ruhusa za moduli."
+    },
+    "access": {
+      "kicker": "UTAWALA",
+      "title": "Usimamizi wa ufikiaji",
+      "subtitle": "Majukumu ya kampuni na ya mradi kwa kila wakala."
+    },
+    "companies": {
+      "kicker": "UTAWALA",
+      "title": "Kampuni",
+      "subtitle": "Kampuni zinazoshiriki MA Workspace."
+    },
+    "departments": {
+      "kicker": "UTAWALA",
+      "title": "Idara",
+      "subtitle": "Muundo wa ndani na majukumu chaguomsingi."
+    },
+    "audit": {
+      "kicker": "UKAGUZI",
+      "title": "Ukaguzi",
+      "subtitle": "Matukio yaliyorekodiwa katika mfumo."
+    },
+    "documents": {
+      "kicker": "NYARAKA",
+      "title": "Nyaraka",
+      "subtitle": "Faili zilizoshirikiwa na hati za moduli."
+    },
+    "account": {
+      "kicker": "AKAUNTI",
+      "title": "Akaunti yangu",
+      "subtitle": "Wasifu, 2FA na mapendeleo."
+    },
+    "stats": {
+      "kicker": "UONGOZI",
+      "title": "Takwimu za jumla",
+      "subtitle": "Viashiria hai kutoka hifadhidata — Kinshasa (UTC+1)."
+    },
+    "tickets": {
+      "kicker": "TEKNOLOJIA",
+      "title": "Tiketi za tekinolojia",
+      "subtitle": "Ombi, kazi na ufuatiliaji wa SLA."
+    },
+    "bugs": {
+      "kicker": "TEKNOLOJIA",
+      "title": "Hitilafu za kiufundi",
+      "subtitle": "Njia fupi ya tiketi za hitilafu ya kiufundi, katika mfumo uleule wa tiketi."
+    },
+    "hr": {
+      "kicker": "RASILIMALI WATU",
+      "title": "Rasilimali watu",
+      "subtitle": "Mawakala, mikataba na ufuatiliaji."
+    },
+    "payroll": {
+      "kicker": "RASILIMALI WATU",
+      "title": "Mishahara",
+      "subtitle": "Vipindi vya malipo na orodha."
+    },
+    "finance": {
+      "kicker": "FEDHA",
+      "title": "Fedha",
+      "subtitle": "Miamala, mizani na uthibitisho."
+    },
+    "media": {
+      "kicker": "MASOKO",
+      "title": "Mwonekano wa midia",
+      "subtitle": "Viashiria vya midia — {{name}}."
+    },
+    "ops": {
+      "kicker": "UENDAJI",
+      "title": "Uendeshaji",
+      "subtitle": "Moduli za uendeshaji za kampuni iliyochaguliwa."
+    },
+    "direction": {
+      "kicker": "UONGOZI",
+      "title": "Dashibodi ya uongozi",
+      "subtitle": "Muhtasari wa viashiria na tahadhari."
+    },
+    "admin": {
+      "kicker": "UTAWALA",
+      "title": "Utawala",
+      "subtitle": "Mipangilio ya mfumo na IAM."
+    },
+    "commercial": {
+      "kicker": "MAUZO",
+      "title": "Mauzo",
+      "subtitle": "Wateja, nafasi na ufuatiliaji."
+    }
+  },
+  "stats": {
+    "export": "Hamisha data",
+    "empty": "Hakuna data kwa kipindi hiki.",
+    "loadError": "Imeshindwa kupakia takwimu.",
+    "period": {
+      "7": "Siku 7",
+      "30": "Siku 30",
+      "90": "Siku 90",
+      "ALL": "Zote"
+    },
+    "agentsAccess": "Mawakala na ufikiaji",
+    "ticketsActivity": "Tiketi na shughuli",
+    "permissions": "Ruhusa",
+    "activeRate": "Kiwango cha akaunti hai",
+    "byScope": "Mawakala kwa upeo",
+    "byDept": "Mawakala kwa idara",
+    "seniority": "Uzee wa akaunti",
+    "rolesByCompany": "Majukumu kwa kampuni",
+    "newVsTickets": "Mawakala wapya dhidi ya tiketi zilizoundwa",
+    "ticketStatus": "Hali za tiketi",
+    "ticketTrend": "Mwelekeo wa tiketi zilizoundwa",
+    "ticketCatPrio": "Tiketi kwa kategoria na kipaumbele",
+    "funnel": "Mzunguko wa maisha wa tiketi",
+    "resolution": "Muda wa kutatua dhidi ya kipaumbele",
+    "heatmap": "Shughuli ya kuingia (siku × saa)",
+    "permTop": "Ruhusa zinazotolewa zaidi",
+    "coverage": "Ufunikaji wa ruhusa kwa wajibu"
+  },
+  "crud": {
+    "archive": "Weka kumbukumbu",
+    "new": "Mpya",
+    "saved": "Rekodi imeundwa.",
+    "updated": "Imesasishwa.",
+    "courseSaved": "Safari imehifadhiwa.",
+    "saveFail": "Imeshindwa kuhifadhi.",
+    "actionFail": "Kitendo kimeshindwa.",
+    "loadFail": "Imeshindwa kupakia.",
+    "empty": "Hakuna data ya “{{scope}}” katika moduli hii.",
+    "statusHint": "Si lazima: ukiacha hii, chaguomsingi “{{status}}” linatumika.",
+    "motifRequired": "{{action}} — sababu inahitajika",
+    "titleRequired": "Kichwa kinahitajika.",
+    "descriptionRequired": "Maelezo yanahitajika."
+  },
+  "ops": {
+    "fleet": {
+      "title": "Ramani ya meli",
+      "subtitle": "Safari na maeneo hai.",
+      "subtitleCity": "Safari na maeneo — {{ville}}.",
+      "create": "Safari mpya"
+    },
+    "incidents": {
+      "title": "Matukio",
+      "subtitle": "Matukio ya meli na usafirishaji.",
+      "create": "Tukio jipya"
+    },
+    "couriers": {
+      "title": "Wabeba na ushirika",
+      "subtitle": "Faili za wabeba na uthibitisho.",
+      "create": "Faili mpya",
+      "archive": "Kataa"
+    },
+    "enterprises": {
+      "title": "Akaunti za biashara",
+      "subtitle": "Wateja B2B, mikataba na kusitisha kwa sababu.",
+      "create": "Mteja mpya",
+      "archive": "Sitisha"
+    },
+    "subscriptions": {
+      "title": "Usajili",
+      "subtitle": "Mipango na upyaaji.",
+      "create": "Usajili mpya",
+      "archive": "Sitisha"
+    },
+    "invoicing": {
+      "title": "Ankara",
+      "subtitle": "Ankara na malipo.",
+      "create": "Ankara mpya"
+    },
+    "b2c": {
+      "title": "Ufuatiliaji B2C",
+      "subtitle": "Kiasi na njia za malipo.",
+      "create": "Malipo mapya"
+    },
+    "leaves": {
+      "title": "Wafanyakazi na likizo",
+      "subtitle": "Maombi yenye viwango viwili vya uthibitisho.",
+      "create": "Ombi jipya",
+      "archive": "Ghairi"
+    },
+    "partners": {
+      "title": "Rejesta ya washirika",
+      "subtitle": "Vyama na makubaliano.",
+      "create": "Chama kipya",
+      "archive": "Sitisha"
+    },
+    "compliance": {
+      "title": "Uzingatiaji",
+      "subtitle": "Faili za uzingatiaji wa ndani.",
+      "create": "Faili mpya"
+    },
+    "marketing": {
+      "title": "Utendaji",
+      "subtitle": "Kampeni na viashiria vya midia.",
+      "create": "Kampeni mpya"
+    },
+    "media": {
+      "title": "Maktaba ya midia",
+      "subtitle": "Vifaa vya ubunifu — kuondoa kwa sababu.",
+      "create": "Ongeza midia",
+      "archive": "Ondoa"
+    },
+    "monitoring": {
+      "title": "Ufuatiliaji",
+      "subtitle": "Ishara za kiufundi na upatikanaji.",
+      "create": "Ishara mpya"
+    },
+    "bugs": {
+      "title": "Tiketi za kiufundi",
+      "subtitle": "Hitilafu za jukwaa.",
+      "create": "Tiketi mpya ya kiufundi"
+    }
+  },
+  "adminUi": {
+    "administration": "Utawala",
+    "newDepartment": "Idara mpya",
+    "newCompany": "Kampuni mpya",
+    "totalDepartments": "Jumla ya idara",
+    "allStatuses": "Hali zote",
+    "activeDepartments": "Idara hai",
+    "offeredToAgents": "Hutolewa kwa mawakala wapya",
+    "attachedAgents": "Mawakala walioambatishwa",
+    "allDepartmentsTogether": "Idara zote pamoja",
+    "noAgentAttached": "Bila wakala",
+    "toStaffOrDisable": "Jazwa au zima",
+    "allHaveAgent": "Kila moja ina angalau wakala mmoja",
+    "deptName": "Jina la idara",
+    "defaultRoles": "Majukumu chaguomsingi",
+    "noDept": "Hakuna idara.",
+    "deptCreated": "Idara imeundwa.",
+    "deptUpdated": "Idara imesasishwa.",
+    "deptDisabled": "Idara imezimwa. Haijafutwa.",
+    "nameRequired": "Jina la idara linahitajika.",
+    "nameTaken": "Idara yenye jina hili tayari ipo.",
+    "totalCompanies": "Jumla ya kampuni",
+    "activeCompanies": "Kampuni hai",
+    "inPreparation": "Inaandaliwa",
+    "allCompaniesTogether": "Kampuni zote pamoja",
+    "city": "Mji",
+    "code": "Msimbo",
+    "noCompany": "Hakuna kampuni.",
+    "companyCreated": "Kampuni imeundwa.",
+    "companyUpdated": "Kampuni imesasishwa.",
+    "companyDisabled": "Kampuni imezimwa. Haijafutwa.",
+    "totalAgents": "Jumla ya mawakala",
+    "allAccounts": "Akaunti zote",
+    "activeAgents": "Mawakala hai",
+    "accountsInService": "Akaunti zinazotumika",
+    "wholeCompany": "Kampuni nzima",
+    "crossAccess": "Ufikiaji wa pamoja",
+    "oneProject": "Mradi mmoja tu",
+    "limitedAccess": "Ufikiaji mdogo",
+    "searchAgent": "Tafuta wakala (jina au barua pepe)",
+    "allDepartments": "Idara zote",
+    "allRoles": "Majukumu yote",
+    "accessUpdated": "Ufikiaji umesasishwa.",
+    "denyReasonRequired": "Sababu inahitajika kwa: {{list}}.",
+    "historyAssign": "Mgawo wa {{role}} · {{scope}}",
+    "historyRevoke": "Kufutwa kwa {{role}} · {{scope}}",
+    "historyCreate": "Akaunti ya wakala imeundwa",
+    "roleWord": "wajibu",
+    "wholeEnterprise": "kampuni nzima",
+    "saveChanges": "Hifadhi mabadiliko",
+    "analyzing": "Inachambua…",
+    "noPending": "Hakuna mabadiliko yanayosubiri.",
+    "pendingChanges": "Mabadiliko yanayosubiri",
+    "matrixSaved": "Jedwali la ruhusa limehifadhiwa.",
+    "general": "Jumla",
+    "editDepartment": "Hariri idara",
+    "editCompany": "Hariri kampuni",
+    "nameStar": "Jina *",
+    "projectCode": "Msimbo wa mradi",
+    "cityOptional": "Mji wa rejea (si lazima)",
+    "defaultRolesShort": "Majukumu chaguomsingi",
+    "roleChangeWarning": "Mabadiliko haya yataathiri mgawo wa kiotomatiki wa majukumu kwa mawakala {{count}} wa idara hii. Majukumu yaliyotolewa kwa mkono hayabadilishwi nyuma. Bofya Hifadhi tena ili kuthibitisha.",
+    "deactivateDeptTitle": "Zima idara hii?",
+    "deactivateDeptBody": "“{{name}}” haitatolewa tena kwenye fomu ya Wakala mpya. Mawakala {{count}} walioambatishwa wanabaki na idara hii. Hakuna kufuta kimwili.",
+    "confirmDeactivate": "Thibitisha kuzima",
+    "confirmation": "Uthibitisho",
+    "noCompanyRegistered": "Hakuna kampuni iliyosajiliwa.",
+    "deactivateCompanyTitle": "Zima kampuni hii?",
+    "deactivateCompanyBody": "“{{name}}” ({{code}}) itawekwa si hai. Data inahifadhiwa. Hii si kufuta kabisa.",
+    "perimeter": "Upeo",
+    "manageAccess": "Simamia ufikiaji",
+    "loadAgentsFail": "Imeshindwa kupakia mawakala.",
+    "noAgentsFilter": "Hakuna wakala kwa vichujio hivi.",
+    "previous": "Iliyotangulia",
+    "next": "Ifuatayo",
+    "accessAgent": "Ufikiaji wa wakala",
+    "enable": "Washa",
+    "chooseCompanyRole": "Chagua wajibu wa kampuni",
+    "accessByProject": "Ufikiaji kwa mradi / kampuni",
+    "coveredByWide": "Inafunikwa na ufikiaji wa kampuni nzima",
+    "noAccess": "Hakuna ufikiaji",
+    "projectAccessInactive": "Sehemu hii haifanyi kazi kwa sababu wakala tayari ana ufikiaji wa kampuni nzima. Zima ufikiaji huo hapo juu ili kuweka majukumu kwa mradi.",
+    "confirmWide": "Wakala huyu atahama kutoka ufikiaji mdogo wa miradi hadi ufikiaji wa kampuni nzima. Bofya Hifadhi tena ili kuthibitisha.",
+    "accessHistory": "Historia ya mabadiliko ya ufikiaji",
+    "noAccessHistory": "Hakuna mabadiliko ya ufikiaji yaliyorekodiwa kwa wakala huyu.",
+    "crossAccessHint": "Wakala anaona kampuni zote ikiwa ufikiaji huu umewashwa.",
+    "permissionCol": "Ruhusa",
+    "matrixTitle": "Jedwali majukumu × ruhusa",
+    "confirmMatrix": "Thibitisha sasisho la jedwali",
+    "agentsCount": "Mawakala {{count}}",
+    "newTicket": "Tiketi mpya",
+    "total": "Jumla",
+    "open": "Zilizo wazi",
+    "inProgress": "Zinaendelea",
+    "resolved": "Zimetatuliwa",
+    "toHandle": "Za kushughulikiwa",
+    "waitingIncluded": "Pamoja na zinazosubiri",
+    "closedIncluded": "Pamoja na zilizofungwa",
+    "allTypes": "Aina zote",
+    "allPriorities": "Vipaumbele vyote",
+    "allAgents": "Mawakala wote",
+    "allCategories": "Kategoria zote",
+    "reference": "Rejea",
+    "type": "Aina",
+    "priority": "Kipaumbele",
+    "agent": "Wakala",
+    "export": "Hamisha",
+    "filterByStatus": "Chuja kwa hali",
+    "name": "Jina",
+    "email": "Barua pepe"
+  },
+  "ticketsUi": {
+    "status": {
+      "all": "Zote",
+      "waiting": "Zinasubiri",
+      "closed": "Zilizofungwa",
+      "cancelled": "Zilizoghairiwa"
+    }
+  },
+  "assistant": {
+    "kicker": "Utawala",
+    "title": "MSAIDIZI WA AI",
+    "subtitle": "Uliza kuhusu mfumo, watumiaji na ufikiaji, upate ushauri.",
+    "newChat": "Mazungumzo mapya",
+    "send": "Tuma",
+    "placeholder": "Swali lako…",
+    "suggested": "Maswali yaliyopendekezwa",
+    "empty": "Chagua swali au eleza unachotaka kujua kuhusu Workspace.",
+    "unavailable": "Msaidizi wa AI haipatikani kwa sasa",
+    "unconfigured": "Hakuna ufunguo wa Groq. Weka GROQ_API_KEY kwenye ma-core-backend/.env, kisha anzisha Core tena.",
+    "notConfigured": "Msaidizi wa AI hajawekwa — wasiliana na msimamizi.",
+    "invalidKey": "Ufunguo wa Groq si sahihi — hakiki GROQ_API_KEY.",
+    "transient": "Hitilafu ya muda, jaribu tena baadaye kidogo.",
+    "history": "Historia",
+    "searchHistory": "Tafuta…",
+    "emptyHistory": "Bado hakuna mazungumzo.",
+    "seeMore": "Ona zaidi",
+    "deleteConfirm": "Ondoa mazungumzo haya kwenye historia yako?",
+    "copy": "Nakili jibu",
+    "copied": "Imenakiliwa",
+    "typing": "Msaidizi anaandika…",
+    "showHistory": "Historia",
+    "hideHistory": "Ficha historia",
+    "showSuggested": "Mapendekezo",
+    "hideSuggested": "Ficha mapendekezo",
+    "suggestions": {
+      "q1": "Tuna watumiaji wangapi hai?",
+      "q2": "Ni watu wangapi walio na wajibu wa Fedha?",
+      "q3": "Nani aliyeingia mwisho?",
+      "q4": "Muhtasari wa ufikiaji wa kampuni nzima",
+      "q5": "Ruhusa zipi za wajibu wa Msaada?",
+      "q6": "Tunawezaje kuboresha kiasi cha kutatua tiketi?"
+    }
+  }
+}
