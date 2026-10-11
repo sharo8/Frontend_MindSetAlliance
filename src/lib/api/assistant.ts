@@ -23,6 +23,8 @@ export type AssistantChatResponse = {
   language?: string | null
   /** count | list | detail | other — les cartes KPI ne s'affichent que pour list/detail. */
   intent?: 'count' | 'list' | 'detail' | 'other' | string | null
+  tools?: string[] | null
+  messageId?: string | null
 }
 
 export type AssistantStatus = {
@@ -51,6 +53,8 @@ export type AssistantStoredMessage = {
   at: string
   facts?: AssistantFact[]
   unavailable?: boolean
+  tools?: string[] | null
+  feedback?: 'up' | 'down' | string | null
 }
 
 export type AssistantConversationDetail = {
@@ -69,8 +73,17 @@ export function askAssistant(
   message: string,
   history: Array<{ role: string; content: string }>,
   conversationId?: number | null,
+  signal?: AbortSignal,
 ) {
-  return api.post<AssistantChatResponse>('/api/admin/assistant/chat', { message, history, conversationId })
+  return api.post<AssistantChatResponse>('/api/admin/assistant/chat', { message, history, conversationId }, { signal })
+}
+
+export function renameAssistantConversation(id: number, title: string) {
+  return api.patch<AssistantConversationSummary>(`/api/admin/assistant/conversations/${id}`, { title })
+}
+
+export function feedbackAssistant(id: number, messageId: string, value: 'up' | 'down' | '') {
+  return api.post<void>(`/api/admin/assistant/conversations/${id}/feedback`, { messageId, value })
 }
 
 export function fetchAssistantConversations(q: string, offset: number, limit = 20) {

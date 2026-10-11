@@ -123,6 +123,13 @@
     "submit": "Set password",
     "done": "Password saved. You can sign in."
   },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    }
+  },
   "home": {
     "workspace": "Workspace",
     "hello": "Hello",
@@ -191,7 +198,72 @@
   "cnn": {
     "title": "Operational supervision",
     "subtitle": "Trips, zones and incidents.",
-    "empty": "No data for this context."
+    "empty": "No data for this context.",
+    "source": {
+      "live": "Source: Colis na Nga database (read-only) · updated {{age}} s ago",
+      "down": "Source: UNAVAILABLE — {{message}}",
+      "downDetail": "Colis na Nga source unavailable.",
+      "grants": "privileges exceed read-only (readOnlyVerified = false)"
+    },
+    "finance": {
+      "subscriptions": "Subscription revenue",
+      "currencyUnknown": "currency not stored",
+      "noCollection": "No collection this month — last payment on {{date}}",
+      "noCollectionEver": "No collection recorded",
+      "totalHint": "Total collected: {{total}} {{unit}}",
+      "volume": "Business volume",
+      "volumeHint": "Value of delivered trips. This amount is not added to subscription revenue.",
+      "pricedCourses": "{{priced}} delivered trips with an amount, out of {{total}}",
+      "series": "Collections — 6 months",
+      "channels": "Split by channel",
+      "amount": "Amount",
+      "center": "Total",
+      "refunds": "Refunds",
+      "refundAmountMissing": "Amount not stored",
+      "noRefunds": "No refund recorded",
+      "monthReceipts": "Monthly revenue",
+      "expenses": "Expenses",
+      "overdue": "Overdue invoices",
+      "treasury": "Cash position",
+      "coreSeries": "Revenue and expenses"
+    },
+    "channel": {
+      "MPESA": "M-Pesa",
+      "ORANGE_MONEY": "Orange Money",
+      "AIRTEL_MONEY": "Airtel Money",
+      "AFRIMONEY": "Afrimoney",
+      "BANK_TRANSFER": "Bank transfer",
+      "CASH": "Cash",
+      "MOBILE_MONEY": "Mobile money"
+    },
+    "refund": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "COMPLETED": "Completed",
+      "REJECTED": "Rejected"
+    },
+    "status": {
+      "DELIVERED": "Delivered",
+      "AGENT_EN_ROUTE": "Agent en route",
+      "IN_TRANSIT": "In transit",
+      "COLLECTED": "Parcel collected",
+      "COURIER_AT_PICKUP": "Courier at pickup",
+      "COURIER_AT_DESTINATION": "Courier at destination",
+      "CANCELLED": "Cancelled"
+    },
+    "direction": {
+      "volume": "Trips per month",
+      "courses": "Trips",
+      "split": "Split by status",
+      "empty": "No trips",
+      "incidents": "Incidents",
+      "emptyIncidents": "No incident read from the Colis na Nga database.",
+      "noneOpen": "No pending refund and no emergency call.",
+      "refundsPending": "Pending refunds",
+      "emergency": "Emergency calls",
+      "health": "Database read",
+      "updated": "Last read of the Colis na Nga database: {{time}}"
+    }
   },
   "authErrors": {
     "disabled": "This account has been disabled. Contact your administrator.",
@@ -559,6 +631,8 @@
     "saveChanges": "Save changes",
     "analyzing": "Analyzing…",
     "noPending": "No pending changes.",
+    "pendingCount": "{{count}} pending change(s)",
+    "emailNotice": "One email is sent to each affected agent.",
     "pendingChanges": "Pending changes",
     "matrixSaved": "Permission matrix saved.",
     "general": "General",
@@ -628,13 +702,16 @@
   },
   "assistant": {
     "kicker": "Administration",
-    "title": "AI ASSISTANT",
+    "title": "AI assistant",
     "subtitle": "Ask about the system, users and access, and get recommendations.",
     "newChat": "New conversation",
     "send": "Send",
-    "placeholder": "Your question…",
-    "suggested": "Suggested questions",
+    "placeholder": "Ask a question about the Workspace…",
+    "suggested": "Suggestions",
     "empty": "Pick a question or describe what you want to know about the Workspace.",
+    "greeting": "Hello {{name}}",
+    "greetingPlain": "Hello",
+    "capability": "I answer from Workspace data: users, access, roles, activity and recommendations.",
     "unavailable": "AI assistant temporarily unavailable",
     "unconfigured": "No Groq key configured. Set GROQ_API_KEY in ma-core-backend/.env, then restart Core.",
     "notConfigured": "AI assistant is not configured — contact the system administrator.",
@@ -642,7 +719,10 @@
     "transient": "Temporary error, try again in a moment.",
     "history": "History",
     "searchHistory": "Search…",
-    "emptyHistory": "No conversations yet.",
+    "emptyHistory": "No conversations yet",
+    "untitled": "Conversation",
+    "noResults": "No results for “{{query}}”",
+    "historyError": "The history could not be loaded.",
     "seeMore": "See more",
     "deleteConfirm": "Remove this conversation from your history?",
     "copy": "Copy answer",
@@ -652,6 +732,46 @@
     "hideHistory": "Hide history",
     "showSuggested": "Suggestions",
     "hideSuggested": "Hide suggestions",
+    "rename": "Rename",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "stop": "Stop",
+    "retry": "Try again",
+    "jump": "Go to the latest message",
+    "disclaimer": "The assistant can be wrong. Check sensitive information on the relevant pages.",
+    "regenerate": "Regenerate",
+    "thumbUp": "Helpful answer",
+    "thumbDown": "Unhelpful answer",
+    "copyCode": "Copy code",
+    "collapseRail": "Collapse history",
+    "expandRail": "Show history",
+    "menu": "Conversation actions",
+    "renameTitle": "Conversation title",
+    "answered": "Answer received",
+    "close": "Close",
+    "categories": {
+      "users": "Users",
+      "access": "Access and roles",
+      "recommendations": "Recommendations"
+    },
+    "groups": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "week": "Last 7 days",
+      "older": "Older"
+    },
+    "tools": {
+      "get_user_count": "User count",
+      "get_role_permissions": "Role permissions",
+      "get_permission_holders": "Permission holders",
+      "get_company_wide_access": "Company-wide access",
+      "get_access_deviations": "Access deviations",
+      "get_last_logins": "Latest sign-ins",
+      "get_today_audit": "Audit log",
+      "get_ticket_stats": "Ticket statistics",
+      "get_cnn_status": "Colis na Nga status",
+      "get_system_summary": "System summary"
+    },
     "suggestions": {
       "q1": "How many active users do we have?",
       "q2": "How many people have the Finance role?",

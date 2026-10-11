@@ -123,6 +123,13 @@
     "submit": "Weka nenosiri",
     "done": "Nenosiri limehifadhiwa. Unaweza kuingia."
   },
+  "dashboard": {
+    "greeting": {
+      "morning": "Habari za asubuhi",
+      "afternoon": "Habari za mchana",
+      "evening": "Habari za jioni"
+    }
+  },
   "home": {
     "workspace": "Nafasi ya kazi",
     "hello": "Habari",
@@ -191,7 +198,72 @@
   "cnn": {
     "title": "Usimamizi wa uendeshaji",
     "subtitle": "Viashiria vilivyojumuishwa (kusoma tu). Programu za simu hazisimamiwi hapa.",
-    "empty": "Hakuna data kwa muktadha huu."
+    "empty": "Hakuna data kwa muktadha huu.",
+    "source": {
+      "live": "Chanzo: hifadhidata ya Colis na Nga (kusoma tu) · imesasishwa sekunde {{age}} zilizopita",
+      "down": "Chanzo: HAIPATIKANI — {{message}}",
+      "downDetail": "Chanzo cha Colis na Nga hakipatikani.",
+      "grants": "haki zinazidi kusoma tu (readOnlyVerified = false)"
+    },
+    "finance": {
+      "subscriptions": "Mapato ya usajili",
+      "currencyUnknown": "sarafu haijahifadhiwa",
+      "noCollection": "Hakuna ukusanyaji mwezi huu — malipo ya mwisho {{date}}",
+      "noCollectionEver": "Hakuna ukusanyaji uliorekodiwa",
+      "totalHint": "Jumla iliyokusanywa: {{total}} {{unit}}",
+      "volume": "Kiasi cha biashara",
+      "volumeHint": "Thamani ya safari zilizowasilishwa. Kiasi hiki hakiongezwi kwenye mapato ya usajili.",
+      "pricedCourses": "Safari {{priced}} zilizo na kiasi, kati ya {{total}}",
+      "series": "Ukusanyaji — miezi 6",
+      "channels": "Mgawanyo kwa njia",
+      "amount": "Kiasi",
+      "center": "Jumla",
+      "refunds": "Marejesho",
+      "refundAmountMissing": "Kiasi hakijahifadhiwa",
+      "noRefunds": "Hakuna rejesho lililorekodiwa",
+      "monthReceipts": "Mapato ya mwezi",
+      "expenses": "Matumizi",
+      "overdue": "Ankara zilizochelewa",
+      "treasury": "Hazina",
+      "coreSeries": "Mapato na matumizi"
+    },
+    "channel": {
+      "MPESA": "M-Pesa",
+      "ORANGE_MONEY": "Orange Money",
+      "AIRTEL_MONEY": "Airtel Money",
+      "AFRIMONEY": "Afrimoney",
+      "BANK_TRANSFER": "Uhamisho wa benki",
+      "CASH": "Taslimu",
+      "MOBILE_MONEY": "Pesa ya simu"
+    },
+    "refund": {
+      "PENDING": "Inasubiri",
+      "APPROVED": "Imeidhinishwa",
+      "COMPLETED": "Imekamilika",
+      "REJECTED": "Imekataliwa"
+    },
+    "status": {
+      "DELIVERED": "Imewasilishwa",
+      "AGENT_EN_ROUTE": "Wakala yuko njiani",
+      "IN_TRANSIT": "Inasafirishwa",
+      "COLLECTED": "Mzigo umechukuliwa",
+      "COURIER_AT_PICKUP": "Mjumbe mahali pa kuchukua",
+      "COURIER_AT_DESTINATION": "Mjumbe mahali pa kufika",
+      "CANCELLED": "Imefutwa"
+    },
+    "direction": {
+      "volume": "Safari kwa mwezi",
+      "courses": "Safari",
+      "split": "Mgawanyo kwa hali",
+      "empty": "Hakuna safari",
+      "incidents": "Matukio",
+      "emptyIncidents": "Hakuna tukio lililosomwa kutoka hifadhidata ya Colis na Nga.",
+      "noneOpen": "Hakuna rejesho linalosubiri na hakuna simu ya dharura.",
+      "refundsPending": "Marejesho yanayosubiri",
+      "emergency": "Simu za dharura",
+      "health": "Usomaji wa hifadhidata",
+      "updated": "Usomaji wa mwisho wa hifadhidata ya Colis na Nga: {{time}}"
+    }
   },
   "authErrors": {
     "disabled": "Akaunti hii imezimwa. Wasiliana na msimamizi.",
@@ -559,6 +631,8 @@
     "saveChanges": "Hifadhi mabadiliko",
     "analyzing": "Inachambua…",
     "noPending": "Hakuna mabadiliko yanayosubiri.",
+    "pendingCount": "Mabadiliko {{count}} yanasubiri",
+    "emailNotice": "Barua pepe moja inatumwa kwa kila wakala anayehusika.",
     "pendingChanges": "Mabadiliko yanayosubiri",
     "matrixSaved": "Jedwali la ruhusa limehifadhiwa.",
     "general": "Jumla",
@@ -628,13 +702,16 @@
   },
   "assistant": {
     "kicker": "Utawala",
-    "title": "MSAIDIZI WA AI",
+    "title": "Msaidizi wa AI",
     "subtitle": "Uliza kuhusu mfumo, watumiaji na ufikiaji, upate ushauri.",
     "newChat": "Mazungumzo mapya",
     "send": "Tuma",
-    "placeholder": "Swali lako…",
-    "suggested": "Maswali yaliyopendekezwa",
+    "placeholder": "Uliza swali kuhusu Workspace…",
+    "suggested": "Mapendekezo",
     "empty": "Chagua swali au eleza unachotaka kujua kuhusu Workspace.",
+    "greeting": "Habari {{name}}",
+    "greetingPlain": "Habari",
+    "capability": "Najibu kutoka data ya Workspace: watumiaji, ufikiaji, majukumu, shughuli na mapendekezo.",
     "unavailable": "Msaidizi wa AI haipatikani kwa sasa",
     "unconfigured": "Hakuna ufunguo wa Groq. Weka GROQ_API_KEY kwenye ma-core-backend/.env, kisha anzisha Core tena.",
     "notConfigured": "Msaidizi wa AI hajawekwa — wasiliana na msimamizi.",
@@ -642,7 +719,10 @@
     "transient": "Hitilafu ya muda, jaribu tena baadaye kidogo.",
     "history": "Historia",
     "searchHistory": "Tafuta…",
-    "emptyHistory": "Bado hakuna mazungumzo.",
+    "emptyHistory": "Bado hakuna mazungumzo",
+    "untitled": "Mazungumzo",
+    "noResults": "Hakuna matokeo ya “{{query}}”",
+    "historyError": "Historia haikuweza kupakiwa.",
     "seeMore": "Ona zaidi",
     "deleteConfirm": "Ondoa mazungumzo haya kwenye historia yako?",
     "copy": "Nakili jibu",
@@ -652,6 +732,46 @@
     "hideHistory": "Ficha historia",
     "showSuggested": "Mapendekezo",
     "hideSuggested": "Ficha mapendekezo",
+    "rename": "Badilisha jina",
+    "delete": "Futa",
+    "cancel": "Ghairi",
+    "stop": "Simamisha",
+    "retry": "Jaribu tena",
+    "jump": "Nenda kwenye ujumbe wa mwisho",
+    "disclaimer": "Msaidizi anaweza kukosea. Hakiki taarifa nyeti kwenye kurasa husika.",
+    "regenerate": "Tengeneza tena",
+    "thumbUp": "Jibu la msaada",
+    "thumbDown": "Jibu lisilo na msaada",
+    "copyCode": "Nakili msimbo",
+    "collapseRail": "Kunja historia",
+    "expandRail": "Onyesha historia",
+    "menu": "Vitendo vya mazungumzo",
+    "renameTitle": "Kichwa cha mazungumzo",
+    "answered": "Jibu limepokelewa",
+    "close": "Funga",
+    "categories": {
+      "users": "Watumiaji",
+      "access": "Ufikiaji na majukumu",
+      "recommendations": "Mapendekezo"
+    },
+    "groups": {
+      "today": "Leo",
+      "yesterday": "Jana",
+      "week": "Siku 7 zilizopita",
+      "older": "Za zamani"
+    },
+    "tools": {
+      "get_user_count": "Idadi ya watumiaji",
+      "get_role_permissions": "Ruhusa za jukumu",
+      "get_permission_holders": "Wenye ruhusa",
+      "get_company_wide_access": "Ufikiaji wa kampuni",
+      "get_access_deviations": "Tofauti za ufikiaji",
+      "get_last_logins": "Kuingia kwa hivi karibuni",
+      "get_today_audit": "Kumbukumbu ya ukaguzi",
+      "get_ticket_stats": "Takwimu za tiketi",
+      "get_cnn_status": "Hali ya Colis na Nga",
+      "get_system_summary": "Muhtasari wa mfumo"
+    },
     "suggestions": {
       "q1": "Tuna watumiaji wangapi hai?",
       "q2": "Ni watu wangapi walio na wajibu wa Fedha?",

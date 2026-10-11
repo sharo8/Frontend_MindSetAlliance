@@ -123,6 +123,13 @@
     "submit": "Définir le mot de passe",
     "done": "Mot de passe enregistré. Vous pouvez vous connecter."
   },
+  "dashboard": {
+    "greeting": {
+      "morning": "Bonjour",
+      "afternoon": "Bonne après-midi",
+      "evening": "Bonsoir"
+    }
+  },
   "home": {
     "workspace": "Espace de travail",
     "hello": "Bonjour",
@@ -191,7 +198,72 @@
   "cnn": {
     "title": "Supervision opérationnelle",
     "subtitle": "Courses, zones et incidents.",
-    "empty": "Aucune donnée pour ce contexte."
+    "empty": "Aucune donnée pour ce contexte.",
+    "source": {
+      "live": "Source : base Colis na Nga (lecture seule) · actualisé il y a {{age}} s",
+      "down": "Source : INDISPONIBLE — {{message}}",
+      "downDetail": "Source Colis na Nga indisponible.",
+      "grants": "droits plus larges que la lecture (readOnlyVerified = false)"
+    },
+    "finance": {
+      "subscriptions": "Recettes d'abonnements",
+      "currencyUnknown": "devise non enregistrée",
+      "noCollection": "Aucun encaissement ce mois-ci — dernier règlement le {{date}}",
+      "noCollectionEver": "Aucun encaissement enregistré",
+      "totalHint": "Total encaissé : {{total}} {{unit}}",
+      "volume": "Volume d'affaires",
+      "volumeHint": "Valeur des courses livrées. Ce montant n'est pas ajouté aux recettes d'abonnement.",
+      "pricedCourses": "{{priced}} courses livrées avec un montant, sur {{total}}",
+      "series": "Encaissements — 6 mois",
+      "channels": "Répartition par canal",
+      "amount": "Montant",
+      "center": "Total",
+      "refunds": "Remboursements",
+      "refundAmountMissing": "Montant non stocké",
+      "noRefunds": "Aucun remboursement enregistré",
+      "monthReceipts": "Recettes du mois",
+      "expenses": "Dépenses",
+      "overdue": "Factures en retard",
+      "treasury": "Trésorerie",
+      "coreSeries": "Recettes et dépenses"
+    },
+    "channel": {
+      "MPESA": "M-Pesa",
+      "ORANGE_MONEY": "Orange Money",
+      "AIRTEL_MONEY": "Airtel Money",
+      "AFRIMONEY": "Afrimoney",
+      "BANK_TRANSFER": "Virement",
+      "CASH": "Espèces",
+      "MOBILE_MONEY": "Mobile money"
+    },
+    "refund": {
+      "PENDING": "En attente",
+      "APPROVED": "Approuvé",
+      "COMPLETED": "Terminé",
+      "REJECTED": "Rejeté"
+    },
+    "status": {
+      "DELIVERED": "Livrée",
+      "AGENT_EN_ROUTE": "Agent en route",
+      "IN_TRANSIT": "En transit",
+      "COLLECTED": "Colis collecté",
+      "COURIER_AT_PICKUP": "Coursier au point de collecte",
+      "COURIER_AT_DESTINATION": "Coursier à destination",
+      "CANCELLED": "Annulée"
+    },
+    "direction": {
+      "volume": "Courses par mois",
+      "courses": "Courses",
+      "split": "Répartition par statut",
+      "empty": "Aucune course",
+      "incidents": "Incidents",
+      "emptyIncidents": "Aucun incident lu dans la base Colis na Nga.",
+      "noneOpen": "Aucun remboursement en attente et aucun appel d'urgence.",
+      "refundsPending": "Remboursements en attente",
+      "emergency": "Appels d'urgence",
+      "health": "Lecture de la base",
+      "updated": "Dernière lecture de la base Colis na Nga : {{time}}"
+    }
   },
   "authErrors": {
     "disabled": "Ce compte a été désactivé, contactez votre administrateur.",
@@ -559,6 +631,8 @@
     "saveChanges": "Enregistrer les modifications",
     "analyzing": "Analyse…",
     "noPending": "Aucun changement en attente.",
+    "pendingCount": "{{count}} modification(s) en attente",
+    "emailNotice": "Un e-mail unique est envoyé à chaque agent concerné.",
     "pendingChanges": "Changements en attente",
     "matrixSaved": "Matrice de permissions enregistrée.",
     "general": "Général",
@@ -628,13 +702,16 @@
   },
   "assistant": {
     "kicker": "Administration",
-    "title": "ASSISTANT IA",
+    "title": "Assistant IA",
     "subtitle": "Posez vos questions sur le système, les utilisateurs, les accès et obtenez des recommandations.",
     "newChat": "Nouvelle conversation",
     "send": "Envoyer",
-    "placeholder": "Votre question…",
+    "placeholder": "Posez une question sur le Workspace…",
     "suggested": "Questions suggérées",
     "empty": "Choisissez une question ou décrivez ce que vous voulez savoir sur le Workspace.",
+    "greeting": "Bonjour {{name}}",
+    "greetingPlain": "Bonjour",
+    "capability": "Je réponds à partir des données du Workspace : utilisateurs, accès, rôles, activité et recommandations.",
     "unavailable": "Assistant IA temporairement indisponible",
     "unconfigured": "Aucune clé Groq configurée. Définissez GROQ_API_KEY dans ma-core-backend/.env, puis redémarrez Core.",
     "notConfigured": "Assistant IA non configuré — contactez l’administrateur système.",
@@ -642,7 +719,10 @@
     "transient": "Erreur temporaire, réessayez dans quelques instants.",
     "history": "Historique",
     "searchHistory": "Rechercher…",
-    "emptyHistory": "Aucune conversation pour le moment.",
+    "emptyHistory": "Aucune conversation pour l'instant",
+    "untitled": "Conversation",
+    "noResults": "Aucun résultat pour « {{query}} »",
+    "historyError": "L'historique n'a pas pu être chargé.",
     "seeMore": "Voir plus",
     "deleteConfirm": "Retirer cette conversation de votre historique ?",
     "copy": "Copier la réponse",
@@ -652,13 +732,53 @@
     "hideHistory": "Masquer l’historique",
     "showSuggested": "Suggestions",
     "hideSuggested": "Masquer les suggestions",
+    "rename": "Renommer",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "stop": "Arrêter",
+    "retry": "Réessayer",
+    "jump": "Aller au dernier message",
+    "disclaimer": "L'assistant peut se tromper. Vérifiez les informations sensibles dans les pages concernées.",
+    "regenerate": "Régénérer",
+    "thumbUp": "Réponse utile",
+    "thumbDown": "Réponse inutile",
+    "copyCode": "Copier le code",
+    "collapseRail": "Replier l'historique",
+    "expandRail": "Afficher l'historique",
+    "menu": "Actions de la conversation",
+    "renameTitle": "Titre de la conversation",
+    "answered": "Réponse reçue",
+    "close": "Fermer",
+    "categories": {
+      "users": "Utilisateurs",
+      "access": "Accès et rôles",
+      "recommendations": "Recommandations"
+    },
+    "groups": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "week": "7 derniers jours",
+      "older": "Plus ancien"
+    },
+    "tools": {
+      "get_user_count": "Nombre d'utilisateurs",
+      "get_role_permissions": "Permissions d'un rôle",
+      "get_permission_holders": "Détenteurs d'une permission",
+      "get_company_wide_access": "Accès de l'entreprise",
+      "get_access_deviations": "Écarts d'accès",
+      "get_last_logins": "Dernières connexions",
+      "get_today_audit": "Journal d'audit",
+      "get_ticket_stats": "Statistiques des tickets",
+      "get_cnn_status": "Situation Colis na Nga",
+      "get_system_summary": "Résumé du système"
+    },
     "suggestions": {
-      "q1": "Combien d’utilisateurs actifs avons-nous ?",
+      "q1": "Combien d'utilisateurs actifs avons-nous ?",
       "q2": "Combien de personnes ont le rôle Finance ?",
-      "q3": "Qui s’est connecté en dernier ?",
-      "q4": "Résumé des accès transverses",
+      "q3": "Qui s'est connecté en dernier ?",
+      "q4": "Résumé des accès de l'entreprise",
       "q5": "Quelles permissions a le rôle Support ?",
-      "q6": "Comment améliorer notre taux de résolution de tickets ?"
+      "q6": "Comment améliorer notre taux de résolution des tickets ?"
     }
   }
 }

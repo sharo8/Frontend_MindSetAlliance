@@ -22,6 +22,7 @@ import { LanguagePanel } from './LanguagePanel'
 import { SidebarNav } from './SidebarNav'
 import { PageFade } from '../motion/page-fade'
 import { ProfileModal } from '../../features/auth/ProfileEditor'
+import { fetchMe } from '../../lib/api/auth'
 import { fetchNotifications, fetchProjects, markNotificationRead } from '../../lib/api/domain'
 import { useAuthStore } from '../../lib/auth/auth-store'
 import type { AppLanguage } from '../../lib/i18n/i18n'
@@ -31,6 +32,24 @@ import { useThemeStore } from '../../lib/theme/theme-store'
 import { cn } from '../../lib/utils'
 
 const SIDEBAR_KEY = 'ma-sidebar-collapsed'
+
+function headerName(prenom?: string | null, nom?: string | null, email?: string | null) {
+  const first = prenom?.trim()
+  const last = nom?.trim()
+  if (first && last) return `${first} ${last}`
+  if (first || last) return first || last || ''
+  const local = (email ?? '').split('@')[0]?.trim() ?? ''
+  if (!local) return ''
+  return local.charAt(0).toUpperCase() + local.slice(1)
+}
+
+function headerInitials(prenom?: string | null, nom?: string | null, email?: string | null) {
+  const first = prenom?.trim()
+  const last = nom?.trim()
+  if (first && last) return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase()
+  const source = first || last || (email ?? '').split('@')[0] || '?'
+  return source.slice(0, 2).toUpperCase()
+}
 
 function SocietyMark({ code }: { code: string }) {
   const palette = ['#16215c', '#0f766e', '#9a3412', '#1d4ed8', '#854d0e', '#4c1d95']
@@ -153,7 +172,11 @@ export function AppLayout() {
       void queryClient.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
+  const me = useQuery({ queryKey: ['agents-me'], queryFn: fetchMe, enabled: Boolean(accessToken) })
   const primaryRole = roles[0]?.role ?? '—'
+  const displayName = headerName(me.data?.prenom, me.data?.nom, email)
+  const poste = roleLabel(primaryRole)
+  const initials = headerInitials(me.data?.prenom, me.data?.nom, email)
   const dateLocale = i18n.language === 'en' ? 'en-GB' : i18n.language === 'sw' ? 'sw-TZ' : 'fr-FR'
   const projectName =
     currentProject === 'ENTREPRISE'
@@ -439,9 +462,10 @@ export function AppLayout() {
             trigger={
               <button
                 type="button"
-                className="flex max-w-[13rem] items-center gap-1 rounded-lg px-1.5 py-1 text-ma-navy-950 transition hover:bg-slate-100 dark:text-ma-white dark:hover:bg-white/10"
+                className="flex max-w-[16.5rem] items-center gap-2 rounded-lg px-1.5 py-1 text-ma-navy-950 transition hover:bg-slate-100 dark:text-ma-white dark:hover:bg-white/10"
                 aria-haspopup="menu"
                 aria-expanded={accountOpen}
+                title={`${displayName}${poste ? ` — ${poste}` : ''}`}
                 onClick={() => {
                   setAccountOpen((v) => !v)
                   setLangOpen(false)
@@ -449,21 +473,31 @@ export function AppLayout() {
                   setProjectOpen(false)
                 }}
               >
-                <span className="hidden min-w-0 truncate text-left text-[11px] leading-tight sm:block sm:max-w-[9.5rem]">
-                  <span className="block truncate font-medium text-ma-navy-950 dark:text-ma-white" title={email ?? undefined}>
-                    {email}
+                <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ma-navy-900 text-[11px] font-semibold tracking-wide text-ma-gold-300 dark:bg-ma-gold-500/20">
+                  {initials}
+                </span>
+                <span className="hidden min-w-0 max-w-[220px] text-left leading-tight md:block">
+                  <span className="block truncate text-xs font-semibold text-ma-navy-950 dark:text-ma-white" title={displayName}>
+                    {displayName}
                   </span>
-                  <span className="text-slate-600 dark:text-ma-gray-300">{roleLabel(primaryRole)}</span>
+                  <span className="block truncate text-[11px] text-slate-600 dark:text-ma-gray-300" title={poste}>
+                    {poste}
+                  </span>
                 </span>
                 {fullAccess && (
-                  <span className="hidden rounded px-1 py-0.5 text-[9px] font-medium uppercase tracking-wide text-ma-muted ring-1 ring-ma-line lg:inline dark:text-ma-gray-300 dark:ring-white/15">
+                  <span className="hidden rounded px-1 py-0.5 text-[9px] font-medium uppercase tracking-wide text-ma-muted ring-1 ring-ma-line md:inline dark:text-ma-gray-300 dark:ring-white/15">
                     {t('home.fullAccess')}
                   </span>
                 )}
-                <ChevronDown size={14} />
+                <ChevronDown size={14} className="hidden shrink-0 md:block" />
               </button>
             }
           >
+            {email && (
+              <p className="truncate px-2 py-1 text-xs text-ma-gray-300" title={email}>
+                {email}
+              </p>
+            )}
             <p className="px-2 py-1 text-xs text-ma-gray-300">
               {currentProject === 'ENTREPRISE' ? t('topbar.companyWide') : projectLabel(currentProject)}
             </p>

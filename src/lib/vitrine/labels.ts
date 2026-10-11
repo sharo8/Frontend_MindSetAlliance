@@ -6,7 +6,9 @@ export const CATEGORIE_LABELS: Record<string, string> = {
 
 const CLE_LABELS: Record<string, string> = {
   courses_livrees_jour: 'Courses livrées (jour)',
+  courses_livrees: 'Courses livrées (total)',
   coursiers_actifs: 'Agents opérationnels actifs',
+  abonnements_regles: 'Abonnements réglés',
   revenu_b2c: 'Revenu B2C',
   revenu_b2b: 'Revenu B2B',
   vues_total: 'Vues cumulées',

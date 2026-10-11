@@ -17,7 +17,8 @@ import { TableSkeleton } from './skeleton'
 import { Toast } from './toast'
 import { cn } from '../../lib/utils'
 import { ApiError } from '../../lib/api/client'
-import { archiveOps, createOps, listOps, updateOps, type OpsRecord } from '../../lib/api/ops'
+import { CnnSourceBadge } from './cnn-source-badge'
+import { archiveOps, createOps, fetchCnnDashboard, listOps, updateOps, type OpsRecord } from '../../lib/api/ops'
 import { RequirePermission } from '../../lib/rbac/RequirePermission'
 import { useProjectStore } from '../../lib/projects/project-store'
 import { projectLabel } from '../../lib/rbac/rbac'
@@ -156,9 +157,17 @@ export function ModuleCrud({
     onError: (err) => setError(err instanceof ApiError ? err.message : t('crud.actionFail')),
   })
 
+  const cnnModule = scope === 'CNN' && ['COURSE', 'INCIDENT', 'COURIER', 'SUBSCRIPTION'].includes(module)
+  const source = useQuery({
+    queryKey: ['ops-dash', 'CNN', 'badge'],
+    queryFn: () => fetchCnnDashboard('CNN'),
+    enabled: cnnModule,
+    refetchInterval: cnnModule ? 10_000 : false,
+  })
   const list = (rows.data ?? []).filter(
     (row) => !scope || row.projectCode === scope || (!row.projectCode && scope === undefined),
   )
+  const lectureSeule = cnnModule || list.some((row) => row.lectureSeule)
 
   return (
     <RequirePermission permission={permission}>
@@ -167,13 +176,22 @@ export function ModuleCrud({
           kicker={kicker}
           title={title}
           subtitle={subtitle}
-          actions={
+          actions={lectureSeule ? undefined : (
             <Button onClick={openCreate}>
               <Plus size={15} />
               {createLabel}
             </Button>
-          }
+          )}
         />
+        {cnnModule && (source.data || source.isError) && (
+          <CnnSourceBadge source={source.data?.source} ageSecondes={source.data?.ageSecondes} message={source.data?.message} readOnlyVerified={source.data?.readOnlyVerified} />
+        )}
+        {cnnModule && module === 'COURSE' && (
+          <p className="text-sm text-ma-muted">Positions GPS — Non disponible dans la base Colis na Nga</p>
+        )}
+        {cnnModule && module === 'COURIER' && (
+          <p className="text-sm text-ma-muted">Expiration des coursiers — Non disponible dans la base Colis na Nga</p>
+        )}
         {error && <Feedback tone="danger">{error}</Feedback>}
         <Card>
           <CardBody className="overflow-x-auto p-0">
@@ -197,19 +215,25 @@ export function ModuleCrud({
                       </td>
                       <td className="px-4 py-3 text-ma-muted">{row.projectCode ?? '—'}</td>
                       <td className="px-4 py-3 text-right">
-                        <Button variant="outline" onClick={() => openEdit(row)}>
-                          {t('common.edit')}
-                        </Button>{' '}
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            setToArchive(row)
-                            setMotif('')
-                            setError(null)
-                          }}
-                        >
-                          {archiveText}
-                        </Button>
+                        {lectureSeule ? (
+                          <span className="text-xs text-ma-muted">{row.description ?? t('common.status')}</span>
+                        ) : (
+                          <>
+                            <Button variant="outline" onClick={() => openEdit(row)}>
+                              {t('common.edit')}
+                            </Button>{' '}
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                setToArchive(row)
+                                setMotif('')
+                                setError(null)
+                              }}
+                            >
+                              {archiveText}
+                            </Button>
+                          </>
+                        )}
                       </td>
                     </tr>
                   ))}

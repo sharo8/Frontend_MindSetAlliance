@@ -204,7 +204,7 @@ export function UsersAdminPage() {
       emailPro: agent.emailPro,
       telephone: agent.telephone ?? '',
       departementId: agent.departement ? String(agent.departement.id) : '',
-      roles: agent.roles.map((r) => r.role),
+      roles: [...new Set(agent.roles.map((r) => r.role))],
       projectCode: uniqueProjectCode(agent.roles),
       photo: null,
     })
@@ -237,7 +237,7 @@ export function UsersAdminPage() {
         emailPro: form.emailPro.trim(),
         telephone: form.telephone,
         departementId: Number(form.departementId),
-        roles: form.roles.map((role) => ({
+        roles: [...new Set(form.roles)].map((role) => ({
           role,
           projectCode: form.projectCode || null,
         })),

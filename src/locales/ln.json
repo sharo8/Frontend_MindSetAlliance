@@ -123,6 +123,13 @@
     "submit": "Tya mot de passe",
     "done": "Mot de passe ebombi. Okoki kokota."
   },
+  "dashboard": {
+    "greeting": {
+      "morning": "Mbote",
+      "afternoon": "Mbote",
+      "evening": "Mbote"
+    }
+  },
   "home": {
     "workspace": "Esika ya mosala",
     "hello": "Mbote",
@@ -191,7 +198,72 @@
   "cnn": {
     "title": "Talatala ya mosala",
     "subtitle": "Kotanga ba indicateurs. Ba applications ya telefoni ezali te na esika oyo.",
-    "empty": "Data ezali te mpo na contexte oyo."
+    "empty": "Data ezali te mpo na contexte oyo.",
+    "source": {
+      "live": "Source : base Colis na Nga (kotanga kaka) · ebongwani na {{age}} s",
+      "down": "Source : EZALI TE — {{message}}",
+      "downDetail": "Source Colis na Nga ezali te.",
+      "grants": "makoki eleki kotanga (readOnlyVerified = false)"
+    },
+    "finance": {
+      "subscriptions": "Ba recettes ya abonnement",
+      "currencyUnknown": "mbongo ebombami te",
+      "noCollection": "Mwa encaissement te na sanza oyo — lifuta ya nsuka na {{date}}",
+      "noCollectionEver": "Encaissement ebombami te",
+      "totalHint": "Total ezuami : {{total}} {{unit}}",
+      "volume": "Volume ya mosala",
+      "volumeHint": "Motuya ya ba courses epesami. Motuya oyo ebakisami te na ba recettes ya abonnement.",
+      "pricedCourses": "Ba courses {{priced}} na motuya, na kati ya {{total}}",
+      "series": "Ba encaissements — ba sanza 6",
+      "channels": "Kokabola na canal",
+      "amount": "Motuya",
+      "center": "Total",
+      "refunds": "Ba remboursements",
+      "refundAmountMissing": "Motuya ebombami te",
+      "noRefunds": "Remboursement ebombami te",
+      "monthReceipts": "Ba recettes ya sanza",
+      "expenses": "Ba dépenses",
+      "overdue": "Ba factures ya retard",
+      "treasury": "Trésorerie",
+      "coreSeries": "Ba recettes na ba dépenses"
+    },
+    "channel": {
+      "MPESA": "M-Pesa",
+      "ORANGE_MONEY": "Orange Money",
+      "AIRTEL_MONEY": "Airtel Money",
+      "AFRIMONEY": "Afrimoney",
+      "BANK_TRANSFER": "Virement",
+      "CASH": "Espèces",
+      "MOBILE_MONEY": "Mobile money"
+    },
+    "refund": {
+      "PENDING": "Ezali kozela",
+      "APPROVED": "Endimami",
+      "COMPLETED": "Esilisi",
+      "REJECTED": "Eboyami"
+    },
+    "status": {
+      "DELIVERED": "Epésami",
+      "AGENT_EN_ROUTE": "Agent azali na nzela",
+      "IN_TRANSIT": "Ezali na nzela",
+      "COLLECTED": "Colis ezuami",
+      "COURIER_AT_PICKUP": "Coursier na esika ya kozua",
+      "COURIER_AT_DESTINATION": "Coursier na esika ya kokende",
+      "CANCELLED": "Elongolami"
+    },
+    "direction": {
+      "volume": "Ba courses na sanza",
+      "courses": "Ba courses",
+      "split": "Kokabola na statut",
+      "empty": "Course ezali te",
+      "incidents": "Ba incidents",
+      "emptyIncidents": "Incident etangami te na base Colis na Nga.",
+      "noneOpen": "Remboursement ya kozela te, mpe appel ya urgence te.",
+      "refundsPending": "Ba remboursements ya kozela",
+      "emergency": "Ba appels ya urgence",
+      "health": "Kotanga base",
+      "updated": "Kotanga ya nsuka ya base Colis na Nga : {{time}}"
+    }
   },
   "authErrors": {
     "disabled": "Compte oyo ezimisi. Benga administrateur na yo.",
@@ -559,6 +631,8 @@
     "saveChanges": "Bomba ba changements",
     "analyzing": "Ezali ko analyser…",
     "noPending": "Changement oyo ezali kozela te.",
+    "pendingCount": "Ba modifications {{count}} ezali kozela",
+    "emailNotice": "Email moko etindami na agent moko na moko oyo etali.",
     "pendingChanges": "Ba changements oyo ezali kozela",
     "matrixSaved": "Matrice ya ba permissions ebombami.",
     "general": "Général",
@@ -628,13 +702,16 @@
   },
   "assistant": {
     "kicker": "Administration",
-    "title": "ASSISTANT IA",
+    "title": "Assistant IA",
     "subtitle": "Tuna mituna na système, ba utilisateurs mpe ba accès, zwa ba conseils.",
     "newChat": "Conversation ya sika",
     "send": "Tinda",
-    "placeholder": "Motuna na yo…",
-    "suggested": "Ba mituna ya liboso",
+    "placeholder": "Tuna motuna na Workspace…",
+    "suggested": "Ba mituna",
     "empty": "Pona motuna to loba oyo olingi koyeba na Workspace.",
+    "greeting": "Mbote {{name}}",
+    "greetingPlain": "Mbote",
+    "capability": "Nazongisaka eyano na ba données ya Workspace : ba utilisateurs, accès, rôles, activité mpe ba conseils.",
     "unavailable": "Assistant IA ezali te sikoyo",
     "unconfigured": "Clé Groq ezali te. Tya GROQ_API_KEY na ma-core-backend/.env, sima bandela Core.",
     "notConfigured": "Assistant IA ezalisi te — benga administrateur.",
@@ -642,7 +719,10 @@
     "transient": "Erreur ya ntango moke, meka lisusu noki.",
     "history": "Historique",
     "searchHistory": "Luka…",
-    "emptyHistory": "Conversation ezali te.",
+    "emptyHistory": "Conversation ezali te",
+    "untitled": "Conversation",
+    "noResults": "Eloko moko te mpo na « {{query}} »",
+    "historyError": "Historique ezwami te.",
     "seeMore": "Tala mingi",
     "deleteConfirm": "Longola conversation oyo na historique?",
     "copy": "Kopi réponse",
@@ -652,6 +732,46 @@
     "hideHistory": "Bomba historique",
     "showSuggested": "Ba mituna",
     "hideSuggested": "Bomba ba mituna",
+    "rename": "Bongola nkombo",
+    "delete": "Longola",
+    "cancel": "Tika",
+    "stop": "Kanga",
+    "retry": "Meka lisusu",
+    "jump": "Kende na message ya nsuka",
+    "disclaimer": "Assistant akoki kokosa. Tala ba informations sensibles na ba pages oyo etali yango.",
+    "regenerate": "Bimisa lisusu",
+    "thumbUp": "Eyano malamu",
+    "thumbDown": "Eyano mabe",
+    "copyCode": "Kopi code",
+    "collapseRail": "Kangisa historique",
+    "expandRail": "Lakisa historique",
+    "menu": "Misala ya conversation",
+    "renameTitle": "Titre ya conversation",
+    "answered": "Eyano ezwami",
+    "close": "Kanga",
+    "categories": {
+      "users": "Ba utilisateurs",
+      "access": "Accès mpe ba rôles",
+      "recommendations": "Ba conseils"
+    },
+    "groups": {
+      "today": "Lelo",
+      "yesterday": "Lobi",
+      "week": "Mikolo 7",
+      "older": "Kala"
+    },
+    "tools": {
+      "get_user_count": "Motango ya ba utilisateurs",
+      "get_role_permissions": "Ba permissions ya rôle",
+      "get_permission_holders": "Bato na permission",
+      "get_company_wide_access": "Accès ya entreprise",
+      "get_access_deviations": "Ba écarts ya accès",
+      "get_last_logins": "Ba connexions ya nsuka",
+      "get_today_audit": "Journal ya audit",
+      "get_ticket_stats": "Ba statistiques ya tickets",
+      "get_cnn_status": "Ezaleli ya Colis na Nga",
+      "get_system_summary": "Résumé ya système"
+    },
     "suggestions": {
       "q1": "Tozali na ba utilisateurs actifs boni?",
       "q2": "Bato boni bazali na rôle Finance?",

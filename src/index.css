@@ -185,7 +185,7 @@ html.dark body {
   height: 6px;
   width: 6px;
   border-radius: 999px;
-  background: #c9a227;
+  background: var(--ma-gold-500);
   animation: ma-pulse 900ms ease-in-out infinite;
 }
 .ma-typing span:nth-child(2) {
@@ -389,6 +389,34 @@ html.dark .ma-shimmer {
 }
 .ma-matrix-hscroll-hide::-webkit-scrollbar {
   display: none;
+}
+
+@keyframes ma-home-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ma-home-rise {
+  animation: ma-home-rise 250ms var(--ease-ma) backwards;
+}
+
+.ma-home-card {
+  animation: ma-home-rise 280ms var(--ease-ma) backwards;
+}
+
+.ma-home-line {
+  animation: ma-home-rise 200ms var(--ease-ma) backwards;
+}
+
+.ma-home-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(201 162 39 / 0.45) transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
