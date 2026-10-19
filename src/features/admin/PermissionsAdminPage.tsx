@@ -1,12 +1,19 @@
 import { useTranslation } from 'react-i18next'
-import { Check } from 'lucide-react'
+import { Check, ChevronRight, ChevronsDownUp, ChevronsUpDown, Minus, Plus, SearchX, ShieldCheck, UsersRound } from 'lucide-react'
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
 import { Card } from '../../components/ui/card'
 import { Feedback } from '../../components/ui/feedback'
 import { Modal } from '../../components/ui/modal'
 import { PageHeader } from '../../components/ui/page-header'
+import { EmptyState } from '../../components/ui/scope-empty'
+import { Skeleton } from '../../components/ui/skeleton'
+import { Mono } from '../../components/ui/table'
+import { SearchField } from '../../components/ui/toolbar'
+import { spring } from '../../components/motion/springs'
 import { ApiError } from '../../lib/api/client'
 import {
   fetchPermissionsCatalog,
@@ -22,6 +29,7 @@ import { useAuthStore } from '../../lib/auth/auth-store'
 import { RequirePermission } from '../../lib/rbac/RequirePermission'
 import { permissionLabel } from '../../lib/rbac/permissions'
 import { cn } from '../../lib/utils'
+import { CheckBox } from './access-ui'
 
 function sameSet(a: string[] = [], b: string[] = []) {
   if (a.length !== b.length) return false
@@ -36,10 +44,15 @@ function humanLabel(perm: PermissionRow) {
   return permissionLabel(perm.code)
 }
 
-const HEADER_H = 76
-const ROW_H = 44
-const PERM_W = 300
-const ROLE_MIN = 88
+function fold(text: string) {
+  return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+}
+
+const HEADER_H = 84
+const ROW_H = 50
+const PERM_W_DESK = 240
+const PERM_W_MOB = 168
+const ROLE_MIN = 104
 
 export function PermissionsAdminPage() {
   const { t } = useTranslation()
@@ -192,44 +205,88 @@ export function PermissionsAdminPage() {
     return () => window.removeEventListener('resize', fit)
   }, [loading, roleList.length])
 
-  const stickyBg = 'bg-white dark:bg-[#101a45]'
+  const [query, setQuery] = useState('')
+  const searching = query.trim().length > 0
+  const visibleGroups = useMemo(() => {
+    if (!searching) return grouped
+    const needle = fold(query.trim())
+    return grouped
+      .map(([module, perms]) => {
+        if (fold(module).includes(needle)) return [module, perms] as const
+        return [module, perms.filter((perm) => fold(`${humanLabel(perm)} ${perm.code}`).includes(needle))] as const
+      })
+      .filter(([, perms]) => perms.length > 0)
+  }, [grouped, query, searching])
+  const allCollapsed = grouped.length > 0 && grouped.every(([module]) => collapsed[module] === true)
+
+  const PERM_W = typeof window !== 'undefined' && window.innerWidth < 640 ? PERM_W_MOB : PERM_W_DESK
   const minTable = PERM_W + Math.max(roleList.length, 1) * ROLE_MIN
+  const stickyBg = 'bg-surface'
+  const hoverTint = 'bg-[color-mix(in_srgb,var(--ma-surface),#dcaa28_8%)]'
 
   return (
     <RequirePermission permission="MANAGE_PERMISSIONS">
-      <div className="space-y-4">
-        <PageHeader
-          kicker={t('pages.permissions.kicker')}
-          title={t('pages.permissions.title')}
-          subtitle={t('pages.permissions.subtitle')}
-        />
+      <div className="space-y-6">
+        <PageHeader kicker={t('pages.permissions.kicker')} title={t('pages.permissions.title')} subtitle={t('pages.permissions.subtitle')} />
         {notice && <Feedback tone="success">{notice}</Feedback>}
         {error && <Feedback tone="danger">{error}</Feedback>}
-        <Card className="hover:translate-y-0">
-          <div className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-ma-line/80 bg-white/95 px-4 py-2 backdrop-blur dark:border-white/10 dark:bg-[#101a45]/95">
-            <div className="min-w-0">
-              <p className="flex items-center gap-1.5 text-sm">
-                {pendingCount === 0 && <Check className="h-3.5 w-3.5 text-status-success" strokeWidth={2.5} />}
-                {pendingCount === 0 ? t('adminUi.noPending') : t('adminUi.pendingCount', { count: pendingCount })}
-              </p>
-              <p className="text-xs text-ma-muted">{t('adminUi.emailNotice')}</p>
-            </div>
-            <Button disabled={save.isPending || preview.isPending || pendingCount === 0} onClick={() => preview.mutate()}>
-              {preview.isPending ? t('adminUi.analyzing') : t('adminUi.saveChanges')}
+        <Card className="overflow-hidden">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-hairline px-4 py-3.5 sm:px-5">
+            <SearchField
+              className="basis-full sm:basis-auto"
+              placeholder={t('acces.matrix.search', 'Rechercher une permission')}
+              value={query}
+              onChange={setQuery}
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={grouped.length === 0 || searching}
+              onClick={() => setCollapsed(Object.fromEntries(grouped.map(([module]) => [module, !allCollapsed])))}
+            >
+              {allCollapsed ? <ChevronsUpDown className="h-4 w-4" /> : <ChevronsDownUp className="h-4 w-4" />}
+              {allCollapsed ? t('acces.matrix.expandAll', 'Tout déplier') : t('acces.matrix.collapseAll', 'Tout replier')}
             </Button>
+            <div className="flex w-full flex-wrap items-center justify-between gap-3 sm:ml-auto sm:w-auto sm:justify-end">
+              <div className="min-w-0">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.p
+                    key={pendingCount === 0 ? 'none' : 'some'}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.16 }}
+                    className="flex items-center gap-1.5 text-[13px] font-medium text-ink"
+                  >
+                    {pendingCount === 0 ? (
+                      <Check className="h-3.5 w-3.5 text-status-success" strokeWidth={2.6} />
+                    ) : (
+                      <span className="h-2 w-2 rounded-full bg-status-warning" aria-hidden />
+                    )}
+                    <span className="tabular-nums">{pendingCount === 0 ? t('adminUi.noPending') : t('adminUi.pendingCount', { count: pendingCount })}</span>
+                  </motion.p>
+                </AnimatePresence>
+                <p className="mt-0.5 hidden text-[12px] text-ink-3 md:block">{t('adminUi.emailNotice')}</p>
+              </div>
+              <Button disabled={save.isPending || preview.isPending || pendingCount === 0} onClick={() => preview.mutate()}>
+                <ShieldCheck className="h-4 w-4" />
+                {preview.isPending ? t('adminUi.analyzing') : t('adminUi.saveChanges')}
+              </Button>
+            </div>
           </div>
           <div
             ref={scrollRef}
-            className="overflow-auto"
+            className="ma-scroll overflow-auto"
             style={{ maxHeight, scrollbarGutter: 'stable' }}
             onScroll={(event) => setScrolledX(event.currentTarget.scrollLeft > 0)}
           >
             {loading ? (
-              <MatrixSkeleton columns={Math.max(roleList.length, 10)} />
+              <MatrixSkeleton columns={Math.max(roleList.length, 8)} />
             ) : (
               <table
-                className="border-separate border-spacing-0 text-left text-sm"
-                style={{ tableLayout: 'fixed', width: '100%', minWidth: compact ? minTable : '100%' }}
+                className="border-separate border-spacing-0 text-left text-[13.5px] text-ink"
+                data-compact={compact || undefined}
+                style={{ tableLayout: 'fixed', width: '100%', minWidth: minTable }}
                 onMouseLeave={() => setHover({})}
               >
                 <colgroup>
@@ -242,100 +299,136 @@ export function PermissionsAdminPage() {
                   <tr>
                     <th
                       className={cn(
-                        'sticky left-0 top-0 z-30 border-b border-r border-ma-line/70 px-3 text-left text-[11px] font-semibold uppercase tracking-[0.14em] text-ma-muted',
+                        'sticky left-0 top-0 z-30 border-b border-r border-hairline px-4 text-left align-bottom sm:px-5',
                         stickyBg,
-                        scrolledX && 'shadow-[4px_0_8px_-6px_rgba(15,23,42,0.35)]',
+                        scrolledX && 'shadow-[6px_0_12px_-8px_rgb(17_27_63/0.35)]',
                       )}
                       style={{ height: HEADER_H, width: PERM_W }}
                     >
-                      {t('adminUi.permissionCol')}
+                      <span className="block pb-3 text-[12px] font-medium text-ink-3">
+                        {t('adminUi.permissionCol')}
+                        <span className="ml-1.5 tabular-nums text-ink-3/80">{(permissions.data ?? []).length}</span>
+                      </span>
                     </th>
                     {roleList.map((role) => (
                       <th
                         key={role.id}
                         title={role.libelle}
-                      className={cn(
-                        'sticky top-0 z-20 overflow-hidden border-b border-ma-line/70 p-0 text-center align-middle',
-                        stickyBg,
-                        hover.col === role.id && 'bg-ma-gold-500/10',
-                      )}
-                      style={{ height: HEADER_H }}
-                    >
-                      <span className="mx-auto flex h-[76px] flex-col items-center justify-center px-1">
-                        <span className="line-clamp-2 text-[12px] font-semibold leading-tight text-ma-navy-900 dark:text-white">
-                          {role.libelle}
+                        className={cn(
+                          'sticky top-0 z-20 overflow-hidden border-b border-hairline p-0 text-center align-middle transition-colors duration-150',
+                          hover.col === role.id ? hoverTint : stickyBg,
+                        )}
+                        style={{ height: HEADER_H }}
+                      >
+                        <span className="mx-auto flex h-[84px] flex-col items-center justify-center gap-1 px-2">
+                          <span lang="fr" className="line-clamp-2 text-[12px] font-semibold leading-[1.15] tracking-[-0.01em] text-ink">{role.libelle}</span>
+                          <span className="inline-flex items-center gap-1 text-[11px] font-normal tabular-nums text-ink-3">
+                            <UsersRound className="h-3 w-3" aria-hidden />
+                            {role.agentsCount ?? 0}
+                            <span className="sr-only">{t('adminUi.agentsCount', { count: role.agentsCount ?? 0 })}</span>
+                          </span>
                         </span>
-                        <span className="mt-1 text-[10px] font-normal text-ma-muted">
-                          {t('adminUi.agentsCount', { count: role.agentsCount ?? 0 })}
-                        </span>
-                      </span>
-                    </th>
+                      </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {grouped.map(([module, perms]) => {
-                    const closed = collapsed[module] === true
+                  {visibleGroups.length === 0 && (
+                    <tr>
+                      <td colSpan={roleList.length + 1} className="p-0">
+                        <div className="sticky left-0 w-full max-w-[100vw] sm:max-w-none">
+                          <EmptyState
+                            icon={<SearchX />}
+                            title={t('acces.matrix.noResult', 'Aucune permission ne correspond')}
+                            hint={t('acces.matrix.noResultHint', 'Essayez un autre mot, par exemple « facture » ou « tickets ».')}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                  {visibleGroups.map(([module, perms]) => {
+                    const closed = !searching && collapsed[module] === true
+                    const enabledInGroup = roleList.reduce((sum, role) => sum + perms.filter((p) => (matrix[role.id] ?? []).includes(p.code)).length, 0)
                     return (
                       <Fragment key={module}>
                         <tr>
-                          <th
-                            colSpan={roleList.length + 1}
-                            className="h-9 border-b border-ma-line/60 bg-slate-50 p-0 text-left dark:bg-white/5"
-                          >
+                          <th colSpan={roleList.length + 1} className="border-b border-hairline bg-surface-2 p-0 text-left">
                             <button
                               type="button"
-                              className="flex h-9 w-full items-center gap-2 px-3 text-left text-[11px] font-semibold uppercase tracking-[0.14em]"
+                              className="group sticky left-0 flex h-10 items-center gap-2 px-5 text-left text-[13px] font-semibold text-ink-2 transition-colors hover:text-ink focus-visible:outline-none focus-visible:[box-shadow:inset_var(--ring-focus)]"
                               aria-expanded={!closed}
                               onClick={() => setCollapsed((prev) => ({ ...prev, [module]: !closed }))}
                             >
-                              <span className={cn('inline-block w-3 text-ma-muted', closed && '-rotate-90')}>▾</span>
+                              <ChevronRight
+                                className={cn('h-4 w-4 text-ink-3 transition-transform duration-300 ease-[var(--ease-ma)]', !closed && 'rotate-90')}
+                                strokeWidth={2.2}
+                              />
                               {module}
+                              <span className="ml-1 rounded-full bg-ink/[0.06] px-1.5 py-px text-[11px] font-medium tabular-nums text-ink-3 dark:bg-white/[0.07]">
+                                {perms.length}
+                              </span>
+                              {closed && (
+                                <span className="ml-1 text-[11.5px] font-normal text-ink-3">
+                                  {t('acces.matrix.enabledCount', '{{count}} cases cochées', { count: enabledInGroup })}
+                                </span>
+                              )}
                             </button>
                           </th>
                         </tr>
-                        {!closed && perms.map((perm) => (
-                          <tr key={perm.id} className={cn('bg-white dark:bg-[#101a45]', hover.row === perm.id && 'bg-ma-gold-500/10 dark:bg-[#243056]')}>
-                            <th
-                              scope="row"
-                              title={`${humanLabel(perm)} · ${perm.code}`}
-                              className={cn(
-                                'sticky left-0 z-10 border-b border-r border-ma-line/60 px-3 text-left font-normal',
-                                hover.row === perm.id ? 'bg-[#f8f1dc] dark:bg-[#243056]' : stickyBg,
-                                scrolledX && 'shadow-[4px_0_8px_-6px_rgba(15,23,42,0.35)]',
-                              )}
-                              style={{ height: ROW_H, width: PERM_W }}
-                            >
-                              <span className="block truncate text-[13px] text-ma-navy-900 dark:text-white">{humanLabel(perm)}</span>
-                            </th>
-                            {roleList.map((role) => {
-                              const checked = (matrix[role.id] ?? []).includes(perm.code)
-                              const dirty = changed(role.id, perm.code)
-                              return (
-                                <td
-                                  key={role.id}
+                        {!closed &&
+                          perms.map((perm) => {
+                            const rowHover = hover.row === perm.id
+                            return (
+                              <tr key={perm.id} className="group/row">
+                                <th
+                                  scope="row"
+                                  title={`${humanLabel(perm)} · ${perm.code}`}
                                   className={cn(
-                                    'relative border-b border-ma-line/40 p-0',
-                                    hover.col === role.id && 'bg-ma-gold-500/10',
+                                    'sticky left-0 z-10 border-b border-r border-hairline px-4 text-left font-normal transition-colors duration-150 sm:px-5',
+                                    rowHover ? hoverTint : stickyBg,
+                                    scrolledX && 'shadow-[6px_0_12px_-8px_rgb(17_27_63/0.35)]',
                                   )}
-                                  style={{ height: ROW_H }}
-                                  onMouseEnter={() => setHover({ row: perm.id, col: role.id })}
+                                  style={{ height: ROW_H, width: PERM_W }}
                                 >
-                                  <label className="flex h-11 w-full cursor-pointer items-center justify-center focus-within:outline focus-within:outline-2 focus-within:outline-offset-[-2px] focus-within:outline-ma-gold-400">
-                                    <input
-                                      type="checkbox"
-                                      className="h-[18px] w-[18px] cursor-pointer accent-ma-gold-500"
-                                      checked={checked}
-                                      aria-label={`${humanLabel(perm)} — ${role.libelle}`}
-                                      onChange={() => toggle(role.id, perm.code)}
-                                    />
-                                  </label>
-                                  {dirty && <span className="pointer-events-none absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-ma-gold-500" aria-hidden="true" />}
-                                </td>
-                              )
-                            })}
-                          </tr>
-                        ))}
+                                  <span className="block truncate text-[13.5px] font-medium leading-tight text-ink">{humanLabel(perm)}</span>
+                                  <Mono className="mt-0.5 block truncate text-[10.5px] text-ink-3">{perm.code}</Mono>
+                                </th>
+                                {roleList.map((role) => {
+                                  const checked = (matrix[role.id] ?? []).includes(perm.code)
+                                  const dirty = changed(role.id, perm.code)
+                                  return (
+                                    <td
+                                      key={role.id}
+                                      className={cn(
+                                        'relative border-b border-hairline p-0 transition-colors duration-150',
+                                        (hover.col === role.id || rowHover) && 'bg-ma-gold-500/[0.06]',
+                                        hover.col === role.id && rowHover && 'bg-ma-gold-500/[0.11]',
+                                        dirty && 'bg-status-warning/[0.07]',
+                                      )}
+                                      style={{ height: ROW_H }}
+                                      onMouseEnter={() => setHover({ row: perm.id, col: role.id })}
+                                    >
+                                      <label className="flex h-full w-full cursor-pointer items-center justify-center">
+                                        <CheckBox checked={checked} label={`${humanLabel(perm)}, ${role.libelle}`} onChange={() => toggle(role.id, perm.code)} />
+                                      </label>
+                                      <AnimatePresence>
+                                        {dirty && (
+                                          <motion.span
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            exit={{ scale: 0 }}
+                                            transition={spring.snappy}
+                                            className="pointer-events-none absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-status-warning"
+                                            aria-hidden="true"
+                                          />
+                                        )}
+                                      </AnimatePresence>
+                                    </td>
+                                  )
+                                })}
+                              </tr>
+                            )
+                          })}
                       </Fragment>
                     )
                   })}
@@ -349,31 +442,47 @@ export function PermissionsAdminPage() {
           onClose={() => setImpact(null)}
           kicker={t('adminUi.confirmation')}
           title={t('adminUi.confirmMatrix')}
+          subtitle={impact?.confirmation}
           footer={(
             <>
-              <Button variant="outline" onClick={() => setImpact(null)}>{t('common.cancel')}</Button>
+              <Button variant="outline" onClick={() => setImpact(null)}>
+                {t('common.cancel')}
+              </Button>
               <Button disabled={save.isPending} onClick={() => save.mutate()}>
+                <ShieldCheck className="h-4 w-4" />
                 {save.isPending ? t('common.saving') : t('common.confirm')}
               </Button>
             </>
           )}
         >
-          <p className="mb-3 text-sm">{impact?.confirmation}</p>
-          <div className="space-y-3 text-sm">
+          <div className="space-y-3">
             {(impact?.roles ?? []).map((row) => (
-              <div key={row.id}>
-                <p className="font-medium">
-                  {row.libelle}
+              <div key={row.id} className="rounded-[18px] bg-surface p-4 ring-1 ring-hairline">
+                <div className="mb-2.5 flex items-center justify-between gap-3">
+                  <p className="text-[14px] font-semibold text-ink">{row.libelle}</p>
                   {typeof row.agentsCount === 'number' && (
-                    <span className="ml-2 text-xs font-normal text-ma-muted">{t('adminUi.agentsCount', { count: row.agentsCount })}</span>
+                    <Badge tone="muted">
+                      <UsersRound className="h-3 w-3" aria-hidden />
+                      {t('adminUi.agentsCount', { count: row.agentsCount })}
+                    </Badge>
                   )}
-                </p>
-                <ul className="mt-1 space-y-0.5">
+                </div>
+                <ul className="space-y-1.5">
                   {row.added.map((p) => (
-                    <li key={`+${p.code}`} className="text-status-success">+ {p.libelle}</li>
+                    <li key={`+${p.code}`} className="flex items-center gap-2.5 text-[13.5px] text-ink">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-status-success/12 text-status-success">
+                        <Plus className="h-3 w-3" strokeWidth={2.8} />
+                      </span>
+                      {p.libelle}
+                    </li>
                   ))}
                   {row.removed.map((p) => (
-                    <li key={`-${p.code}`} className="text-status-danger">− {p.libelle}</li>
+                    <li key={`-${p.code}`} className="flex items-center gap-2.5 text-[13.5px] text-ink">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-status-danger/10 text-status-danger">
+                        <Minus className="h-3 w-3" strokeWidth={2.8} />
+                      </span>
+                      {p.libelle}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -387,23 +496,25 @@ export function PermissionsAdminPage() {
 
 function MatrixSkeleton({ columns }: { columns: number }) {
   return (
-    <div className="min-w-[1180px]" aria-hidden="true">
-      <div className="flex border-b border-ma-line/70" style={{ height: HEADER_H }}>
-        <div className="w-[300px] shrink-0 bg-slate-100 dark:bg-white/5" />
-        {Array.from({ length: columns }, (_, i) => (
-          <div key={i} className="min-w-[88px] flex-1 bg-slate-100 dark:bg-white/5" />
-        ))}
-      </div>
-      {Array.from({ length: 8 }, (_, row) => (
-        <div key={row} className="flex border-b border-ma-line/40" style={{ height: ROW_H }}>
-          <div className="w-[300px] shrink-0 px-3 py-3">
-            <div className="h-3 w-40 rounded bg-slate-200 dark:bg-white/10" />
-          </div>
-          {Array.from({ length: columns }, (_, col) => (
-            <div key={col} className="flex min-w-[88px] flex-1 items-center justify-center">
-              <div className="h-[18px] w-[18px] rounded bg-slate-200 dark:bg-white/10" />
-            </div>
+    <div className="min-w-[1080px]" role="status" aria-label="Chargement">
+      <div className="flex items-end gap-2 border-b border-hairline px-5 pb-3" style={{ height: HEADER_H }}>
+        <Skeleton className="h-3.5 w-24 shrink-0" />
+        <div className="ml-[176px] flex flex-1 justify-around">
+          {Array.from({ length: columns }, (_, i) => (
+            <Skeleton key={i} className="h-3.5 w-14" />
           ))}
+        </div>
+      </div>
+      {Array.from({ length: 9 }, (_, row) => (
+        <div key={row} className="flex items-center border-b border-hairline" style={{ height: ROW_H, opacity: 1 - row * 0.08 }}>
+          <div className="w-[240px] shrink-0 px-5">
+            <Skeleton className="h-3.5 w-40" />
+          </div>
+          <div className="flex flex-1 justify-around">
+            {Array.from({ length: columns }, (_, col) => (
+              <Skeleton key={col} className="h-5 w-5 rounded-[7px]" />
+            ))}
+          </div>
         </div>
       ))}
     </div>

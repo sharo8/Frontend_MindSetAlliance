@@ -1,16 +1,23 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
-import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { ChartCard, KpiCard } from '../../components/ui/charts'
-import { Card, CardBody, CardHeader } from '../../components/ui/card'
+import { AlertTriangle, Banknote, Briefcase, Landmark, TrendingDown, Undo2, Wallet } from 'lucide-react'
+import { DashboardDonutChart } from '../../components/charts/DashboardDonutChart'
+import { ChartSummary } from '../../components/charts/chart-kit'
+import { Badge } from '../../components/ui/badge'
 import { CnnSourceBadge } from '../../components/ui/cnn-source-badge'
+import { Feedback } from '../../components/ui/feedback'
 import { PageHeader } from '../../components/ui/page-header'
-import { ScopeEmpty } from '../../components/ui/scope-empty'
+import { EmptyState, ScopeEmpty } from '../../components/ui/scope-empty'
+import { StatCard } from '../../components/ui/stat-card'
+import { SectionCard } from '../../components/ui/toolbar'
+import { Segmented } from '../../components/ui/segmented'
+import { Stagger, StaggerItem } from '../../components/motion/page-fade'
 import { fetchFinanceDashboard, type FinanceMoney } from '../../lib/api/ops'
+import { ApiError } from '../../lib/api/client'
 import { useProjectStore } from '../../lib/projects/project-store'
 import { RequirePermission } from '../../lib/rbac/RequirePermission'
-
-const COLORS = ['#e0a721', '#16215c', '#f97316', '#22c55e', '#2563eb', '#7c3aed', '#0891b2']
+import { GroupedBarChart, MetricRow, StatSkeletons, compact, foldSlices } from '../ops/charts'
 
 function formatAmount(value: number, lang: string) {
   return new Intl.NumberFormat(lang, { maximumFractionDigits: 2 }).format(value)
@@ -19,13 +26,20 @@ function formatAmount(value: number, lang: string) {
 function formatDay(iso: string, lang: string) {
   const [year, month, day] = iso.split('-').map(Number)
   if (!year || !month || !day) return iso
-  return new Intl.DateTimeFormat(lang, { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(year, month - 1, day))
+  return new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(year, month - 1, day))
 }
 
 function formatMonth(iso: string, lang: string) {
   const [year, month] = iso.split('-').map(Number)
   if (!year || !month) return iso
   return new Intl.DateTimeFormat(lang, { month: 'short', year: '2-digit' }).format(new Date(year, month - 1, 1))
+}
+
+const REFUND_TONE: Record<string, 'warning' | 'info' | 'success' | 'danger'> = {
+  PENDING: 'warning',
+  APPROVED: 'info',
+  COMPLETED: 'success',
+  REJECTED: 'danger',
 }
 
 export function FinancePage() {
@@ -39,19 +53,32 @@ export function FinancePage() {
   })
   const d = dash.data
   const cnn = currentProject === 'CNN'
-  const currency = (devise: string | null | undefined, stored?: boolean) =>
-    stored && devise ? devise : t('cnn.finance.currencyUnknown')
+  const currency = (devise: string | null | undefined, stored?: boolean) => (stored && devise ? devise : t('cnn.finance.currencyUnknown'))
+  const fmt = (n: number) => formatAmount(Math.round(n), lang)
+  const currencies = [...new Set((d?.parCanal ?? []).filter((row) => row.deviseStockee && row.devise).map((row) => row.devise as string))]
+  const [devise, setDevise] = useState<string | null>(null)
+  const activeDevise = devise && currencies.includes(devise) ? devise : (currencies[0] ?? null)
+  const channelSlices = foldSlices(
+    (d?.parCanal ?? [])
+      .filter((row) => currencies.length < 2 || (row.deviseStockee ? row.devise : null) === activeDevise)
+      .map((row) => ({ label: t(`cnn.channel.${row.canal}`, { defaultValue: row.canal }), valeur: Number(row.montant ?? 0) })),
+    6,
+    t('opsui.charts.other', 'Autres'),
+  )
+  const comparison = (d?.comparaison6m ?? []).map((row) => ({ mois: row.mois, recettes: row.recettes, depenses: row.depenses ?? 0 }))
 
   return (
     <RequirePermission permission="VIEW_FINANCE">
-      <div className="space-y-4">
+      <div className="space-y-6">
         <PageHeader kicker={t('pages.finance.kicker')} title={t('pages.finance.title')} subtitle={t('pages.finance.subtitle')} />
         {cnn && (d || dash.isError) && (
-          <CnnSourceBadge source={d?.source} ageSecondes={d?.ageSecondes} message={d?.message} readOnlyVerified={d?.readOnlyVerified} />
+          <div className="max-w-full [&>p]:h-auto [&>p]:min-h-7 [&>p]:rounded-[14px] [&>p]:py-1 [&>p]:leading-snug sm:[&>p]:rounded-full"><CnnSourceBadge source={d?.source} ageSecondes={d?.ageSecondes} message={d?.message} readOnlyVerified={d?.readOnlyVerified} /></div>
         )}
-        {cnn && d?.source !== 'CNN_DB' && !dash.isLoading && (
-          <ScopeEmpty context={t('cnn.source.downDetail')} />
+        {dash.isError && !cnn && (
+          <Feedback tone="danger">{dash.error instanceof ApiError ? dash.error.message : t('crud.loadFail')}</Feedback>
         )}
+        {cnn && dash.isLoading && <StatSkeletons count={3} />}
+        {cnn && d?.source !== 'CNN_DB' && !dash.isLoading && <ScopeEmpty context={t('cnn.source.downDetail')} />}
         {cnn && d?.source === 'CNN_DB' && (
           <CnnFinance
             money={d.recettesParDevise ?? []}
@@ -65,38 +92,67 @@ export function FinancePage() {
         )}
         {!cnn && (
           <>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <KpiCard label={t('cnn.finance.monthReceipts')} value={Math.round(Number(d?.recettesMois ?? 0))} accent="ok" />
-              <KpiCard label={t('cnn.finance.expenses')} value={Math.round(Number(d?.depensesMois ?? 0))} accent="warn" />
-              <KpiCard label={t('cnn.finance.overdue')} value={d?.facturesRetard ?? 0} accent="info" />
-              <KpiCard label={t('cnn.finance.treasury')} value={Math.round(Number(d?.tresorerie ?? 0))} accent="gold" />
-            </div>
-            <div className="grid gap-4 xl:grid-cols-3">
-              <div className="xl:col-span-2">
-                <ChartCard title={t('cnn.finance.coreSeries')}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={d?.comparaison6m ?? []}>
-                      <XAxis dataKey="mois" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="recettes" fill="#e0a721" radius={4} />
-                      <Bar dataKey="depenses" fill="#16215c" radius={4} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartCard>
+            {dash.isLoading ? (
+              <StatSkeletons />
+            ) : (
+              <Stagger className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4 [&>*>*]:h-full">
+                <StaggerItem>
+                  <StatCard label={t('cnn.finance.monthReceipts')} value={Math.round(Number(d?.recettesMois ?? 0))} accent="ok" icon={<Wallet />} />
+                </StaggerItem>
+                <StaggerItem>
+                  <StatCard label={t('cnn.finance.expenses')} value={Math.round(Number(d?.depensesMois ?? 0))} accent="warn" icon={<TrendingDown />} />
+                </StaggerItem>
+                <StaggerItem>
+                  <StatCard
+                    label={t('cnn.finance.overdue')}
+                    value={d?.facturesRetard ?? 0}
+                    accent={(d?.facturesRetard ?? 0) > 0 ? 'danger' : 'info'}
+                    icon={<AlertTriangle />}
+                    hint={(d?.facturesRetard ?? 0) > 0 ? t('opsui.finance.overdueHint', 'À relancer en priorité') : t('opsui.finance.overdueNone', 'Aucune relance à faire')}
+                  />
+                </StaggerItem>
+                <StaggerItem>
+                  <StatCard label={t('cnn.finance.treasury')} value={Math.round(Number(d?.tresorerie ?? 0))} accent="gold" icon={<Landmark />} />
+                </StaggerItem>
+              </Stagger>
+            )}
+            <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+              <div className="h-[400px] min-w-0">
+                <GroupedBarChart
+                  className="h-full"
+                  title={t('cnn.finance.coreSeries')}
+                  subtitle={t('opsui.finance.sixMonths', 'Six derniers mois')}
+                  data={comparison}
+                  xKey="mois"
+                  series={[
+                    { key: 'recettes', label: t('opsui.finance.receipts', 'Recettes') },
+                    { key: 'depenses', label: t('cnn.finance.expenses') },
+                  ]}
+                  format={fmt}
+                  loading={dash.isLoading}
+                />
               </div>
-              <ChartCard title={t('cnn.finance.channels')}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={d?.parCanal ?? []} dataKey="montant" nameKey="canal" innerRadius={48} outerRadius={78}>
-                      {(d?.parCanal ?? []).map((_, i) => (
-                        <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </ChartCard>
+              <div className="relative h-[400px] min-w-0">
+                {currencies.length > 1 && activeDevise && (
+                  <Segmented
+                    size="sm"
+                    className="absolute right-5 top-4 z-[1] sm:right-6"
+                    ariaLabel={t('opsui.finance.currency', 'Devise')}
+                    value={activeDevise}
+                    onChange={setDevise}
+                    options={currencies.map((c) => ({ value: c, label: c }))}
+                  />
+                )}
+                <DashboardDonutChart
+                  className="h-full"
+                  subtitle={activeDevise ? t('opsui.finance.inCurrency', 'En {{unit}}', { unit: activeDevise }) : undefined}
+                  title={t('cnn.finance.channels')}
+                  data={channelSlices}
+                  loading={dash.isLoading}
+                  centerLabel={t('cnn.finance.center')}
+                  centerValue={compact(channelSlices.reduce((s, x) => s + x.valeur, 0))}
+                />
+              </div>
             </div>
           </>
         )}
@@ -130,130 +186,119 @@ function CnnFinance({
 }) {
   const { t } = useTranslation()
   const groups = money.length ? money : []
+  const fmt = (n: number) => formatAmount(n, lang)
   return (
     <>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <Stagger className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3 [&>*>*]:h-full">
         {groups.map((row) => {
           const unit = currency(row.devise, row.deviseStockee)
-          const hint = row.mois === 0
-            ? row.dernier
-              ? t('cnn.finance.noCollection', { date: formatDay(row.dernier, lang) })
-              : t('cnn.finance.noCollectionEver')
-            : t('cnn.finance.totalHint', { total: formatAmount(row.total, lang), unit })
+          const hint =
+            row.mois === 0
+              ? row.dernier
+                ? t('opsui.finance.noCollection', 'Aucun encaissement ce mois-ci. Dernier règlement le {{date}}.', { date: formatDay(row.dernier, lang) })
+                : t('cnn.finance.noCollectionEver')
+              : t('cnn.finance.totalHint', { total: formatAmount(row.total, lang), unit })
           return (
-            <Card key={unit}>
-              <CardBody>
-                <p className="text-xs uppercase tracking-wide text-ma-muted">{t('cnn.finance.subscriptions')}</p>
-                <p className="mt-2 text-3xl font-semibold tabular-nums">{formatAmount(row.mois, lang)}</p>
-                <p className="text-sm text-ma-muted">{unit}</p>
-                <p className="mt-1 text-sm text-ma-navy-900 dark:text-ma-gold-300">{hint}</p>
-              </CardBody>
-            </Card>
+            <StaggerItem key={unit}>
+              <StatCard
+                label={`${t('cnn.finance.subscriptions')} · ${t('opsui.finance.thisMonth', 'ce mois-ci')}`}
+                value={row.mois}
+                format={(n) => formatAmount(Math.round(n), lang)}
+                suffix={unit}
+                hint={hint}
+                accent="gold"
+                icon={<Banknote />}
+              />
+            </StaggerItem>
           )
         })}
         {groups.length === 0 && (
-          <Card>
-            <CardBody>
-              <p className="text-xs uppercase tracking-wide text-ma-muted">{t('cnn.finance.subscriptions')}</p>
-              <p className="mt-2 text-sm text-ma-navy-900 dark:text-ma-gold-300">{t('cnn.finance.noCollectionEver')}</p>
-            </CardBody>
-          </Card>
+          <StaggerItem>
+            <StatCard label={t('cnn.finance.subscriptions')} value={0} hint={t('cnn.finance.noCollectionEver')} accent="gold" icon={<Banknote />} />
+          </StaggerItem>
         )}
         {volume && (
-          <Card>
-            <CardBody>
-              <p className="text-xs uppercase tracking-wide text-ma-muted">{t('cnn.finance.volume')}</p>
-              <p className="mt-2 text-3xl font-semibold tabular-nums">{formatAmount(volume.montant, lang)}</p>
-              <p className="text-sm text-ma-muted">{currency(volume.devise, volume.deviseStockee)}</p>
-              <p className="mt-1 text-sm">{t('cnn.finance.volumeHint')}</p>
-              <p className="mt-1 text-sm text-ma-muted">
-                {t('cnn.finance.pricedCourses', { priced: volume.coursesAvecMontant, total: volume.courses })}
-              </p>
-            </CardBody>
-          </Card>
+          <StaggerItem>
+            <StatCard
+              label={t('cnn.finance.volume')}
+              value={volume.montant}
+              format={(n) => formatAmount(Math.round(n), lang)}
+              suffix={currency(volume.devise, volume.deviseStockee)}
+              accent="info"
+              icon={<Briefcase />}
+              hint={
+                <>
+                  {t('cnn.finance.pricedCourses', { priced: volume.coursesAvecMontant, total: volume.courses })}
+                  <span className="mt-1 block text-ink-3/90">{t('cnn.finance.volumeHint')}</span>
+                </>
+              }
+            />
+          </StaggerItem>
         )}
-      </div>
-      {groups.map((row) => {
+      </Stagger>
+      {groups.map((row, index) => {
         const unit = currency(row.devise, row.deviseStockee)
         const bars = serie.map((point) => ({
           mois: formatMonth(point.mois, lang),
           montant: point.montants?.find((part) => (part.devise ?? null) === (row.devise ?? null))?.montant ?? 0,
         }))
-        const slices = canals
-          .filter((canal) => (canal.devise ?? null) === (row.devise ?? null))
-          .map((canal) => ({ ...canal, label: t(`cnn.channel.${canal.canal}`, { defaultValue: canal.canal }) }))
-        const total = slices.reduce((sum, slice) => sum + Number(slice.montant ?? 0), 0)
+        const slices = foldSlices(
+          canals
+            .filter((canal) => (canal.devise ?? null) === (row.devise ?? null))
+            .map((canal) => ({ label: t(`cnn.channel.${canal.canal}`, { defaultValue: canal.canal }), valeur: Number(canal.montant ?? 0) })),
+          6,
+          t('opsui.charts.other', 'Autres'),
+        )
+        const total = slices.reduce((sum, slice) => sum + slice.valeur, 0)
+        const sixMonths = bars.reduce((sum, bar) => sum + bar.montant, 0)
         return (
-          <div key={`charts-${unit}`} className="grid gap-4 xl:grid-cols-3">
-            <div className="xl:col-span-2">
-              <ChartCard title={`${t('cnn.finance.series')} · ${unit}`}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={bars}>
-                    <XAxis dataKey="mois" />
-                    <YAxis width={88} tick={{ fontSize: 11 }} label={{ value: unit, angle: -90, position: 'insideLeft', fontSize: 11 }} />
-                    <Tooltip
-                      formatter={(value) => [`${formatAmount(Number(value), lang)} ${unit}`, t('cnn.finance.amount')]}
-                    />
-                    <Bar dataKey="montant" fill="#e0a721" radius={4} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartCard>
+          <div key={`charts-${unit}`} className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+            <div className="h-[420px] min-w-0">
+              <GroupedBarChart
+                className="h-full"
+                title={t('opsui.finance.series', 'Encaissements sur 6 mois')}
+                subtitle={t('opsui.finance.inCurrency', 'En {{unit}}', { unit })}
+                summary={<ChartSummary label={t('cnn.finance.center')} value={`${compact(sixMonths)} ${unit}`} />}
+                data={bars}
+                xKey="mois"
+                series={[{ key: 'montant', label: t('cnn.finance.amount') }]}
+                format={(n) => `${fmt(n)} ${unit}`}
+              />
             </div>
-            <Card>
-              <CardHeader>
-                <h2 className="font-semibold">{t('cnn.finance.channels')}</h2>
-              </CardHeader>
-              <CardBody className="space-y-3">
-                <div className="relative mx-auto h-[160px] w-[160px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={slices.length ? slices : [{ label: unit, montant: 0 }]} dataKey="montant" nameKey="label" innerRadius={48} outerRadius={72}>
-                        {(slices.length ? slices : [{ label: unit }]).map((_, i) => (
-                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value) => [`${formatAmount(Number(value), lang)} ${unit}`, t('cnn.finance.amount')]} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <p className="text-lg font-semibold tabular-nums">{formatAmount(total, lang)}</p>
-                    <p className="text-[10px] uppercase tracking-wide text-ma-muted">{t('cnn.finance.center')}</p>
-                  </div>
-                </div>
-                <ul className="space-y-1 text-sm">
-                  {slices.map((slice) => (
-                    <li key={slice.canal} className="flex min-w-0 items-center gap-2" title={slice.label}>
-                      <span className="min-w-0 flex-1 truncate">{slice.label}</span>
-                      <span className="shrink-0 tabular-nums">{formatAmount(slice.montant, lang)}</span>
-                      <span className="w-10 shrink-0 text-right tabular-nums text-ma-muted">
-                        {total ? Math.round((slice.montant / total) * 100) : 0}%
-                      </span>
-                    </li>
-                  ))}
-                  {slices.length === 0 && <li className="text-ma-muted">{t('cnn.finance.noCollectionEver')}</li>}
-                </ul>
-              </CardBody>
-            </Card>
+            <div className="h-[420px] min-w-0">
+              <DashboardDonutChart
+                className="h-full"
+                title={t('cnn.finance.channels')}
+                subtitle={t('opsui.finance.inCurrency', 'En {{unit}}', { unit })}
+                data={slices}
+                centerLabel={t('cnn.finance.center')}
+                centerValue={compact(total)}
+                key={`${unit}-${index}`}
+              />
+            </div>
           </div>
         )
       })}
-      <Card>
-        <CardHeader>
-          <h2 className="font-semibold">{t('cnn.finance.refunds')}</h2>
-        </CardHeader>
-        <CardBody className="space-y-1 text-sm">
-          {(refunds ?? []).map((row) => (
-            <p key={row.statut} className="flex justify-between gap-3">
-              <span>{t(`cnn.refund.${row.statut}`, { defaultValue: row.statut })}</span>
-              <span className="tabular-nums">
-                {row.nombre}
-                {row.montant == null ? ` · ${t('cnn.finance.refundAmountMissing')}` : ` · ${formatAmount(row.montant, lang)}`}
-              </span>
-            </p>
-          ))}
-          {(refunds ?? []).length === 0 && <p>{t('cnn.finance.noRefunds')}</p>}
-        </CardBody>
-      </Card>
+      <SectionCard title={t('cnn.finance.refunds')} icon={<Undo2 />} tone="coral" subtitle={t('opsui.finance.refundsHint', 'Demandes lues dans la base Colis na Nga')}>
+        {(refunds ?? []).length === 0 ? (
+          <EmptyState icon={<Undo2 />} title={t('cnn.finance.noRefunds')} />
+        ) : (
+          <div className="grid gap-x-8 sm:grid-cols-2">
+            {(refunds ?? []).map((row) => (
+              <MetricRow
+                key={row.statut}
+                label={
+                  <Badge tone={REFUND_TONE[row.statut] ?? 'muted'} dot>
+                    {t(`cnn.refund.${row.statut}`, { defaultValue: row.statut })}
+                  </Badge>
+                }
+                hint={row.montant == null ? t('cnn.finance.refundAmountMissing') : t('opsui.finance.refundAmount', 'Montant : {{amount}}', { amount: formatAmount(row.montant, lang) })}
+                value={row.nombre}
+              />
+            ))}
+          </div>
+        )}
+      </SectionCard>
     </>
   )
 }

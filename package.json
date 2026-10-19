@@ -11,6 +11,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource/cinzel": "^5.2.8",
     "@hookform/resolvers": "^5.9.1",
     "@tanstack/react-query": "^5.103.1",
     "class-variance-authority": "^0.7.1",
@@ -19,6 +21,7 @@
     "i18next": "^26.4.2",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^1.47.0",
+    "motion": "^13.4.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.88.0",
@@ -36,6 +39,7 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
+    "@types/google.maps": "^3.58.1",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",

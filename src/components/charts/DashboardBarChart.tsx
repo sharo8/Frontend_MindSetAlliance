@@ -1,16 +1,16 @@
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { Card, CardBody, CardHeader } from '../ui/card'
-import { Skeleton } from '../ui/skeleton'
-import { useThemeStore } from '../../lib/theme/theme-store'
-import { cn } from '../../lib/utils'
+import { useId, useState } from 'react'
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { ChartFrame, ChartSummary, GlassTooltip, axisTick, fmtNumber, useViz } from './chart-kit'
 
 export type BarPoint = { [key: string]: string | number }
 
+/** Barres verticales (une série) : dégradé, coins arrondis, la barre survolée ressort. */
 export function DashboardBarChart({
   data,
   dataKey,
   xAxisKey,
   title,
+  subtitle,
   loading,
   tooltipDateKey = 'date',
   unit,
@@ -18,11 +18,14 @@ export function DashboardBarChart({
   footnote,
   emptyMessage = 'Aucune donnée disponible pour cette période',
   className,
+  showTotal = true,
+  color = 2,
 }: {
   data: BarPoint[]
   dataKey: string
   xAxisKey: string
   title: string
+  subtitle?: string
   loading?: boolean
   tooltipDateKey?: string
   unit?: string
@@ -30,59 +33,79 @@ export function DashboardBarChart({
   footnote?: string | null
   emptyMessage?: string
   className?: string
+  showTotal?: boolean
+  /** Index de couleur de la palette (1 = indigo, 2 = or…). */
+  color?: 1 | 2 | 3 | 4 | 5 | 6
 }) {
-  const theme = useThemeStore((s) => s.theme)
-  const axis = theme === 'dark' ? '#94a3b8' : '#64748b'
-  const grid = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.08)'
+  const viz = useViz()
+  const gid = useId().replace(/:/g, '')
+  const [hover, setHover] = useState<number | null>(null)
   const allZero = data.every((row) => Number(row[dataKey] ?? 0) === 0)
   const empty = !loading && allZero && !zeroAsData
+  const total = data.reduce((s, row) => s + Number(row[dataKey] ?? 0), 0)
+  const base = viz.series[color - 1]
 
   return (
-    <Card className={cn('flex h-full min-h-0 min-w-0 flex-col', className)}>
-      <CardHeader className="shrink-0">
-        <h2 className="font-semibold">{title}</h2>
-      </CardHeader>
-      <CardBody className="flex min-h-0 flex-1 flex-col gap-2">
-        <div className="min-h-0 flex-1">
-        {loading && <Skeleton className="h-full w-full rounded-xl" />}
-        {!loading && empty && (
-          <p className="flex h-full items-center justify-center text-sm text-ma-muted dark:text-ma-gray-300">
-            {emptyMessage}
-          </p>
-        )}
-        {!loading && !empty && (
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="maGoldBar" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#f6d06a" />
-                  <stop offset="100%" stopColor="#c49214" />
-                </linearGradient>
-              </defs>
-              <CartesianGrid stroke={grid} vertical={false} />
-              <XAxis dataKey={xAxisKey} tick={{ fill: axis, fontSize: 12 }} axisLine={false} tickLine={false} />
-              <YAxis hide={!zeroAsData} allowDecimals={false} width={zeroAsData ? 28 : 0} tick={{ fill: axis, fontSize: 11 }} axisLine={false} tickLine={false} />
-              <Tooltip
-                cursor={{ fill: theme === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.04)' }}
-                contentStyle={{
-                  background: theme === 'dark' ? '#0f1a3d' : '#ffffff',
-                  border: '1px solid #e8b42a55',
-                  borderRadius: 12,
-                  color: theme === 'dark' ? '#f8fafc' : '#0f172a',
-                }}
-                formatter={(value) => [`${value}${unit ? ` ${unit}` : ''}`, 'Valeur']}
-                labelFormatter={(_, payload) => {
-                  const row = payload?.[0]?.payload as BarPoint | undefined
-                  return String(row?.[tooltipDateKey] ?? '')
-                }}
-              />
-              <Bar dataKey={dataKey} fill="url(#maGoldBar)" radius={[6, 6, 2, 2]} maxBarSize={36} />
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-        </div>
-        {!loading && footnote && <p className="shrink-0 text-sm text-ma-muted dark:text-ma-gray-300">{footnote}</p>}
-      </CardBody>
-    </Card>
+    <ChartFrame
+      className={className}
+      title={title}
+      subtitle={subtitle}
+      loading={loading}
+      empty={empty}
+      emptyMessage={emptyMessage}
+      footnote={footnote}
+      summary={showTotal && !loading && !empty ? <ChartSummary label="Total" value={`${fmtNumber(total)}${unit ? ` ${unit}` : ''}`} /> : undefined}
+    >
+      <div className="min-h-0 flex-1">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={data}
+            margin={{ top: 12, right: 12, left: 4, bottom: 0 }}
+            onMouseMove={(state) => setHover(typeof state?.activeTooltipIndex === 'number' ? state.activeTooltipIndex : null)}
+            onMouseLeave={() => setHover(null)}
+          >
+            <defs>
+              <linearGradient id={`bar-${gid}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={base} stopOpacity={1} />
+                <stop offset="100%" stopColor={base} stopOpacity={0.72} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid stroke={viz.grid} vertical={false} strokeDasharray="0" />
+            <XAxis dataKey={xAxisKey} tick={axisTick(viz.axis)} axisLine={false} tickLine={false} dy={8} />
+            <YAxis
+              allowDecimals={false}
+              width={40}
+              tick={axisTick(viz.axis)}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={(v: number) => (v >= 1000 ? `${Math.round(v / 100) / 10}k` : String(v))}
+            />
+            <Tooltip
+              cursor={{ fill: viz.dark ? 'rgba(255,255,255,0.035)' : 'rgba(17,27,63,0.035)', radius: 10 }}
+              content={({ active, payload }) => {
+                const row = payload?.[0]?.payload as BarPoint | undefined
+                return (
+                  <GlassTooltip
+                    active={active}
+                    title={String(row?.[tooltipDateKey] ?? row?.[xAxisKey] ?? '')}
+                    rows={[{ color: base, label: 'Valeur', value: `${fmtNumber(Number(row?.[dataKey] ?? 0))}${unit ? ` ${unit}` : ''}` }]}
+                  />
+                )
+              }}
+            />
+            <Bar dataKey={dataKey} radius={[8, 8, 4, 4]} maxBarSize={44} animationDuration={900} animationEasing="ease-out">
+              {data.map((_, i) => (
+                <Cell
+                  key={i}
+                  fill={`url(#bar-${gid})`}
+                  fillOpacity={hover === null || hover === i ? 1 : 0.38}
+                  style={{ transition: 'fill-opacity 220ms ease' }}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </ChartFrame>
   )
 }

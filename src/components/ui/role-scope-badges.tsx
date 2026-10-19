@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 import { Building2, Globe } from 'lucide-react'
 import { projectLabel, roleLabel } from '../../lib/rbac/rbac'
 import { Badge, roleTone } from './badge'
+import { Td } from './table'
+import { FilterSelect } from './toolbar'
 
 export type RoleAssignmentView = {
   id: number
@@ -10,6 +12,7 @@ export type RoleAssignmentView = {
   projectNom?: string | null
 }
 
+/** Périmètre d'un rôle : globe bleu nuit pour toute l'entreprise, immeuble doré pour une société. */
 export function ScopeBadge({
   projectCode,
   projectNom,
@@ -19,22 +22,19 @@ export function ScopeBadge({
 }) {
   const companyWide = !projectCode
   return (
-    <Badge tone={companyWide ? 'navy' : 'gold'} className="normal-case tracking-normal">
-      {companyWide ? (
-        <Globe className="h-3 w-3" aria-hidden />
-      ) : (
-        <Building2 className="h-3 w-3" aria-hidden />
-      )}
-      <span
-        title={
-          companyWide
-            ? 'Accès toute l’entreprise : l’agent voit tous les projets.'
-            : 'Accès limité à cette société : l’agent ne voit que ce projet.'
-        }
-      >
+    <span
+      className="inline-flex"
+      title={
+        companyWide
+          ? 'Accès toute l’entreprise : l’agent voit tous les projets.'
+          : 'Accès limité à cette société : l’agent ne voit que ce projet.'
+      }
+    >
+      <Badge tone={companyWide ? 'navy' : 'gold'} className="gap-1 pl-2">
+        {companyWide ? <Globe className="h-3 w-3" aria-hidden /> : <Building2 className="h-3 w-3" aria-hidden />}
         {projectNom || projectLabel(projectCode)}
-      </span>
-    </Badge>
+      </Badge>
+    </span>
   )
 }
 
@@ -42,7 +42,7 @@ export function RoleOnlyBadge({ role }: { role: string }) {
   return <Badge tone={roleTone(role)}>{roleLabel(role)}</Badge>
 }
 
-/** Combined badge pair (fiche agent, listes compactes). */
+/** Paire rôle + périmètre (fiche agent, listes compactes). */
 export function RoleScopeBadges({
   role,
   projectCode,
@@ -53,7 +53,7 @@ export function RoleScopeBadges({
   projectNom?: string | null
 }) {
   return (
-    <span className="inline-flex flex-wrap items-center gap-1">
+    <span className="inline-flex flex-wrap items-center gap-1.5">
       <RoleOnlyBadge role={role} />
       <ScopeBadge projectCode={projectCode} projectNom={projectNom} />
     </span>
@@ -68,9 +68,9 @@ function AssignmentStack({
   render: (row: RoleAssignmentView) => ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col items-start gap-1.5">
       {roles.map((row) => (
-        <div key={row.id} className="flex min-h-7 items-center">
+        <div key={row.id} className="flex h-[22px] items-center">
           {render(row)}
         </div>
       ))}
@@ -78,27 +78,28 @@ function AssignmentStack({
   )
 }
 
-/** Two aligned table cells: roles only, then matching périmètre. */
+/** Deux cellules alignées ligne à ligne : les rôles, puis le périmètre correspondant. */
 export function RolePerimeterCells({ roles }: { roles: RoleAssignmentView[] }) {
   if (roles.length === 0) {
     return (
       <>
-        <td className="px-4 py-3 align-top text-ma-muted">Aucun</td>
-        <td className="px-4 py-3 align-top text-ma-muted">—</td>
+        <Td>
+          <span className="text-[13px] text-ink-3">Aucun rôle</span>
+        </Td>
+        <Td>
+          <span className="text-ink-3">–</span>
+        </Td>
       </>
     )
   }
   return (
     <>
-      <td className="px-4 py-3 align-top">
+      <Td>
         <AssignmentStack roles={roles} render={(row) => <RoleOnlyBadge role={row.role} />} />
-      </td>
-      <td className="px-4 py-3 align-top">
-        <AssignmentStack
-          roles={roles}
-          render={(row) => <ScopeBadge projectCode={row.projectCode} projectNom={row.projectNom} />}
-        />
-      </td>
+      </Td>
+      <Td>
+        <AssignmentStack roles={roles} render={(row) => <ScopeBadge projectCode={row.projectCode} projectNom={row.projectNom} />} />
+      </Td>
     </>
   )
 }
@@ -107,18 +108,15 @@ export function PerimeterFilter({
   value,
   onChange,
   projects,
+  className,
 }: {
   value: string
   onChange: (value: string) => void
   projects: { code: string; nom: string }[]
+  className?: string
 }) {
   return (
-    <select
-      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-ma-navy-800"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      aria-label="Filtrer par périmètre"
-    >
+    <FilterSelect className={className} active={Boolean(value)} value={value} onChange={(e) => onChange(e.target.value)} aria-label="Filtrer par périmètre">
       <option value="">Tous les périmètres</option>
       <option value="ENTREPRISE">Toute l’entreprise</option>
       {projects.map((p) => (
@@ -126,6 +124,6 @@ export function PerimeterFilter({
           {p.nom}
         </option>
       ))}
-    </select>
+    </FilterSelect>
   )
 }

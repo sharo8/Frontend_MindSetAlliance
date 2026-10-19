@@ -43,6 +43,16 @@ export const PERMISSION_LABELS: Record<string, string> = {
   VIEW_MEDIA: 'Voir les médias',
   MANAGE_PARTNERS: 'Gérer les partenaires',
   SYSTEM_ADMIN: 'Administration technique',
+  VIEW_CNN_DASHBOARD: 'Colis na Nga : tableau de bord',
+  MANAGE_CNN_ORDERS: 'Colis na Nga : commandes et livraisons',
+  MANAGE_CNN_AGENTS: 'Colis na Nga : livreurs',
+  MANAGE_CNN_MOTARDS: 'Colis na Nga : motards et signalements',
+  MANAGE_CNN_ASSOCIATIONS: 'Colis na Nga : associations et reversements',
+  MANAGE_CNN_CLIENTS: 'Colis na Nga : clients',
+  MANAGE_CNN_SUBSCRIPTIONS: 'Colis na Nga : abonnements et factures',
+  MANAGE_CNN_PAYMENTS: 'Colis na Nga : paiements Mobile Money',
+  MANAGE_CNN_SETTINGS: 'Colis na Nga : tarifs et taux',
+  MANAGE_CNN_ADMINS: 'Colis na Nga : administrateurs et audit',
 }
 
 export function hasFullAccess(roles: { role: string }[]) {

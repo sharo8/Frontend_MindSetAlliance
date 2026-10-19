@@ -17,7 +17,18 @@ import { ForgotPasswordPage, LoginPage } from '../features/auth/LoginPage'
 import { FirstLoginPage } from '../features/auth/FirstLoginPage'
 import { SetupPasswordPage } from '../features/auth/SetupPasswordPage'
 import { AccountPage } from '../features/auth/AccountPage'
-import { ColisNaNgaPage } from '../features/colisnanga/ColisNaNgaPage'
+import { InProject } from '../features/cnnadmin/InProject'
+import { CnnOrdersPage } from '../features/cnnadmin/CnnOrdersPage'
+import { CnnLiveMapPage } from '../features/cnnadmin/CnnLiveMapPage'
+import { CnnAgentsPage } from '../features/cnnadmin/CnnAgentsPage'
+import { CnnMotardsPage } from '../features/cnnadmin/CnnMotardsPage'
+import { CnnAssociationsPage } from '../features/cnnadmin/CnnAssociationsPage'
+import { CnnStatsPage } from '../features/cnnadmin/CnnStatsPage'
+import { CnnSubscriptionsPage } from '../features/cnnadmin/CnnSubscriptionsPage'
+import { CnnIncidentsPage } from '../features/cnnadmin/CnnIncidentsPage'
+import { CnnPricingPage } from '../features/cnnadmin/CnnPricingPage'
+import { CnnClientsPage } from '../features/cnnadmin/CnnClientsPage'
+import { SitePage } from '../features/site/SitePage'
 import { DirectionDashboardPage } from '../features/dashboard-direction/DirectionDashboardPage'
 import { FinancePage } from '../features/finance/FinancePage'
 import { HrPage, PayrollPage } from '../features/hr/HrPage'
@@ -25,10 +36,7 @@ import { MdrPage } from '../features/mindsetduroyaume/MdrPage'
 import {
   B2cPage,
   CompliancePage,
-  CouriersPage,
   EnterprisesPage,
-  FleetMapPage,
-  IncidentsPage,
   InvoicingPage,
   LeavesPage,
   MarketingPage,
@@ -58,6 +66,7 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
+          <Route path="/bienvenue" element={<SitePage />} />
           <Route path="/connexion" element={<LoginPage />} />
           <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
           <Route path="/premiere-connexion" element={<FirstLoginPage />} />
@@ -78,10 +87,10 @@ export function App() {
             <Route path="/finance/facturation" element={<InvoicingPage />} />
             <Route path="/finance/b2c" element={<B2cPage />} />
             <Route path="/commercial" element={<EnterprisesPage />} />
-            <Route path="/commercial/coursiers" element={<CouriersPage />} />
+            <Route path="/commercial/coursiers" element={<Navigate to="/" replace />} />
             <Route path="/commercial/entreprises" element={<EnterprisesPage />} />
-            <Route path="/operations/flotte" element={<FleetMapPage />} />
-            <Route path="/operations/incidents" element={<IncidentsPage />} />
+            <Route path="/operations/flotte" element={<Navigate to="/" replace />} />
+            <Route path="/operations/incidents" element={<Navigate to="/" replace />} />
             <Route path="/juridique/partenaires" element={<PartnersPage />} />
             <Route path="/juridique/conformite" element={<CompliancePage />} />
             <Route path="/marketing/performance" element={<MarketingPage />} />
@@ -89,9 +98,20 @@ export function App() {
             <Route path="/technique/monitoring" element={<MonitoringPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
             <Route path="/compte" element={<AccountPage />} />
-            <Route path="/supervision/operations" element={<ColisNaNgaPage />} />
+            <Route path="/supervision/operations" element={<Navigate to="/" replace />} />
             <Route path="/supervision/cnn" element={<Navigate to="/supervision/operations" replace />} />
-            <Route path="/supervision/mdr" element={<MdrPage />} />
+            <Route path="/supervision/mdr" element={<InProject code="MDR"><MdrPage /></InProject>} />
+            <Route path="/colis-na-nga" element={<Navigate to="/" replace />} />
+            <Route path="/colis-na-nga/carte" element={<InProject code="CNN"><CnnLiveMapPage /></InProject>} />
+            <Route path="/colis-na-nga/commandes" element={<InProject code="CNN"><CnnOrdersPage /></InProject>} />
+            <Route path="/colis-na-nga/livreurs" element={<InProject code="CNN"><CnnAgentsPage /></InProject>} />
+            <Route path="/colis-na-nga/motards" element={<InProject code="CNN"><CnnMotardsPage /></InProject>} />
+            <Route path="/colis-na-nga/associations" element={<InProject code="CNN"><CnnAssociationsPage /></InProject>} />
+            <Route path="/colis-na-nga/clients" element={<InProject code="CNN"><CnnClientsPage /></InProject>} />
+            <Route path="/colis-na-nga/statistiques" element={<InProject code="CNN"><CnnStatsPage /></InProject>} />
+            <Route path="/colis-na-nga/abonnements" element={<InProject code="CNN"><CnnSubscriptionsPage /></InProject>} />
+            <Route path="/colis-na-nga/incidents" element={<InProject code="CNN"><CnnIncidentsPage /></InProject>} />
+            <Route path="/colis-na-nga/tarification" element={<InProject code="CNN"><CnnPricingPage /></InProject>} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/admin/societes" element={<SocietesAdminPage />} />
             <Route path="/admin/utilisateurs" element={<UsersAdminPage />} />

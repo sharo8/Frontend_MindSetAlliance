@@ -12,10 +12,12 @@ export function initialsFrom(name?: string | null) {
 
 export function avatarTone(name?: string | null) {
   const palette = [
-    'bg-ma-navy-800 text-ma-gold-400',
-    'bg-[#15224a] text-ma-gold-300',
-    'bg-[#1c2f63] text-ma-gold-400',
-    'bg-[#24386e] text-[#f6d06a]',
+    'bg-gradient-to-b from-[#2a3b8f] to-[#111b3f] text-ma-gold-300',
+    'bg-gradient-to-b from-[#f8d977] to-[#d9a521] text-ma-navy-900',
+    'bg-gradient-to-b from-[#3fd0b2] to-[#108a75] text-white',
+    'bg-gradient-to-b from-[#a98bfa] to-[#6d3fe0] text-white',
+    'bg-gradient-to-b from-[#6cc0f2] to-[#2380c4] text-white',
+    'bg-gradient-to-b from-[#f6936f] to-[#d84b28] text-white',
   ]
   let hash = 0
   for (const ch of name ?? '') hash = (hash + ch.charCodeAt(0) * 17) % palette.length
@@ -24,8 +26,8 @@ export function avatarTone(name?: string | null) {
 
 const sizes = {
   sm: 'h-7 w-7 text-[10px]',
-  md: 'h-9 w-9 text-xs',
-  lg: 'h-20 w-20 text-xl',
+  md: 'h-9 w-9 text-[12px]',
+  lg: 'h-20 w-20 text-[26px]',
 }
 
 export function Avatar({
@@ -55,7 +57,7 @@ export function Avatar({
     <span
       title={name ?? undefined}
       className={cn(
-        'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold ring-1 ring-ma-gold-500/25',
+        'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold tracking-[0.02em] shadow-[inset_0_1px_0_rgb(255_255_255/0.35),0_2px_6px_-2px_rgb(17_27_63/0.35)] ring-2 ring-surface',
         image ? 'bg-ma-navy-800' : avatarTone(name),
         sizes[size],
         className,

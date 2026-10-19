@@ -1,5 +1,5 @@
 import { StatCard } from './stat-card'
-import { Card, CardBody, CardHeader } from './card'
+import { Card, CardBody, CardHeader, CardTitle } from './card'
 import type { ReactNode } from 'react'
 
 export function KpiCard({
@@ -20,7 +20,7 @@ export function ChartCard({ title, children }: { title: string; children: ReactN
   return (
     <Card>
       <CardHeader>
-        <h2 className="font-semibold">{title}</h2>
+        <CardTitle title={title} />
       </CardHeader>
       <CardBody className="h-64">{children}</CardBody>
     </Card>

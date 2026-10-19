@@ -142,6 +142,20 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
   ],
 }
 
+/** Administration Colis na Nga (relais vers l'API admin de l'application). */
+export const CNN_ADMIN_PERMISSIONS = [
+  'VIEW_CNN_DASHBOARD',
+  'MANAGE_CNN_ORDERS',
+  'MANAGE_CNN_AGENTS',
+  'MANAGE_CNN_MOTARDS',
+  'MANAGE_CNN_ASSOCIATIONS',
+  'MANAGE_CNN_CLIENTS',
+  'MANAGE_CNN_SUBSCRIPTIONS',
+  'MANAGE_CNN_PAYMENTS',
+  'MANAGE_CNN_SETTINGS',
+  'MANAGE_CNN_ADMINS',
+]
+
 export const TICKET_ROLES = [
   'SUPPORT',
   'DIRECTION',
@@ -212,8 +226,13 @@ export function hasPermission(
   })
 }
 
+/** Espaces de travail : l'entreprise (Mindset Alliance) ou un projet. */
+export type Workspace = 'ENTREPRISE' | 'CNN' | 'MDR'
+
 export type MenuItem = {
   id: string
+  /** Espaces où l'entrée apparaît (absent = tous). Chaque projet n'affiche que ses propres menus. */
+  workspaces?: Workspace[]
   label: string
   to: string
   roles?: string[]
@@ -226,12 +245,20 @@ export type MenuItem = {
 
 export type NavSection = {
   id: string
+  workspaces?: Workspace[]
   label?: string
   projectTag?: string
   items: MenuItem[]
 }
 
-function itemVisible(item: MenuItem, roles: RoleAssignment[], currentProject: string, overrides: PermissionOverride[] = []) {
+function itemVisible(
+  item: MenuItem,
+  roles: RoleAssignment[],
+  currentProject: string,
+  overrides: PermissionOverride[] = [],
+  granted?: ReadonlySet<string>,
+) {
+  if (item.workspaces && !item.workspaces.includes(currentProject as Workspace)) return false
   if (item.projectCodes) {
     const visible = visibleProjectCodes(roles)
     const allowedByJwt = visible.includes('*') || item.projectCodes.some((code) => visible.includes(code))
@@ -243,118 +270,166 @@ function itemVisible(item: MenuItem, roles: RoleAssignment[], currentProject: st
     }
   }
   const scope = currentProject === 'ENTREPRISE' ? null : currentProject
-  if (item.permissions?.length) return item.permissions.some((p) => hasPermission(roles, p, scope, overrides))
-  if (item.permission) return hasPermission(roles, item.permission, scope, overrides)
+  // `granted` : permissions effectives calculées par le Core (rôles de la matrice compris).
+  const can = (p: string) => Boolean(granted?.has(p)) || hasPermission(roles, p, scope, overrides)
+  if (item.permissions?.length) return item.permissions.some(can)
+  if (item.permission) return can(item.permission)
   if (item.roles) return hasAnyRole(roles, item.roles, scope)
   return true
 }
 
-export function buildNavSections(roles: RoleAssignment[], currentProject: string, overrides: PermissionOverride[] = []): NavSection[] {
+export function buildNavSections(
+  roles: RoleAssignment[],
+  currentProject: string,
+  overrides: PermissionOverride[] = [],
+  granted?: ReadonlySet<string>,
+): NavSection[] {
+  const ENTREPRISE: Workspace[] = ['ENTREPRISE']
   const catalog: NavSection[] = [
-    { id: 'home', items: [{ id: 'accueil', label: 'Accueil', to: '/' }] },
     {
-      id: 'operations',
-      label: 'Opérations',
-      projectTag: currentProject !== 'ENTREPRISE' ? currentProject : undefined,
+      id: 'home',
       items: [
-        { id: 'cnn', label: 'Supervision opérationnelle', to: '/supervision/operations', permissions: ['VIEW_FLEET_MAP', 'MANAGE_COURSES', 'RESOLVE_INCIDENTS'] },
-        { id: 'fleet', label: 'Cartographie flotte', to: '/operations/flotte', permissions: ['VIEW_FLEET_MAP', 'MANAGE_COURSES'] },
-        { id: 'incidents', label: 'Incidents', to: '/operations/incidents', permissions: ['RESOLVE_INCIDENTS'] },
+        { id: 'accueil', label: 'Accueil', to: '/', workspaces: ['ENTREPRISE', 'MDR'] },
+        { id: 'cnn-home', label: 'Tableau de bord', to: '/', workspaces: ['CNN'], permissions: ['VIEW_CNN_DASHBOARD'] },
+        { id: 'cnn-map', label: 'Carte en direct', to: '/colis-na-nga/carte', workspaces: ['CNN'], permissions: ['VIEW_CNN_DASHBOARD'] },
+        { id: 'cnn-stats', label: 'Statistiques', to: '/colis-na-nga/statistiques', workspaces: ['CNN'], permissions: ['VIEW_CNN_DASHBOARD'] },
       ],
     },
+    // ── Colis na Nga : uniquement quand le projet Colis na Nga est choisi ──
+    {
+      id: 'cnn-admin',
+      label: 'Colis na Nga',
+      workspaces: ['CNN'],
+      items: [
+        { id: 'cnn-orders', label: 'Commandes', to: '/colis-na-nga/commandes', workspaces: ['CNN'], permission: 'MANAGE_CNN_ORDERS' },
+        { id: 'cnn-clients', label: 'Clients', to: '/colis-na-nga/clients', workspaces: ['CNN'], permission: 'MANAGE_CNN_CLIENTS' },
+        { id: 'cnn-agents', label: 'Livreurs', to: '/colis-na-nga/livreurs', workspaces: ['CNN'], permission: 'MANAGE_CNN_AGENTS' },
+        { id: 'cnn-motards', label: 'Motards', to: '/colis-na-nga/motards', workspaces: ['CNN'], permission: 'MANAGE_CNN_MOTARDS' },
+        { id: 'cnn-associations', label: 'Associations', to: '/colis-na-nga/associations', workspaces: ['CNN'], permission: 'MANAGE_CNN_ASSOCIATIONS' },
+        {
+          id: 'cnn-subscriptions',
+          label: 'Abonnements et crédits',
+          to: '/colis-na-nga/abonnements',
+          workspaces: ['CNN'],
+          permissions: ['MANAGE_CNN_SUBSCRIPTIONS', 'MANAGE_CNN_CLIENTS', 'MANAGE_CNN_MOTARDS'],
+        },
+        {
+          id: 'cnn-incidents',
+          label: 'Signalements et incidents',
+          to: '/colis-na-nga/incidents',
+          workspaces: ['CNN'],
+          permissions: ['MANAGE_CNN_MOTARDS', 'MANAGE_CNN_ORDERS', 'MANAGE_CNN_PAYMENTS'],
+        },
+        { id: 'cnn-pricing', label: 'Tarification', to: '/colis-na-nga/tarification', workspaces: ['CNN'], permission: 'MANAGE_CNN_SETTINGS' },
+      ],
+    },
+    // ── Mindset du Royaume ──
+    {
+      id: 'mdr',
+      label: 'Mindset du Royaume',
+      workspaces: ['MDR'],
+      items: [{ id: 'mdr', label: 'Vue média', to: '/supervision/mdr', workspaces: ['MDR'], permission: 'VIEW_MARKETING_PERFORMANCE' }],
+    },
+    // ── Mindset Alliance (toute l'entreprise) ──
     {
       id: 'tickets-sec',
       label: 'Billetterie',
-      items: [{ id: 'tickets', label: 'Tickets', to: '/tickets', permission: 'VIEW_TICKETS' }],
+      workspaces: ENTREPRISE,
+      items: [{ id: 'tickets', label: 'Tickets', to: '/tickets', permission: 'VIEW_TICKETS', workspaces: ENTREPRISE }],
     },
     {
       id: 'commercial',
       label: 'Commercial',
-      items: [
-        { id: 'couriers', label: 'Coursiers & affiliations', to: '/commercial/coursiers', permission: 'VALIDATE_COURIER' },
-        { id: 'enterprises', label: 'Comptes entreprises', to: '/commercial/entreprises', permission: 'MANAGE_ENTERPRISE_ACCOUNTS' },
-      ],
+      workspaces: ENTREPRISE,
+      items: [{ id: 'enterprises', label: 'Comptes entreprises', to: '/commercial/entreprises', permission: 'MANAGE_ENTERPRISE_ACCOUNTS', workspaces: ENTREPRISE }],
     },
     {
       id: 'finance',
       label: 'Finance',
+      workspaces: ENTREPRISE,
       items: [
-        { id: 'finance-home', label: 'Pilotage financier', to: '/finance', permissions: ['VIEW_FINANCE', 'MANAGE_SUBSCRIPTIONS', 'MANAGE_INVOICING', 'VIEW_B2C_VOLUME'] },
-        { id: 'subscriptions', label: 'Abonnements', to: '/finance/abonnements', permission: 'MANAGE_SUBSCRIPTIONS' },
-        { id: 'invoicing', label: 'Facturation', to: '/finance/facturation', permission: 'MANAGE_INVOICING' },
-        { id: 'b2c', label: 'Suivi B2C', to: '/finance/b2c', permission: 'VIEW_B2C_VOLUME' },
+        { id: 'finance-home', label: 'Pilotage financier', to: '/finance', permissions: ['VIEW_FINANCE', 'MANAGE_SUBSCRIPTIONS', 'MANAGE_INVOICING', 'VIEW_B2C_VOLUME'], workspaces: ENTREPRISE },
+        { id: 'subscriptions', label: 'Abonnements', to: '/finance/abonnements', permission: 'MANAGE_SUBSCRIPTIONS', workspaces: ENTREPRISE },
+        { id: 'invoicing', label: 'Facturation', to: '/finance/facturation', permission: 'MANAGE_INVOICING', workspaces: ENTREPRISE },
+        { id: 'b2c', label: 'Suivi B2C', to: '/finance/b2c', permission: 'VIEW_B2C_VOLUME', workspaces: ENTREPRISE },
       ],
     },
     {
       id: 'hr',
       label: 'Ressources humaines',
+      workspaces: ENTREPRISE,
       items: [
-        { id: 'rh', label: 'Vue RH', to: '/rh', permissions: ['MANAGE_HR', 'MANAGE_INTERNAL_AGENTS', 'MANAGE_STAFF', 'VIEW_PAYROLL'] },
-        { id: 'agents-hr', label: 'Agents internes', to: '/rh/agents', permissions: ['MANAGE_INTERNAL_AGENTS', 'MANAGE_HR', 'MANAGE_USERS'] },
-        { id: 'leaves', label: 'Personnel & congés', to: '/rh/conges', permission: 'MANAGE_STAFF' },
-        { id: 'payroll', label: 'Paie', to: '/rh/paie', permission: 'VIEW_PAYROLL' },
+        { id: 'rh', label: 'Vue RH', to: '/rh', permissions: ['MANAGE_HR', 'MANAGE_INTERNAL_AGENTS', 'MANAGE_STAFF', 'VIEW_PAYROLL'], workspaces: ENTREPRISE },
+        { id: 'agents-hr', label: 'Agents internes', to: '/rh/agents', permissions: ['MANAGE_INTERNAL_AGENTS', 'MANAGE_HR', 'MANAGE_USERS'], workspaces: ENTREPRISE },
+        { id: 'leaves', label: 'Personnel & congés', to: '/rh/conges', permission: 'MANAGE_STAFF', workspaces: ENTREPRISE },
+        { id: 'payroll', label: 'Paie', to: '/rh/paie', permission: 'VIEW_PAYROLL', workspaces: ENTREPRISE },
       ],
     },
     {
       id: 'legal',
       label: 'Juridique',
+      workspaces: ENTREPRISE,
       items: [
-        { id: 'partners', label: 'Registre partenaires', to: '/juridique/partenaires', permission: 'MANAGE_PARTNER_REGISTRY' },
-        { id: 'compliance', label: 'Conformité', to: '/juridique/conformite', permission: 'MANAGE_COMPLIANCE' },
+        { id: 'partners', label: 'Registre partenaires', to: '/juridique/partenaires', permission: 'MANAGE_PARTNER_REGISTRY', workspaces: ENTREPRISE },
+        { id: 'compliance', label: 'Conformité', to: '/juridique/conformite', permission: 'MANAGE_COMPLIANCE', workspaces: ENTREPRISE },
       ],
     },
     {
       id: 'marketing',
       label: 'Marketing & média',
+      workspaces: ENTREPRISE,
       items: [
-        { id: 'mkt', label: 'Performance', to: '/marketing/performance', permission: 'VIEW_MARKETING_PERFORMANCE' },
-        { id: 'media', label: 'Médiathèque', to: '/marketing/mediatheque', permission: 'MANAGE_MEDIA_LIBRARY' },
-        { id: 'mdr', label: 'Vue média', to: '/supervision/mdr', permission: 'VIEW_MARKETING_PERFORMANCE' },
+        { id: 'mkt', label: 'Performance', to: '/marketing/performance', permission: 'VIEW_MARKETING_PERFORMANCE', workspaces: ENTREPRISE },
+        { id: 'media', label: 'Médiathèque', to: '/marketing/mediatheque', permission: 'MANAGE_MEDIA_LIBRARY', workspaces: ENTREPRISE },
       ],
     },
     {
       id: 'tech',
       label: 'Technique',
+      workspaces: ENTREPRISE,
       items: [
-        { id: 'monitoring', label: 'Monitoring', to: '/technique/monitoring', permission: 'VIEW_MONITORING' },
-        { id: 'bugs', label: 'Bugs & Déploiements', to: '/tickets-techniques', permission: 'MANAGE_BUG_TICKETS' },
+        { id: 'monitoring', label: 'Monitoring', to: '/technique/monitoring', permission: 'VIEW_MONITORING', workspaces: ENTREPRISE },
+        { id: 'bugs', label: 'Bugs & Déploiements', to: '/tickets-techniques', permission: 'MANAGE_BUG_TICKETS', workspaces: ENTREPRISE },
       ],
     },
     {
       id: 'direction',
       label: 'Direction',
+      workspaces: ENTREPRISE,
       items: [
-        { id: 'direction', label: 'Tableau de bord exécutif', to: '/direction', permissions: ['VIEW_EXECUTIVE_DASHBOARD'], roles: ['DIRECTION', 'CONSEIL_ADMINISTRATION', 'ADMIN_SYSTEME'] },
-        { id: 'stats', label: 'Statistiques globales', to: '/admin/statistiques', roles: ['ADMIN_SYSTEME', 'DIRECTION'] },
+        { id: 'direction', label: 'Tableau de bord exécutif', to: '/direction', permissions: ['VIEW_EXECUTIVE_DASHBOARD'], roles: ['DIRECTION', 'CONSEIL_ADMINISTRATION', 'ADMIN_SYSTEME'], workspaces: ENTREPRISE },
+        { id: 'stats', label: 'Statistiques globales', to: '/admin/statistiques', roles: ['ADMIN_SYSTEME', 'DIRECTION'], workspaces: ENTREPRISE },
       ],
     },
     {
       id: 'admin',
       label: 'Administration',
+      workspaces: ENTREPRISE,
       items: [
-        { id: 'access', label: 'Gestion des accès', to: '/admin/acces', permission: 'MANAGE_ACCESS' },
-        { id: 'societes', label: 'Sociétés', to: '/admin/societes', roles: ['ADMIN_SYSTEME', 'DIRECTION'] },
-        { id: 'users', label: 'Agents', to: '/admin/utilisateurs', permissions: ['MANAGE_USERS', 'MANAGE_ACCESS', 'MANAGE_AGENTS'] },
-        { id: 'departements', label: 'Départements', to: '/admin/departements', roles: ['ADMIN_SYSTEME', 'DIRECTION'] },
-        { id: 'permissions', label: 'Rôles & permissions', to: '/admin/permissions', permission: 'MANAGE_PERMISSIONS' },
-        { id: 'rapports', label: 'Rapports', to: '/admin/rapports', roles: ['ADMIN_SYSTEME', 'DIRECTION'] },
-        { id: 'assistant', label: 'Assistant IA', to: '/admin/assistant-ia', roles: ['ADMIN_SYSTEME', 'DIRECTION'] },
-        { id: 'audit', label: 'Journal d’audit', to: '/admin/audit', permission: 'VIEW_AUDIT' },
+        { id: 'access', label: 'Gestion des accès', to: '/admin/acces', permission: 'MANAGE_ACCESS', workspaces: ENTREPRISE },
+        { id: 'societes', label: 'Sociétés', to: '/admin/societes', roles: ['ADMIN_SYSTEME', 'DIRECTION'], workspaces: ENTREPRISE },
+        { id: 'users', label: 'Agents', to: '/admin/utilisateurs', permissions: ['MANAGE_USERS', 'MANAGE_ACCESS', 'MANAGE_AGENTS'], workspaces: ENTREPRISE },
+        { id: 'departements', label: 'Départements', to: '/admin/departements', roles: ['ADMIN_SYSTEME', 'DIRECTION'], workspaces: ENTREPRISE },
+        { id: 'permissions', label: 'Rôles & permissions', to: '/admin/permissions', permission: 'MANAGE_PERMISSIONS', workspaces: ENTREPRISE },
+        { id: 'rapports', label: 'Rapports', to: '/admin/rapports', roles: ['ADMIN_SYSTEME', 'DIRECTION'], workspaces: ENTREPRISE },
+        { id: 'assistant', label: 'Assistant IA', to: '/admin/assistant-ia', roles: ['ADMIN_SYSTEME', 'DIRECTION'], workspaces: ENTREPRISE },
+        { id: 'audit', label: 'Journal d’audit', to: '/admin/audit', permission: 'VIEW_AUDIT', workspaces: ENTREPRISE },
       ],
     },
     {
       id: 'footer',
       items: [
-        { id: 'documents', label: 'Documents', to: '/documents' },
+        { id: 'documents', label: 'Documents', to: '/documents', workspaces: ENTREPRISE },
         { id: 'compte', label: 'Mon compte', to: '/compte' },
       ],
     },
   ]
 
   return catalog
+    .filter((section) => !section.workspaces || section.workspaces.includes(currentProject as Workspace))
     .map((section) => ({
       ...section,
-      items: section.items.filter((item) => itemVisible(item, roles, currentProject, overrides)),
+      items: section.items.filter((item) => itemVisible(item, roles, currentProject, overrides, granted)),
     }))
     .filter((section) => section.items.length > 0)
 }

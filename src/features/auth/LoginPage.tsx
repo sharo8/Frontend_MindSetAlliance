@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Loader2, Lock, Mail } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -8,13 +9,11 @@ import { login, requestPasswordReset, verify2fa } from '../../lib/api/auth'
 import { ApiError } from '../../lib/api/client'
 import { useAuthStore } from '../../lib/auth/auth-store'
 import { Button } from '../../components/ui/button'
-import { Input } from '../../components/ui/input'
+import { easeIOS } from '../../components/motion/springs'
 import { makeLoginSchema, type LoginValues } from './login-schema'
-import { AuthShell } from './AuthShell'
+import { AuthField, AuthNotice, AuthShell, BackToLogin, RevealButton } from './AuthShell'
 import { OtpInput } from './OtpInput'
 
-const navyField =
-  'h-11 border-white/10 bg-ma-navy-700/55 pl-10 text-ma-white placeholder:text-ma-gray-300/70 transition-all duration-200 focus:border-ma-gold-400 focus:ring-2 focus:ring-ma-gold-400/70 focus:shadow-[0_0_0_4px_rgba(246,208,106,0.16)]'
 
 export function LoginPage() {
   const { t } = useTranslation()
@@ -114,90 +113,116 @@ export function LoginPage() {
   return (
     <AuthShell
       kicker={t('login.brand')}
-      title={challengeId ? 'Vérification' : t('login.title')}
-      subtitle={challengeId ? otpHint || t('login.otpHint') : t('login.subtitle')}
+      title={challengeId ? t('login.otpTitle') : t('login.heading')}
+      subtitle={challengeId ? otpHint || t('login.otpHint') : t('login.headingSub')}
       footer={t('login.footer')}
     >
-            {!challengeId ? (
-              <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-                {sessionNotice && (
-                  <p className="rounded-lg bg-ma-gold-400/15 px-3 py-2 text-sm text-ma-gold-300">
-                    {sessionNotice}
-                  </p>
-                )}
-                <label className="block text-sm text-ma-gray-300">
-                  {t('login.email')}
-                  <span className="relative mt-1.5 block">
-                    <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ma-gold-400/80" />
-                    <Input
-                      className={navyField}
-                      type="email"
-                      autoComplete="username"
-                      {...form.register('email')}
-                    />
-                  </span>
-                </label>
-                {form.formState.errors.email && (
-                  <p className="text-sm text-status-danger">{form.formState.errors.email.message}</p>
-                )}
-                <label className="block text-sm text-ma-gray-300">
-                  {t('login.password')}
-                  <div className="relative mt-1.5">
-                    <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ma-gold-400/80" />
-                    <Input
-                      className={`${navyField} pr-11`}
-                      type={showPassword ? 'text' : 'password'}
-                      autoComplete="current-password"
-                      {...form.register('password')}
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-ma-gray-300 transition hover:text-ma-gold-400"
-                      onClick={() => setShowPassword((v) => !v)}
-                      aria-label={showPassword ? t('login.hidePassword') : t('login.showPassword')}
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </label>
-                {form.formState.errors.password && (
-                  <p className="text-sm text-status-danger">{form.formState.errors.password.message}</p>
-                )}
-                {form.formState.errors.root && (
-                  <p className="rounded-lg bg-status-danger/15 px-3 py-2 text-sm text-status-danger">
-                    {form.formState.errors.root.message}
-                  </p>
-                )}
-                <Button className="mt-2 w-full" type="submit" disabled={submitting}>
-                  {submitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
-                  {submitting ? t('login.submitting') : t('login.submit')}
-                </Button>
-                <div className="text-center">
-                  <Link to="/mot-de-passe-oublie" className="text-sm text-ma-gray-300 transition hover:text-ma-gold-400">
-                    {t('login.forgot')}
-                  </Link>
-                </div>
-              </form>
-            ) : (
-              <div className="space-y-5">
-                <div className="rounded-2xl border border-ma-gold-400/30 bg-ma-navy-950/50 px-4 py-5">
-                  <p className="mb-3 text-center text-[10px] font-semibold tracking-[0.28em] text-ma-gold-400">CODE</p>
-                  <OtpInput value={otp} onChange={setOtp} disabled={otpBusy} />
-                </div>
-                {otpError && (
-                  <p className="rounded-lg bg-status-danger/15 px-3 py-2 text-center text-sm text-status-danger">{otpError}</p>
-                )}
-                <p className="text-center text-xs text-ma-gray-300">
-                  {seconds > 0
-                    ? t('login.otpWait', { time: `00:${String(seconds).padStart(2, '0')}` })
-                    : t('login.otpExpired')}
-                </p>
-                <Button className="w-full" disabled={otp.length !== 6 || otpBusy} onClick={() => void onVerify()}>
-                  {otpBusy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
-                  {otpBusy ? t('login.verifying') : t('login.verify')}
-                </Button>
-              </div>
-            )}
+      <AnimatePresence mode="wait" initial={false}>
+        {!challengeId ? (
+          <motion.form
+            key="credentials"
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -16 }}
+            transition={{ duration: 0.32, ease: easeIOS }}
+            className="space-y-4"
+            noValidate
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            {sessionNotice && <AuthNotice tone="info">{sessionNotice}</AuthNotice>}
+            <AuthField
+              label={t('login.email')}
+              icon={<Mail />}
+              type="email"
+              autoComplete="username"
+              placeholder={t('login.emailPlaceholder')}
+              error={form.formState.errors.email?.message}
+              {...form.register('email')}
+            />
+            <AuthField
+              label={t('login.password')}
+              icon={<Lock />}
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              error={form.formState.errors.password?.message}
+              trailing={
+                <RevealButton
+                  shown={showPassword}
+                  onToggle={() => setShowPassword((v) => !v)}
+                  labelShow={t('login.showPassword')}
+                  labelHide={t('login.hidePassword')}
+                />
+              }
+              {...form.register('password')}
+            />
+            <div className="flex justify-end">
+              <Link
+                to="/mot-de-passe-oublie"
+                className="rounded-md text-[13px] font-medium text-accent-ink transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+              >
+                {t('login.forgot')}
+              </Link>
+            </div>
+            {form.formState.errors.root && <AuthNotice tone="error">{form.formState.errors.root.message}</AuthNotice>}
+            <Button className="w-full" size="lg" type="submit" disabled={submitting}>
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
+              {submitting ? t('login.submitting') : t('login.submit')}
+              {!submitting && <ArrowRight className="h-4 w-4" aria-hidden strokeWidth={2.4} />}
+            </Button>
+          </motion.form>
+        ) : (
+          <motion.div
+            key="otp"
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 16 }}
+            transition={{ duration: 0.32, ease: easeIOS }}
+            className="space-y-5"
+          >
+            <div>
+              <p className="mb-2.5 text-[13px] font-medium text-ink-2">{t('login.otpLabel')}</p>
+              <OtpInput value={otp} onChange={setOtp} disabled={otpBusy} invalid={Boolean(otpError)} />
+            </div>
+            {otpError && <AuthNotice tone="error">{otpError}</AuthNotice>}
+            <p className="flex items-center gap-2 text-[12.5px] text-ink-3">
+              <span className="relative inline-flex h-4 w-4 items-center justify-center">
+                <svg viewBox="0 0 20 20" className="h-4 w-4 -rotate-90" aria-hidden>
+                  <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeOpacity={0.18} strokeWidth={2.5} />
+                  <circle
+                    cx="10"
+                    cy="10"
+                    r="8"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                    strokeLinecap="round"
+                    strokeDasharray={50.27}
+                    strokeDashoffset={50.27 * (1 - seconds / 30)}
+                    className="text-accent-ink transition-[stroke-dashoffset] duration-1000 ease-linear"
+                  />
+                </svg>
+              </span>
+              {seconds > 0 ? t('login.otpWait', { time: `00:${String(seconds).padStart(2, '0')}` }) : t('login.otpExpired')}
+            </p>
+            <Button className="w-full" size="lg" disabled={otp.length !== 6 || otpBusy} onClick={() => void onVerify()}>
+              {otpBusy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+              {otpBusy ? t('login.verifying') : t('login.verify')}
+            </Button>
+            <button
+              type="button"
+              onClick={() => {
+                setChallengeId(null)
+                setOtp('')
+                setOtpError(null)
+              }}
+              className="press mx-auto flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium text-ink-3 hover:text-ink focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2.4} />
+              {t('login.changeAccount')}
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AuthShell>
   )
 }
@@ -230,37 +255,27 @@ export function ForgotPasswordPage() {
 
   return (
     <AuthShell kicker={t('login.brand')} title={t('login.forgotTitle')} subtitle={t('login.forgotBody')} footer={t('login.footer')}>
-          {sent ? (
-            <p className="rounded-xl border border-ma-gold-400/25 bg-ma-gold-400/10 px-3 py-3 text-center text-sm text-ma-gold-300">{sent}</p>
-          ) : (
-            <form className="space-y-4" onSubmit={(e) => void onSubmit(e)}>
-              <label className="block text-sm text-ma-gray-300">
-                {t('login.email')}
-                <span className="relative mt-1.5 block">
-                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ma-gold-400/80" />
-                  <Input
-                    className={navyField}
-                    type="email"
-                    autoComplete="username"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </span>
-              </label>
-              {error && (
-                <p className="rounded-lg bg-status-danger/15 px-3 py-2 text-sm text-status-danger">{error}</p>
-              )}
-              <Button className="w-full" type="submit" disabled={busy}>
-                {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
-                {busy ? t('login.forgotSubmitting') : t('login.forgotSubmit')}
-              </Button>
-            </form>
-          )}
-          <div className="mt-6 text-center">
-            <Link to="/connexion" className="text-sm text-ma-gold-400 transition hover:text-ma-gold-300">
-              {t('login.backToLogin')}
-            </Link>
-          </div>
+      {sent ? (
+        <AuthNotice tone="success">{sent}</AuthNotice>
+      ) : (
+        <form className="space-y-4" noValidate onSubmit={(e) => void onSubmit(e)}>
+          <AuthField
+            label={t('login.email')}
+            icon={<Mail />}
+            type="email"
+            autoComplete="username"
+            placeholder={t('login.emailPlaceholder')}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {error && <AuthNotice tone="error">{error}</AuthNotice>}
+          <Button className="w-full" size="lg" type="submit" disabled={busy}>
+            {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+            {busy ? t('login.forgotSubmitting') : t('login.forgotSubmit')}
+          </Button>
+        </form>
+      )}
+      <BackToLogin />
     </AuthShell>
   )
 }

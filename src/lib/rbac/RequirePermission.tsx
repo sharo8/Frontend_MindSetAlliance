@@ -50,7 +50,7 @@ export function RequirePermission({ children, permission, anyOf, anyOfPermission
   }
   return (
     fallback ?? (
-      <div className="rounded-xl border border-status-danger/40 bg-white p-6 text-ma-navy-950 dark:bg-ma-navy-800 dark:text-ma-white">
+      <div className="clay rounded-[var(--radius-ma)] border border-status-danger/30 p-6 text-ink">
         <p className="font-semibold">{t('rbac.deniedTitle')}</p>
         <p className="mt-1 text-sm text-slate-500 dark:text-ma-gray-300">
           {t('rbac.deniedBody')}

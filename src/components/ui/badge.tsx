@@ -2,26 +2,38 @@ import type { ReactNode } from 'react'
 import { cn } from '../../lib/utils'
 
 const tones: Record<string, string> = {
-  success: 'bg-status-success/12 text-status-success ring-status-success/20',
-  warning: 'bg-status-warning/12 text-status-warning ring-status-warning/20',
-  danger: 'bg-status-danger/12 text-status-danger ring-status-danger/20',
-  info: 'bg-status-info/12 text-status-info ring-status-info/20',
-  gold: 'bg-ma-gold-500/15 text-ma-gold-600 ring-ma-gold-500/25 dark:text-ma-gold-400',
-  violet: 'bg-violet-500/15 text-violet-700 ring-violet-500/25 dark:text-violet-300',
-  muted: 'bg-slate-100 text-ma-muted ring-slate-200/80 dark:bg-white/8 dark:text-ma-gray-300 dark:ring-white/10',
-  navy: 'bg-ma-navy-800/10 text-ma-navy-800 ring-ma-navy-800/20 dark:bg-ma-navy-700 dark:text-ma-gold-300 dark:ring-ma-gold-500/20',
-  teal: 'bg-teal-500/12 text-teal-800 ring-teal-500/25 dark:text-teal-300',
+  success: 'bg-status-success/12 text-[#0f7a37] ring-status-success/20 dark:text-[#4ade80] [--dot:#16a34a]',
+  warning: 'bg-status-warning/12 text-[#a85a04] ring-status-warning/22 dark:text-[#fbbf24] [--dot:#d97706]',
+  danger: 'bg-status-danger/10 text-[#b91c1c] ring-status-danger/20 dark:text-[#f87171] [--dot:#dc2626]',
+  info: 'bg-status-info/10 text-[#1d4ed8] ring-status-info/20 dark:text-[#93b4ff] [--dot:#2563eb]',
+  gold: 'bg-ma-gold-500/14 text-ma-gold-700 ring-ma-gold-500/25 dark:text-ma-gold-300 [--dot:#dcaa28]',
+  violet: 'bg-violet-500/12 text-violet-700 ring-violet-500/22 dark:text-violet-300 [--dot:#7c4ee8]',
+  muted: 'bg-ink/[0.05] text-ink-2 ring-hairline dark:bg-white/[0.06] [--dot:#8a94b3]',
+  navy: 'bg-ma-navy-700/10 text-ma-navy-700 ring-ma-navy-700/18 dark:bg-white/[0.1] dark:text-ink dark:ring-white/10 [--dot:#2f42a0]',
+  teal: 'bg-teal-500/12 text-teal-800 ring-teal-500/22 dark:text-teal-300 [--dot:#139c85]',
 }
 
-export function Badge({ children, tone = 'muted', className }: { children: ReactNode; tone?: keyof typeof tones; className?: string }) {
+export function Badge({
+  children,
+  tone = 'muted',
+  dot,
+  className,
+}: {
+  children: ReactNode
+  tone?: keyof typeof tones
+  /** Point de couleur devant le libellé (statuts). */
+  dot?: boolean
+  className?: string
+}) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ring-1',
+        'inline-flex h-[22px] items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-[11px] font-semibold tracking-[0.01em] ring-1 ring-inset',
         tones[tone],
         className,
       )}
     >
+      {dot && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--dot)]" aria-hidden />}
       {children}
     </span>
   )
@@ -50,7 +62,7 @@ export function prioriteLabel(priorite: string): string {
     case 'NORMAL':
       return 'Normale'
     default:
-      return priorite?.replaceAll('_', ' ') || '—'
+      return priorite ? sentence(priorite.replaceAll('_', ' ')) : '–'
   }
 }
 
@@ -81,8 +93,14 @@ export function statutLabel(statut: string) {
     case 'INACTIF':
       return 'Inactif'
     default:
-      return statut.replaceAll('_', ' ')
+      return sentence(statut.replaceAll('_', ' '))
   }
+}
+
+/** « EN_ATTENTE » → « En attente » (les badges ne crient plus en majuscules). */
+export function sentence(text: string) {
+  const lower = text.toLocaleLowerCase('fr')
+  return lower.charAt(0).toLocaleUpperCase('fr') + lower.slice(1)
 }
 
 export function roleTone(role: string): keyof typeof tones {

@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
-import { AlertTriangle, Check } from 'lucide-react'
+import { useMemo, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
+import { motion, useReducedMotion } from 'motion/react'
+import { AlertTriangle, ArrowRight, Check, CircleSlash, Clock3, Hourglass, ShieldCheck } from 'lucide-react'
 import type { Ticket, TicketStatutEvent } from '../../lib/api/tickets'
+import { Avatar } from '../../components/ui/avatar'
+import { spring } from '../../components/motion/springs'
 import { cn } from '../../lib/utils'
-
-const STATUSES = ['OUVERT', 'EN_COURS', 'EN_ATTENTE', 'RESOLU', 'CLOTURE', 'ANNULE'] as const
 
 const STATUS_LABELS: Record<string, string> = {
   OUVERT: 'Ouvert',
@@ -23,14 +25,19 @@ const STATUS_MEANING: Record<string, string> = {
   ANNULE: 'Ticket abandonné ou sans objet ; fin de parcours.',
 }
 
-const STATUS_COLOR: Record<string, string> = {
-  OUVERT: '#2563eb',
-  EN_COURS: '#d97706',
-  EN_ATTENTE: '#94a3b8',
-  RESOLU: '#16a34a',
-  CLOTURE: '#065f46',
-  ANNULE: '#dc2626',
+/** Pastille de couleur par statut (jetons de statut uniquement). */
+const STATUS_DOT: Record<string, string> = {
+  OUVERT: 'bg-status-info',
+  EN_COURS: 'bg-status-warning',
+  EN_ATTENTE: 'bg-ink-3',
+  RESOLU: 'bg-status-success',
+  CLOTURE: 'bg-status-success',
+  ANNULE: 'bg-status-danger',
 }
+
+/** Parcours principal affiché sur la frise. « En attente » est une étape facultative. */
+const TRACK = ['OUVERT', 'EN_COURS', 'EN_ATTENTE', 'RESOLU', 'CLOTURE'] as const
+const OPTIONAL = new Set(['EN_ATTENTE'])
 
 const EDGES: [string, string][] = [
   ['OUVERT', 'EN_COURS'],
@@ -45,12 +52,43 @@ const EDGES: [string, string][] = [
   ['RESOLU', 'EN_COURS'],
 ]
 
+function statusLabel(status?: string) {
+  if (!status) return '–'
+  return STATUS_LABELS[status] ?? status.charAt(0) + status.slice(1).toLowerCase().replaceAll('_', ' ')
+}
+
 function minutesLabel(value?: number) {
-  if (value == null) return '—'
+  if (value == null) return '–'
   if (value < 60) return `${value} min`
   const h = Math.floor(value / 60)
   const m = value % 60
   return m ? `${h} h ${m} min` : `${h} h`
+}
+
+function durationLabel(ms: number) {
+  const minutes = Math.round(Math.abs(ms) / 60000)
+  if (minutes < 60) return `${minutes} min`
+  const hours = Math.round(minutes / 60)
+  if (hours < 48) return `${hours} h`
+  return `${Math.round(hours / 24)} j`
+}
+
+function fmtDate(iso?: string) {
+  if (!iso) return '–'
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return '–'
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+}
+
+function fmtDateTime(iso?: string) {
+  if (!iso) return '–'
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return '–'
+  return `${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}, ${d.toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })}`
 }
 
 function agentLabel(event: TicketStatutEvent) {
@@ -70,283 +108,333 @@ function realEvents(ticket: Ticket): TicketStatutEvent[] {
   ]
 }
 
-function SectionTitle({ children }: { children: string }) {
+function Heading({ children, hint, icon }: { children: string; hint?: string; icon?: ReactNode }) {
   return (
-    <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.16em] text-ma-muted">{children}</p>
+    <div className="mb-4 flex items-baseline justify-between gap-3">
+      <h3 className="flex items-center gap-2 text-[13.5px] font-semibold tracking-[-0.01em] text-ink [&_svg]:h-4 [&_svg]:w-4 [&_svg]:text-ink-3">
+        {icon}
+        {children}
+      </h3>
+      {hint && <span className="text-[12px] text-ink-3">{hint}</span>}
+    </div>
   )
 }
 
 export function TicketLifecycle({ ticket }: { ticket: Ticket }) {
+  const { t } = useTranslation()
   const events = useMemo(() => realEvents(ticket), [ticket])
-  const visited = useMemo(() => new Set(events.map((e) => e.statutApres)), [events])
   const overdue = ticket.sla?.echeanceDepassee || ticket.sla?.depassement || ticket.sla?.respecte === false
 
   return (
-    <div className="space-y-8">
+    <div className="@container space-y-7">
       <section>
-        <SectionTitle>Cycle de vie</SectionTitle>
-        <StatusWheel current={ticket.statut} visited={visited} />
-        <p className="mb-3 mt-6 text-[10px] font-medium uppercase tracking-[0.16em] text-ma-muted">Parcours réel</p>
-        <RealTimeline events={events} />
+        <Heading>{t('ticketsUi.lifecycle.steps', 'Étapes du traitement')}</Heading>
+        <LifecycleTrack current={ticket.statut} events={events} />
+        <NextSteps current={ticket.statut} />
       </section>
-      <section>
-        <SectionTitle>Performance SLA</SectionTitle>
-        <SlaBars ticket={ticket} overdue={Boolean(overdue)} />
-      </section>
+      <div className="grid gap-7 @xl:grid-cols-2 @xl:gap-8">
+        <section className="min-w-0">
+          <Heading icon={<Clock3 />} hint={t('ticketsUi.lifecycle.eventsCount', '{{count}} étape(s)', { count: events.length })}>
+            {t('ticketsUi.lifecycle.realPath', 'Parcours réel')}
+          </Heading>
+          <RealTimeline events={events} />
+        </section>
+        <section className="min-w-0">
+          <Heading icon={<ShieldCheck />}>{t('ticketsUi.lifecycle.sla', 'Performance SLA')}</Heading>
+          <SlaPanel ticket={ticket} overdue={Boolean(overdue)} />
+        </section>
+      </div>
     </div>
   )
 }
 
-function StatusWheel({ current, visited }: { current: string; visited: Set<string> }) {
-  const [hover, setHover] = useState<string | null>(null)
-  const size = 360
-  const cx = size / 2
-  const cy = size / 2
-  const radius = 118
-  const nodeR = 26
+/** Onde douce autour de l'étape courante (désactivée si l'utilisateur réduit les animations). */
+function Halo({ className }: { className?: string }) {
+  const reduce = useReducedMotion()
+  return (
+    <motion.span
+      aria-hidden
+      className={cn('absolute rounded-full', className)}
+      initial={{ opacity: 0.3, scale: 1 }}
+      animate={reduce ? { opacity: 0.18 } : { opacity: [0.32, 0, 0.32], scale: [1, 1.45, 1] }}
+      transition={reduce ? undefined : { duration: 2.4, ease: 'easeInOut', repeat: Infinity }}
+    />
+  )
+}
 
-  const nodes = STATUSES.map((status, i) => {
-    const angle = -Math.PI / 2 + (i * 2 * Math.PI) / STATUSES.length
-    const cos = Math.cos(angle)
-    const sin = Math.sin(angle)
-    const labelR = radius + 44
-    return {
-      status,
-      angle,
-      x: cx + radius * cos,
-      y: cy + radius * sin,
-      lx: cx + labelR * cos,
-      ly: cy + labelR * sin,
-      anchor: Math.abs(cos) < 0.4 ? 'middle' : cos > 0 ? 'start' : 'end',
-    }
-  })
-  const byStatus = Object.fromEntries(nodes.map((n) => [n.status, n]))
+/* ── Frise horizontale ─────────────────────────────────────────────────── */
+
+function LifecycleTrack({ current, events }: { current: string; events: TicketStatutEvent[] }) {
+  const reduce = useReducedMotion()
+  const cancelled = current === 'ANNULE'
+  const firstSeen = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const e of events) if (!map.has(e.statutApres)) map.set(e.statutApres, e.createdAt)
+    return map
+  }, [events])
+  // Étape atteinte : celle du statut courant, ou la dernière étape franchie avant annulation.
+  const reachedStatus = cancelled
+    ? [...events].reverse().find((e) => e.statutApres !== 'ANNULE')?.statutApres ?? 'OUVERT'
+    : current
+  const reached = Math.max(0, TRACK.indexOf(reachedStatus as (typeof TRACK)[number]))
 
   return (
-    <div className="relative mx-auto max-w-[360px]">
-      <svg viewBox={`0 0 ${size} ${size}`} className="h-auto w-full overflow-visible" role="img" aria-label="Diagramme des états du ticket">
-            <defs>
-              <marker id="ma-edge-arrow" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto">
-                <path d="M0 0 L7 3.5 L0 7 Z" fill="#94a3b8" />
-              </marker>
-              <marker id="ma-edge-arrow-gold" markerWidth="7" markerHeight="7" refX="5.2" refY="3.5" orient="auto">
-                <path d="M0 0 L7 3.5 L0 7 Z" fill="#c9a227" />
-              </marker>
-            </defs>
-            <circle cx={cx} cy={cy} r={radius} fill="none" stroke="currentColor" className="text-ma-line dark:text-white/10" strokeWidth="1" strokeDasharray="3 6" />
-            {EDGES.map(([from, to]) => {
-              const a = byStatus[from]
-              const b = byStatus[to]
-              if (!a || !b) return null
-              const active = current === from
-              return (
-                <path
-                  key={`${from}-${to}`}
-                  d={curvePath(a, b, cx, cy, radius, nodeR + 6)}
-                  fill="none"
-                  stroke={active ? '#c9a227' : '#94a3b8'}
-                  strokeWidth={active ? 1.8 : 1.15}
-                  strokeOpacity={active ? 0.95 : 0.45}
-                  markerEnd={active ? 'url(#ma-edge-arrow-gold)' : 'url(#ma-edge-arrow)'}
-                />
-              )
-            })}
-            {nodes.map((node) => {
-              const color = STATUS_COLOR[node.status]
-              const isCurrent = node.status === current
-              const seen = visited.has(node.status)
-              const opacity = seen || isCurrent ? 1 : 0.4
-              return (
-                <g
-                  key={node.status}
-                  opacity={opacity}
-                  className="cursor-pointer"
-                  onMouseEnter={() => setHover(node.status)}
-                  onMouseLeave={() => setHover(null)}
-                >
-                  {isCurrent && (
-                    <circle
-                      cx={node.x}
-                      cy={node.y}
-                      r={nodeR + 8}
-                      fill="none"
-                      stroke={color}
-                      strokeWidth="2"
-                      className="ma-status-halo"
-                      style={{ transformOrigin: `${node.x}px ${node.y}px` }}
-                    />
-                  )}
-                  <circle
-                    cx={node.x}
-                    cy={node.y}
-                    r={nodeR}
-                    fill={color}
-                    stroke={isCurrent ? '#f6d06a' : 'white'}
-                    strokeWidth={isCurrent ? 3 : 2}
+    <div>
+      <ol className="relative grid grid-cols-5" aria-label="Cycle de vie du ticket">
+        {TRACK.map((status, i) => {
+          const isCurrent = !cancelled && status === current
+          const done = i < reached || (i === reached && cancelled)
+          const optional = OPTIONAL.has(status)
+          const skipped = optional && done && !firstSeen.has(status)
+          return (
+            <li key={status} className="group/step relative flex flex-col items-center text-center" title={`${statusLabel(status)} : ${STATUS_MEANING[status]}`}>
+              {/* Segment vers l'étape suivante */}
+              {i < TRACK.length - 1 && (
+                <span className="absolute left-1/2 top-[15px] h-[3px] w-full -translate-y-1/2 overflow-hidden rounded-full bg-ink/[0.08] dark:bg-white/[0.08]" aria-hidden>
+                  <motion.span
+                    className={cn(
+                      'absolute inset-0 origin-left rounded-full bg-gradient-to-r',
+                      cancelled ? 'from-ink-3/50 to-ink-3/40' : 'from-ma-gold-300 to-ma-gold-500',
+                    )}
+                    initial={reduce ? false : { scaleX: 0 }}
+                    animate={{ scaleX: i < reached ? 1 : 0 }}
+                    transition={{ ...spring.page, delay: reduce ? 0 : 0.12 + i * 0.09 }}
                   />
-                  {seen && (
-                    <path
-                      d={`M ${node.x - 7} ${node.y + 1} l 5 5 l 10 -11`}
-                      fill="none"
-                      stroke="white"
-                      strokeWidth="2.4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  )}
-                  <text
-                    x={node.lx}
-                    y={node.ly}
-                    textAnchor={node.anchor}
-                    dominantBaseline="middle"
-                    className="fill-ma-navy-900 dark:fill-ma-gold-300"
-                    fontSize="10"
-                    fontWeight={isCurrent ? 700 : 500}
-                    letterSpacing="0.08em"
+                </span>
+              )}
+              <motion.span
+                className="relative z-[1] flex h-[30px] w-[30px] items-center justify-center"
+                initial={reduce ? false : { scale: 0.6, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ ...spring.snappy, delay: reduce ? 0 : 0.05 + i * 0.07 }}
+              >
+                {isCurrent && (
+                  <Halo className={cn('inset-0', STATUS_DOT[status])} />
+                )}
+                {done && !skipped ? (
+                  <span
+                    className={cn(
+                      'flex h-[26px] w-[26px] items-center justify-center rounded-full',
+                      cancelled ? 'bg-ink-3/70 text-surface' : 'clay-gold text-ma-navy-950',
+                    )}
                   >
-                    {STATUS_LABELS[node.status].toUpperCase()}
-                  </text>
-                  <title>{`${STATUS_LABELS[node.status]} — ${STATUS_MEANING[node.status]}`}</title>
-                </g>
-              )
-            })}
-          </svg>
-          {hover && (
-            <div className="pointer-events-none absolute bottom-2 left-1/2 z-10 w-[min(100%,18rem)] -translate-x-1/2 rounded-xl border border-ma-line bg-white/95 px-3 py-2 text-center text-xs text-ma-navy-800 shadow-lg backdrop-blur dark:border-white/10 dark:bg-ma-navy-900/95 dark:text-ma-gray-200">
-              <p className="mb-1 font-semibold uppercase tracking-[0.12em] text-[10px] text-ma-muted">{STATUS_LABELS[hover]}</p>
-              {STATUS_MEANING[hover]}
-            </div>
-          )}
+                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
+                ) : isCurrent ? (
+                  <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-surface shadow-[0_2px_8px_-2px_rgb(17_27_63/0.3)] ring-1 ring-hairline">
+                    <span className={cn('h-3 w-3 rounded-full', STATUS_DOT[status])} />
+                  </span>
+                ) : (
+                  <span
+                    className={cn(
+                      'clay-field flex items-center justify-center rounded-full',
+                      optional ? 'h-[20px] w-[20px]' : 'h-[24px] w-[24px]',
+                    )}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-ink-3/50" />
+                  </span>
+                )}
+              </motion.span>
+              <span
+                className={cn(
+                  'mt-2.5 px-0.5 text-[12px] leading-tight @md:text-[12.5px]',
+                  isCurrent ? 'font-semibold text-ink' : done && !skipped ? 'font-medium text-ink-2' : 'text-ink-3',
+                )}
+              >
+                {statusLabel(status)}
+              </span>
+              <span className="mt-0.5 text-[11px] tabular-nums text-ink-3">
+                {firstSeen.has(status) ? fmtDate(firstSeen.get(status)) : optional ? 'Facultatif' : ' '}
+              </span>
+            </li>
+          )
+        })}
+      </ol>
+      {cancelled && (
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...spring.page, delay: 0.4 }}
+          className="mt-4 flex items-center gap-2 rounded-[14px] bg-status-danger/10 px-3.5 py-2.5 text-[13px] text-status-danger ring-1 ring-inset ring-status-danger/20"
+        >
+          <CircleSlash className="h-4 w-4 shrink-0" />
+          <span>
+            <span className="font-semibold">Annulé</span>
+            {firstSeen.get('ANNULE') ? ` le ${fmtDateTime(firstSeen.get('ANNULE'))}` : ''}. {STATUS_MEANING.ANNULE}
+          </span>
+        </motion.div>
+      )}
     </div>
   )
 }
 
-function curvePath(
-  from: { x: number; y: number },
-  to: { x: number; y: number },
-  cx: number,
-  cy: number,
-  radius: number,
-  pad: number,
-) {
-  const dx = to.x - from.x
-  const dy = to.y - from.y
-  const dist = Math.hypot(dx, dy) || 1
-  const sx = from.x + (dx / dist) * pad
-  const sy = from.y + (dy / dist) * pad
-  const ex = to.x - (dx / dist) * pad
-  const ey = to.y - (dy / dist) * pad
-  const mx = (from.x + to.x) / 2
-  const my = (from.y + to.y) / 2
-  const vx = mx - cx
-  const vy = my - cy
-  const vlen = Math.hypot(vx, vy) || 1
-  const adjacent = dist < radius * 1.35
-  const bulge = adjacent ? 1.22 : 0.52
-  const qx = cx + (vx / vlen) * radius * bulge
-  const qy = cy + (vy / vlen) * radius * bulge
-  return `M ${sx} ${sy} Q ${qx} ${qy} ${ex} ${ey}`
+function NextSteps({ current }: { current: string }) {
+  const { t } = useTranslation()
+  const nexts = EDGES.filter(([from]) => from === current).map(([, to]) => to)
+  return (
+    <div className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-2 rounded-[14px] bg-ink/[0.03] px-3.5 py-3 dark:bg-white/[0.03]">
+      <span className="mr-1 text-[12.5px] text-ink-3">
+        <span className="font-medium text-ink-2">{statusLabel(current)}</span>
+        {' · '}
+        {nexts.length ? t('ticketsUi.lifecycle.nextSteps', 'Étapes possibles') : STATUS_MEANING[current] ?? ''}
+      </span>
+      {nexts.map((s) => (
+        <span
+          key={s}
+          title={STATUS_MEANING[s]}
+          className="inline-flex h-7 items-center gap-1.5 rounded-full bg-surface pl-2 pr-2.5 text-[12px] font-medium text-ink-2 shadow-[0_1px_2px_rgb(17_27_63/0.06)] ring-1 ring-hairline"
+        >
+          <ArrowRight className="h-3 w-3 text-ink-3" strokeWidth={2.4} />
+          <span className={cn('h-1.5 w-1.5 rounded-full', STATUS_DOT[s])} />
+          {statusLabel(s)}
+        </span>
+      ))}
+    </div>
+  )
 }
+
+/* ── Parcours réel ─────────────────────────────────────────────────────── */
 
 function RealTimeline({ events }: { events: TicketStatutEvent[] }) {
+  const reduce = useReducedMotion()
+  const ordered = [...events].reverse()
   return (
-    <ol className="flex flex-col gap-4 overflow-x-auto pb-2 sm:flex-row sm:items-start sm:gap-0">
-      {events.map((event, i) => {
-        const last = i === events.length - 1
-        const color = STATUS_COLOR[event.statutApres] ?? '#94a3b8'
+    <ol className="relative">
+      {ordered.map((event, i) => {
+        const latest = i === 0
+        const last = i === ordered.length - 1
+        const name = agentLabel(event)
         return (
-          <li
+          <motion.li
             key={event.id || i}
-            className="ma-timeline-step flex items-start sm:min-w-[10.5rem]"
-            style={{ animationDelay: `${i * 100}ms` }}
+            className="relative flex gap-3.5 pb-5 last:pb-0"
+            initial={reduce ? false : { opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ ...spring.page, delay: reduce ? 0 : 0.1 + i * 0.06 }}
           >
-            <span className="relative mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center">
-              {last && (
-                <span className="ma-status-halo absolute h-4 w-4 rounded-full" style={{ background: color, opacity: 0.35 }} />
-              )}
+            {!last && <span className="absolute bottom-0 left-[7px] top-5 w-px bg-hairline" aria-hidden />}
+            <span className="relative mt-1 flex h-[15px] w-[15px] shrink-0 items-center justify-center">
+              {latest && <Halo className={cn('inset-0', STATUS_DOT[event.statutApres] ?? 'bg-ink-3')} />}
               <span
-                className="relative z-[1] block rounded-full ring-2 ring-white dark:ring-ma-navy-900"
-                style={{ width: last ? 14 : 10, height: last ? 14 : 10, background: color }}
+                className={cn(
+                  'relative rounded-full ring-[3px] ring-surface',
+                  latest ? 'h-[11px] w-[11px]' : 'h-[9px] w-[9px] opacity-80',
+                  STATUS_DOT[event.statutApres] ?? 'bg-ink-3',
+                )}
               />
             </span>
-            {!last && (
-              <span
-                className="mx-2 mt-2 hidden h-0.5 w-6 shrink-0 rounded-full sm:block"
-                style={{ background: color, opacity: 0.55 }}
-              />
-            )}
-            <div className="ml-3 min-w-0 sm:ml-0 sm:mt-5 sm:w-[8.5rem]">
-              {!last && <span className="absolute left-[0.7rem] top-5 h-full w-px bg-ma-line sm:hidden dark:bg-white/10" />}
-              <p className="text-sm font-medium">{STATUS_LABELS[event.statutApres] ?? event.statutApres}</p>
-              <p className="mt-0.5 text-[11px] text-ma-muted">
-                {event.createdAt ? new Date(event.createdAt).toLocaleString() : '—'}
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                <p className="text-[13.5px] text-ink">
+                  <span className="font-semibold">{statusLabel(event.statutApres)}</span>
+                  {event.statutAvant && <span className="text-ink-3"> · depuis {statusLabel(event.statutAvant).toLowerCase()}</span>}
+                </p>
+                <time className="text-[12px] tabular-nums text-ink-3" dateTime={event.createdAt}>
+                  {fmtDateTime(event.createdAt)}
+                </time>
+              </div>
+              <p className="mt-1 flex items-center gap-1.5 text-[12.5px] text-ink-3">
+                {event.agent ? (
+                  <Avatar name={name} agentId={event.agent.id} hasPhoto={event.agent.hasPhoto} className="h-5 w-5 text-[8px] ring-1" />
+                ) : null}
+                <span className="truncate">{name}</span>
               </p>
-              <p className="truncate text-[11px] text-ma-muted">{agentLabel(event)}</p>
             </div>
-          </li>
+          </motion.li>
         )
       })}
     </ol>
   )
 }
 
-function SlaBars({ ticket, overdue }: { ticket: Ticket; overdue: boolean }) {
-  const [ready, setReady] = useState(false)
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setReady(true))
-    return () => cancelAnimationFrame(id)
-  }, [])
+/* ── SLA ───────────────────────────────────────────────────────────────── */
 
+function SlaPanel({ ticket, overdue }: { ticket: Ticket; overdue: boolean }) {
+  const { t } = useTranslation()
   const slaMinutes = (ticket.sla?.engagementHeures ?? 0) * 60
-  const pec = ticket.sla?.priseEnChargeMinutes ?? 0
-  const res = ticket.sla?.resolutionMinutes ?? 0
   const slaOk = !overdue && ticket.sla?.respecte !== false
+  const finished = ['RESOLU', 'CLOTURE', 'ANNULE'].includes(ticket.statut)
+  const due = ticket.echeance ? new Date(ticket.echeance).getTime() : NaN
+  const remaining = Number.isFinite(due) ? due - Date.now() : null
 
   return (
-    <div className="space-y-4">
-      <div
-        className={cn(
-          'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ring-1',
-          slaOk ? 'bg-status-success/12 text-status-success ring-status-success/25' : 'bg-status-danger/12 text-status-danger ring-status-danger/25',
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center gap-2">
+        <span
+          className={cn(
+            'inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-semibold ring-1 ring-inset',
+            slaOk ? 'bg-status-success/12 text-status-success ring-status-success/25' : 'bg-status-danger/10 text-status-danger ring-status-danger/25',
+          )}
+        >
+          {slaOk ? <Check className="h-3.5 w-3.5" strokeWidth={2.6} /> : <AlertTriangle className="h-3.5 w-3.5" />}
+          {slaOk ? 'SLA respecté' : 'SLA dépassé'}
+        </span>
+        <span className="text-[12.5px] text-ink-3">
+          {t('ticketsUi.sla.commitment', 'Engagement')} <span className="font-medium tabular-nums text-ink-2">{ticket.sla?.engagementHeures ?? '–'} h</span>
+        </span>
+        {remaining != null && !finished && (
+          <span
+            className={cn(
+              'ml-auto inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-medium tabular-nums',
+              remaining < 0 ? 'bg-status-danger/10 text-status-danger' : 'bg-ink/[0.05] text-ink-2 dark:bg-white/[0.06]',
+            )}
+          >
+            <Hourglass className="h-3.5 w-3.5" />
+            {remaining < 0
+              ? t('ticketsUi.sla.overdueBy', 'Échéance dépassée de {{d}}', { d: durationLabel(remaining) })
+              : t('ticketsUi.sla.dueIn', 'Échéance dans {{d}}', { d: durationLabel(remaining) })}
+          </span>
         )}
-      >
-        {slaOk ? <Check className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
-        {slaOk ? 'SLA respecté' : 'SLA dépassé'}
-        <span className="font-normal opacity-80">· engagement {ticket.sla?.engagementHeures ?? '—'} h</span>
       </div>
-      <SlaRow label="Prise en charge" real={pec} sla={slaMinutes} ready={ready} />
-      <SlaRow label="Résolution" real={res} sla={slaMinutes} ready={ready} />
+      <SlaMeter label={t('ticketsUi.sla.pickup', 'Prise en charge')} real={ticket.sla?.priseEnChargeMinutes} sla={slaMinutes} index={0} />
+      <SlaMeter label={t('ticketsUi.sla.resolution', 'Résolution')} real={ticket.sla?.resolutionMinutes} sla={slaMinutes} index={1} />
     </div>
   )
 }
 
-function SlaRow({ label, real, sla, ready }: { label: string; real: number; sla: number; ready: boolean }) {
-  const max = Math.max(real, sla, 1)
-  const ok = sla <= 0 ? true : real <= sla
-  const realPct = ready ? (real / max) * 100 : 0
-  const slaPct = ready ? (sla / max) * 100 : 0
+function SlaMeter({ label, real, sla, index }: { label: string; real?: number; sla: number; index: number }) {
+  const { t } = useTranslation()
+  const reduce = useReducedMotion()
+  const measured = real != null
+  const value = real ?? 0
+  const scale = Math.max(value, sla, 1) * 1.15
+  const ok = sla <= 0 ? true : value <= sla
+  const pct = measured ? Math.max(2, (value / scale) * 100) : 0
+  const target = sla > 0 ? (sla / scale) * 100 : null
+
   return (
     <div>
-      <p className="mb-1.5 text-[11px] uppercase tracking-[0.12em] text-ma-muted">{label}</p>
-      <div className="space-y-1.5">
-        <div className="flex items-center gap-2">
-          <div className="h-3 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-white/8">
-            <div
-              className="ma-sla-fill h-full rounded-full"
-              style={{ width: `${realPct}%`, background: ok ? '#16a34a' : '#dc2626' }}
-            />
-          </div>
-          <span className={cn('w-24 shrink-0 text-right text-xs font-medium', ok ? 'text-status-success' : 'text-status-danger')}>
-            {minutesLabel(real)}
+      <div className="mb-2 flex items-baseline justify-between gap-3">
+        <span className="text-[13px] text-ink-2">{label}</span>
+        {measured ? (
+          <span className={cn('text-[13px] font-semibold tabular-nums', ok ? 'text-status-success' : 'text-status-danger')}>{minutesLabel(value)}</span>
+        ) : (
+          <span className="text-[12.5px] text-ink-3">{t('ticketsUi.sla.notMeasured', 'Pas encore mesuré')}</span>
+        )}
+      </div>
+      <div className="relative">
+        <div className="clay-field h-2.5 overflow-hidden rounded-full">
+          <motion.div
+            className={cn('h-full rounded-full bg-gradient-to-r', ok ? 'from-status-success/70 to-status-success' : 'from-status-danger/70 to-status-danger')}
+            initial={reduce ? false : { width: 0 }}
+            animate={{ width: `${pct}%` }}
+            transition={{ type: 'spring', stiffness: 120, damping: 22, delay: reduce ? 0 : 0.2 + index * 0.12 }}
+          />
+        </div>
+        {target != null && (
+          <span className="absolute -top-1 bottom-[-4px] w-[2px] -translate-x-1/2 rounded-full bg-ink/60 dark:bg-white/70" style={{ left: `${target}%` }} aria-hidden />
+        )}
+      </div>
+      {target != null && (
+        <div className="relative mt-1.5 h-4">
+          <span
+            className="absolute -translate-x-1/2 whitespace-nowrap text-[11px] tabular-nums text-ink-3"
+            style={{ left: `${Math.min(Math.max(target, 12), 88)}%` }}
+          >
+            {t('ticketsUi.sla.target', 'Objectif {{v}}', { v: minutesLabel(sla) })}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-white/8">
-            <div className="ma-sla-fill h-full rounded-full bg-ma-navy-700/70 dark:bg-ma-gold-500/45" style={{ width: `${slaPct}%` }} />
-          </div>
-          <span className="w-24 shrink-0 text-right text-[11px] text-ma-muted">SLA {minutesLabel(sla)}</span>
-        </div>
-      </div>
+      )}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
@@ -68,7 +68,8 @@ describe('SidebarNav entrée active', () => {
     const user = userEvent.setup()
     renderAt('/rh/conges')
     await user.click(screen.getByRole('button', { name: 'Ressources humaines' }))
-    expect(screen.queryByRole('link', { name: 'Personnel & congés' })).not.toBeInTheDocument()
+    // La section se replie avec une animation : on attend la fin de la sortie.
+    await waitFor(() => expect(screen.queryByRole('link', { name: 'Personnel & congés' })).not.toBeInTheDocument())
     expect(screen.queryByRole('link', { current: 'page' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Ressources humaines' }).querySelector('[aria-hidden="true"]')).toBeTruthy()
   })

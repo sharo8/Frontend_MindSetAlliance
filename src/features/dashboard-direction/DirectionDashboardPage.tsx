@@ -1,23 +1,47 @@
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
-import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { Badge, prioriteTone } from '../../components/ui/badge'
+import { Link } from 'react-router-dom'
+import { AlertTriangle, CalendarRange, CheckCircle2, ChevronRight, Database, Download, Gauge, PhoneCall, ShieldCheck, Truck, Undo2 } from 'lucide-react'
+import { DashboardBarChart } from '../../components/charts/DashboardBarChart'
+import { DashboardDonutChart } from '../../components/charts/DashboardDonutChart'
+import { Badge, prioriteLabel, prioriteTone, sentence } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
-import { Card, CardBody, CardHeader } from '../../components/ui/card'
+import { Card } from '../../components/ui/card'
 import { PageHeader } from '../../components/ui/page-header'
 import { CnnSourceBadge } from '../../components/ui/cnn-source-badge'
+import { EmptyState, ScopeEmpty } from '../../components/ui/scope-empty'
+import { StatCard } from '../../components/ui/stat-card'
+import { SectionCard } from '../../components/ui/toolbar'
+import { Mono } from '../../components/ui/table'
+import { Skeleton } from '../../components/ui/skeleton'
+import { Stagger, StaggerItem } from '../../components/motion/page-fade'
 import { fetchDirectionDashboard, type DirectionCnn } from '../../lib/api/ops'
-import { fetchVitrine } from '../../lib/api/domain'
+import { fetchVitrine, type VitrineKpi } from '../../lib/api/domain'
 import { exportTickets, listTickets } from '../../lib/api/tickets'
 import { useProjectStore } from '../../lib/projects/project-store'
 import { RequirePermission } from '../../lib/rbac/RequirePermission'
-import { categorieLabel, kpiLabel } from '../../lib/vitrine/labels'
-import { projectLabel } from '../../lib/rbac/rbac'
+import { categorieLabel as rawCategorieLabel, kpiLabel } from '../../lib/vitrine/labels'
 
-const PIE_COLORS = ['#e0a721', '#16215c', '#3b82f6', '#22c55e']
+const categorieLabel = (code: string) => {
+  const label = rawCategorieLabel(code)
+  return label === code ? sentence(code.replaceAll('_', ' ')) : label
+}
+import { projectLabel } from '../../lib/rbac/rbac'
+import { cn } from '../../lib/utils'
+import { MetricRow, StatSkeletons, compact, foldSlices } from '../ops/charts'
+
+const KPI_ACCENTS = ['gold', 'info', 'ok', 'warn'] as const
+
+function formatDateTime(iso: string | undefined | null, lang: string) {
+  if (!iso) return null
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return null
+  return date.toLocaleString(lang === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false })
+}
 
 export function DirectionDashboardPage() {
   const { t, i18n } = useTranslation()
+  const lang = i18n.language || 'fr'
   const currentProject = useProjectStore((s) => s.currentProject)
   const cnn = currentProject === 'CNN'
   const direction = useQuery({
@@ -36,231 +60,251 @@ export function DirectionDashboardPage() {
     enabled: !cnn,
   })
 
-  const filtered = (kpis.data ?? []).filter(
-    (k) => currentProject === 'ENTREPRISE' || k.project?.code === currentProject,
-  )
+  const filtered = (kpis.data ?? []).filter((k) => currentProject === 'ENTREPRISE' || k.project?.code === currentProject)
   const cards = filtered.slice(0, 4)
   const byCategory = Object.entries(
     filtered.reduce<Record<string, number>>((acc, kpi) => {
       acc[kpi.categorie] = (acc[kpi.categorie] ?? 0) + Number(kpi.valeur ?? 0)
       return acc
     }, {}),
-  ).map(([name, value]) => ({ name: categorieLabel(name), value }))
+  ).map(([name, value]) => ({ label: categorieLabel(name), valeur: value, couleur: '' }))
 
   const incidents = (tickets.data ?? []).filter((t) => t.type === 'INCIDENT' && !['CLOTURE', 'ANNULE', 'RESOLU'].includes(t.statut))
   const volume = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'].map((mois, i) => ({
     mois,
     volume: filtered.reduce((sum, k) => sum + Number(k.valeur ?? 0), 0) / 6 + i,
   }))
+  const lastUpdate = formatDateTime(filtered[0]?.derniereMaj, lang)
 
   if (cnn) {
     return (
       <RequirePermission anyOf={['DIRECTION', 'CONSEIL_ADMINISTRATION', 'ADMIN_SYSTEME']}>
-        <CnnDirection data={direction.data} loading={direction.isLoading} lang={i18n.language || 'fr'} />
+        <CnnDirection data={direction.data} loading={direction.isLoading} lang={lang} />
       </RequirePermission>
     )
   }
 
   return (
     <RequirePermission anyOf={['DIRECTION', 'CONSEIL_ADMINISTRATION', 'ADMIN_SYSTEME']}>
-      <div className="space-y-4">
+      <div className="space-y-6">
         <PageHeader
           kicker={t('pages.direction.kicker')}
           title={t('pages.direction.title')}
           subtitle={projectLabel(currentProject === 'ENTREPRISE' ? null : currentProject)}
           actions={
-            <Button
-              variant="outline"
-              onClick={() => void exportTickets(currentProject === 'ENTREPRISE' ? undefined : currentProject)}
-            >
-              Exporter le rapport
+            <Button variant="outline" onClick={() => void exportTickets(currentProject === 'ENTREPRISE' ? undefined : currentProject)}>
+              <Download size={16} />
+              {t('opsui.direction.export', 'Exporter le rapport')}
             </Button>
           }
         />
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {(cards.length ? cards : [{ id: 0, cle: 'indicateur', categorie: 'OPERATIONNEL', valeur: '—', project: undefined }]).map((kpi) => (
-            <Card key={kpi.id}>
-              <CardBody>
-                <p className="text-xs uppercase tracking-wide text-ma-navy-700/70">
-                  {categorieLabel(kpi.categorie)} · {kpi.project?.code ? projectLabel(kpi.project.code) : 'Tous projets'}
-                </p>
-                <p className="mt-2 text-3xl font-semibold">{kpi.valeur ?? '—'}</p>
-                <p className="mt-1 text-sm">{kpiLabel(kpi.cle, kpi.categorie)}</p>
-              </CardBody>
-            </Card>
-          ))}
+        {kpis.isLoading ? (
+          <StatSkeletons />
+        ) : cards.length === 0 ? (
+          <Card>
+            <EmptyState icon={<Gauge />} title={t('opsui.direction.noKpi', 'Aucun indicateur publié')} hint={t('opsui.direction.noKpiHint', 'Les indicateurs de la vitrine apparaîtront ici dès leur publication.')} />
+          </Card>
+        ) : (
+          <Stagger className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4 [&>*>*]:h-full">
+            {cards.map((kpi, i) => (
+              <StaggerItem key={kpi.id}>
+                <KpiTile kpi={kpi} accent={KPI_ACCENTS[i % 4]} />
+              </StaggerItem>
+            ))}
+          </Stagger>
+        )}
+        <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <div className="h-[380px] min-w-0">
+            <DashboardBarChart
+              className="h-full"
+              title={t('opsui.direction.monthly', 'Volume mensuel')}
+              data={volume}
+              dataKey="volume"
+              xAxisKey="mois"
+              loading={kpis.isLoading}
+              color={1}
+            />
+          </div>
+          <div className="h-[380px] min-w-0">
+            <DashboardDonutChart
+              className="h-full"
+              title={t('opsui.direction.byCategory', 'Répartition par catégorie')}
+              data={byCategory}
+              loading={kpis.isLoading}
+              centerLabel={t('cnn.finance.center')}
+              centerValue={compact(byCategory.reduce((sum, row) => sum + row.valeur, 0))}
+            />
+          </div>
         </div>
-        <div className="grid gap-4 xl:grid-cols-3">
-          <Card className="xl:col-span-2">
-            <CardHeader>
-              <h2 className="font-semibold">Volume mensuel</h2>
-            </CardHeader>
-            <CardBody className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={volume}>
-                  <XAxis dataKey="mois" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="volume" fill="#e0a721" radius={4} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardBody>
-          </Card>
-          <Card>
-            <CardHeader>
-              <h2 className="font-semibold">Répartition par catégorie</h2>
-            </CardHeader>
-            <CardBody className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={byCategory.length ? byCategory : [{ name: 'Aucune donnée', value: 1 }]} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80}>
-                    {(byCategory.length ? byCategory : [{ name: 'Aucune donnée', value: 1 }]).map((_, i) => (
-                      <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardBody>
-          </Card>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <h2 className="font-semibold">Incidents actifs</h2>
-            </CardHeader>
-            <CardBody className="space-y-2">
-              {incidents.slice(0, 8).map((t) => (
-                <div key={t.id} className="flex items-center justify-between text-sm">
-                  <span>{t.reference} — {t.titre}</span>
-                  <Badge tone={prioriteTone(t.priorite)}>{t.priorite}</Badge>
-                </div>
-              ))}
-              {incidents.length === 0 && <p className="text-sm">Aucun incident actif.</p>}
-            </CardBody>
-          </Card>
-          <Card>
-            <CardHeader>
-              <h2 className="font-semibold">Santé du système</h2>
-            </CardHeader>
-            <CardBody>
-              <p className="text-sm text-status-success">● Cœur applicatif joignable</p>
-              <p className="mt-2 text-sm">Dernière mise à jour vitrine : {filtered[0]?.derniereMaj ?? '—'}</p>
-            </CardBody>
-          </Card>
+        <div className="grid items-start gap-4 lg:grid-cols-2">
+          <SectionCard
+            title={t('opsui.direction.activeIncidents', 'Incidents actifs')}
+            subtitle={incidents.length ? t('opsui.direction.incidentCount', '{{count}} en cours de traitement', { count: incidents.length }) : undefined}
+            icon={<AlertTriangle />}
+            tone="coral"
+            bodyClassName="px-2 pb-3 pt-2 sm:px-3"
+            action={
+              incidents.length > 0 ? (
+                <Link to="/tickets" className="rounded-[8px] px-2 py-1 text-[12.5px] font-semibold text-accent-ink hover:bg-ma-gold-500/10">
+                  {t('opsui.direction.seeAll', 'Tout voir')}
+                </Link>
+              ) : undefined
+            }
+          >
+            {tickets.isLoading ? (
+              <div className="space-y-3 px-3 py-2">
+                {[0, 1, 2].map((i) => (
+                  <Skeleton key={i} className="h-10" />
+                ))}
+              </div>
+            ) : incidents.length === 0 ? (
+              <EmptyState icon={<CheckCircle2 />} title={t('opsui.direction.noIncident', 'Aucun incident actif')} hint={t('opsui.direction.noIncidentHint', 'Tout est calme pour le moment.')} />
+            ) : (
+              <ul>
+                {incidents.slice(0, 8).map((ticket) => (
+                  <li key={ticket.id}>
+                    <Link
+                      to={`/tickets/${ticket.id}`}
+                      className="group flex items-center gap-3 rounded-[14px] px-3 py-2.5 transition-colors hover:bg-ink/[0.035] focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)] dark:hover:bg-white/[0.04]"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[13.5px] font-medium text-ink">{ticket.titre}</p>
+                        <Mono className="text-ink-3">{ticket.reference}</Mono>
+                      </div>
+                      <Badge tone={prioriteTone(ticket.priorite)}>{prioriteLabel(ticket.priorite)}</Badge>
+                      <ChevronRight className="h-4 w-4 shrink-0 text-ink-3 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </SectionCard>
+          <SectionCard title={t('opsui.direction.health', 'Santé du système')} icon={<ShieldCheck />} tone="teal">
+            <HealthLine ok label={t('opsui.direction.coreUp', 'Cœur applicatif joignable')} />
+            <MetricRow
+              label={t('opsui.direction.vitrineUpdate', 'Dernière mise à jour de la vitrine')}
+              value={<span className="text-[14px] font-medium">{lastUpdate ?? <span className="text-ink-3">–</span>}</span>}
+            />
+            <MetricRow label={t('opsui.direction.kpiCount', 'Indicateurs suivis')} value={filtered.length} />
+          </SectionCard>
         </div>
       </div>
     </RequirePermission>
   )
 }
 
+function KpiTile({ kpi, accent }: { kpi: VitrineKpi; accent: (typeof KPI_ACCENTS)[number] }) {
+  const { t } = useTranslation()
+  const hint = `${categorieLabel(kpi.categorie)} · ${kpi.project?.code ? projectLabel(kpi.project.code) : t('opsui.direction.allProjects', 'Tous projets')}`
+  const numeric = typeof kpi.valeur === 'number' ? kpi.valeur : kpi.valeur != null && kpi.valeur !== '' && !Number.isNaN(Number(kpi.valeur)) ? Number(kpi.valeur) : null
+  if (numeric != null) return <StatCard label={kpiLabel(kpi.cle, kpi.categorie)} value={numeric} hint={hint} accent={accent} />
+  return (
+    <div className="clay flex min-h-[132px] flex-col rounded-[var(--radius-ma)] p-5 ring-1 ring-hairline">
+      <p className="text-[12.5px] font-medium leading-snug text-ink-3">{kpiLabel(kpi.cle, kpi.categorie)}</p>
+      <p className="mt-auto pt-3 text-[24px] font-semibold leading-tight tracking-[-0.03em] text-ink">{kpi.valeur ?? <span className="text-ink-3">–</span>}</p>
+      <p className="mt-2 text-[12px] text-ink-3">{hint}</p>
+    </div>
+  )
+}
+
+function HealthLine({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <div className="flex items-center gap-3 border-b border-hairline pb-3">
+      <span className="relative flex h-2.5 w-2.5">
+        {ok && <span className="ma-pulse absolute inline-flex h-full w-full rounded-full bg-status-success/60" />}
+        <span className={cn('relative inline-flex h-2.5 w-2.5 rounded-full', ok ? 'bg-status-success' : 'bg-status-danger')} />
+      </span>
+      <p className="text-[13.5px] font-medium text-ink">{label}</p>
+    </div>
+  )
+}
+
 function CnnDirection({ data, loading, lang }: { data?: DirectionCnn; loading: boolean; lang: string }) {
   const { t } = useTranslation()
   const unavailable = !loading && data?.source !== 'CNN_DB'
-  const slices = (data?.parStatut ?? []).map((row) => ({
-    code: row.statut,
-    label: t(`cnn.status.${row.statut}`, { defaultValue: row.statut }),
-    value: Number(row.volume ?? 0),
-    couleur: row.couleur ?? '#64748b',
-  }))
-  const total = slices.reduce((sum, slice) => sum + slice.value, 0)
+  const slices = foldSlices(
+    (data?.parStatut ?? []).map((row) => ({ label: t(`cnn.status.${row.statut}`, { defaultValue: row.statut }), valeur: Number(row.volume ?? 0) })),
+    6,
+    t('opsui.charts.other', 'Autres'),
+  )
   const months = (data?.coursesParMois ?? []).map((row) => ({
     mois: formatMonth(row.mois, lang),
     volume: row.volume,
   }))
+  const sixMonths = months.reduce((s, m) => s + Number(m.volume ?? 0), 0)
+  const thisMonth = months.length ? Number(months[months.length - 1].volume ?? 0) : 0
   const updated = data?.calculeLe
-    ? new Intl.DateTimeFormat(lang, { dateStyle: 'short', timeStyle: 'medium' }).format(new Date(data.calculeLe))
-    : '—'
+    ? new Intl.DateTimeFormat(lang, { dateStyle: 'medium', timeStyle: 'medium', hour12: false }).format(new Date(data.calculeLe))
+    : null
+  const noIncidentData = data?.remboursementsEnAttente == null && data?.appelsUrgence == null
   return (
-    <div className="space-y-4">
-      <PageHeader kicker={t('pages.direction.kicker')} title={t('pages.direction.title')} subtitle={projectLabel('CNN')} />
-      <CnnSourceBadge source={data?.source} ageSecondes={data?.ageSecondes} readOnlyVerified={data?.readOnlyVerified} />
-      {unavailable && <p className="text-sm">{t('cnn.source.downDetail')}</p>}
-      {!unavailable && (
+    <div className="space-y-6">
+      <PageHeader
+        kicker={t('pages.direction.kicker')}
+        title={t('pages.direction.title')}
+        subtitle={projectLabel('CNN')}
+      />
+      {(data || !loading) && <div className="max-w-full [&>p]:h-auto [&>p]:min-h-7 [&>p]:rounded-[14px] [&>p]:py-1 [&>p]:leading-snug sm:[&>p]:rounded-full"><CnnSourceBadge source={data?.source} ageSecondes={data?.ageSecondes} readOnlyVerified={data?.readOnlyVerified} /></div>}
+      {loading && <StatSkeletons />}
+      {unavailable && <ScopeEmpty context={t('cnn.source.downDetail')} />}
+      {!unavailable && !loading && (
         <>
-          <div className="grid gap-4 xl:grid-cols-3">
-            <Card className="xl:col-span-2">
-              <CardHeader>
-                <h2 className="font-semibold">{t('cnn.direction.volume')}</h2>
-              </CardHeader>
-              <CardBody className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={months}>
-                    <XAxis dataKey="mois" />
-                    <YAxis allowDecimals={false} width={36} />
-                    <Tooltip formatter={(value) => [String(value), t('cnn.direction.courses')]} />
-                    <Bar dataKey="volume" fill="#e0a721" radius={4} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardBody>
-            </Card>
-            <Card>
-              <CardHeader>
-                <h2 className="font-semibold">{t('cnn.direction.split')}</h2>
-              </CardHeader>
-              <CardBody className="space-y-2">
-                <div className="relative mx-auto h-[150px] w-[150px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={slices.length ? slices : [{ label: t('cnn.direction.empty'), value: 0 }]} dataKey="value" nameKey="label" innerRadius={46} outerRadius={68}>
-                        {(slices.length ? slices : [{ couleur: '#64748b' }]).map((slice, i) => (
-                          <Cell key={i} fill={'couleur' in slice ? slice.couleur : COLORS[i % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                    <p className="text-lg font-semibold tabular-nums">{total}</p>
-                    <p className="text-[10px] uppercase tracking-wide text-ma-muted">{t('cnn.finance.center')}</p>
-                  </div>
-                </div>
-                <ul className="space-y-1 text-sm">
-                  {slices.map((slice) => (
-                    <li key={slice.code} className="flex gap-2" title={slice.label}>
-                      <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: slice.couleur }} />
-                      <span className="min-w-0 flex-1 truncate">{slice.label}</span>
-                      <span className="tabular-nums">{slice.value}</span>
-                      <span className="w-10 text-right tabular-nums text-ma-muted">{total ? Math.round((slice.value / total) * 100) : 0}%</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardBody>
-            </Card>
+          <Stagger className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4 [&>*>*]:h-full">
+            <StaggerItem>
+              <StatCard label={t('opsui.direction.coursesMonth', 'Courses ce mois-ci')} value={thisMonth} accent="gold" icon={<Truck />} />
+            </StaggerItem>
+            <StaggerItem>
+              <StatCard label={t('opsui.direction.courses6m', 'Courses sur 6 mois')} value={sixMonths} accent="info" icon={<CalendarRange />} />
+            </StaggerItem>
+            <StaggerItem>
+              <StatCard label={t('cnn.direction.refundsPending')} value={data?.remboursementsEnAttente ?? 0} accent="warn" icon={<Undo2 />} />
+            </StaggerItem>
+            <StaggerItem>
+              <StatCard label={t('cnn.direction.emergency')} value={data?.appelsUrgence ?? 0} accent={(data?.appelsUrgence ?? 0) > 0 ? 'danger' : 'ok'} icon={<PhoneCall />} />
+            </StaggerItem>
+          </Stagger>
+          <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+            <div className="h-[400px] min-w-0">
+              <DashboardBarChart
+                className="h-full"
+                title={t('cnn.direction.volume')}
+                subtitle={t('opsui.direction.sixMonths', 'Six derniers mois')}
+                data={months}
+                dataKey="volume"
+                xAxisKey="mois"
+                color={1}
+                unit={t('cnn.direction.courses').toLocaleLowerCase(lang)}
+              />
+            </div>
+            <div className="h-[400px] min-w-0">
+              <DashboardDonutChart className="h-full" title={t('cnn.direction.split')} data={slices} centerLabel={t('cnn.direction.courses')} />
+            </div>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <h2 className="font-semibold">{t('cnn.direction.incidents')}</h2>
-              </CardHeader>
-              <CardBody className="space-y-2 text-sm">
-                {data?.remboursementsEnAttente == null && data?.appelsUrgence == null ? (
-                  <p>{t('cnn.direction.emptyIncidents')}</p>
-                ) : (
-                  <>
-                    <p className="flex justify-between">
-                      <span>{t('cnn.direction.refundsPending')}</span>
-                      <span className="tabular-nums">{data?.remboursementsEnAttente ?? 0}</span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span>{t('cnn.direction.emergency')}</span>
-                      <span className="tabular-nums">{data?.appelsUrgence ?? 0}</span>
-                    </p>
-                    {(data?.remboursementsEnAttente ?? 0) === 0 && (data?.appelsUrgence ?? 0) === 0 && (
-                      <p className="text-ma-muted">{t('cnn.direction.noneOpen')}</p>
-                    )}
-                  </>
-                )}
-              </CardBody>
-            </Card>
-            <Card>
-              <CardHeader>
-                <h2 className="font-semibold">{t('cnn.direction.health')}</h2>
-              </CardHeader>
-              <CardBody>
-                <p className="text-sm">{t('cnn.direction.updated', { time: updated })}</p>
-              </CardBody>
-            </Card>
+          <div className="grid items-start gap-4 lg:grid-cols-2">
+            <SectionCard title={t('cnn.direction.incidents')} icon={<AlertTriangle />} tone="coral">
+              {noIncidentData ? (
+                <EmptyState icon={<CheckCircle2 />} title={t('cnn.direction.emptyIncidents')} />
+              ) : (
+                <>
+                  <MetricRow
+                    label={t('cnn.direction.refundsPending')}
+                    value={data?.remboursementsEnAttente ?? 0}
+                    tone={(data?.remboursementsEnAttente ?? 0) > 0 ? 'warning' : undefined}
+                  />
+                  <MetricRow label={t('cnn.direction.emergency')} value={data?.appelsUrgence ?? 0} tone={(data?.appelsUrgence ?? 0) > 0 ? 'danger' : undefined} />
+                  {(data?.remboursementsEnAttente ?? 0) === 0 && (data?.appelsUrgence ?? 0) === 0 && (
+                    <p className="pt-3 text-[13px] text-ink-3">{t('cnn.direction.noneOpen')}</p>
+                  )}
+                </>
+              )}
+            </SectionCard>
+            <SectionCard title={t('cnn.direction.health')} icon={<Database />} tone="teal">
+              <HealthLine ok={data?.source === 'CNN_DB'} label={t('opsui.direction.readOnlyDb', 'Base Colis na Nga lue en lecture seule')} />
+              <MetricRow
+                label={t('opsui.direction.lastRead', 'Dernière lecture')}
+                value={<span className="text-[14px] font-medium">{updated ?? <span className="text-ink-3">–</span>}</span>}
+              />
+            </SectionCard>
           </div>
         </>
       )}
@@ -273,5 +317,3 @@ function formatMonth(iso: string, lang: string) {
   if (!year || !month) return iso
   return new Intl.DateTimeFormat(lang, { month: 'short', year: '2-digit' }).format(new Date(year, month - 1, 1))
 }
-
-const COLORS = ['#e0a721', '#16215c', '#3b82f6', '#22c55e']

@@ -8,11 +8,13 @@ import sw from '../../locales/sw.json'
 export const LANGUAGE_KEY = 'ma-language-preference'
 export const SUPPORTED_LANGS = ['fr', 'en', 'ln', 'sw'] as const
 export type AppLanguage = (typeof SUPPORTED_LANGS)[number]
+/** Langues proposées dans l'interface. */
+export const UI_LANGS = ['fr', 'en'] as const
 
 function initialLanguage(): AppLanguage {
   if (typeof window === 'undefined') return 'fr'
   const stored = window.localStorage.getItem(LANGUAGE_KEY)
-  if (stored && SUPPORTED_LANGS.includes(stored as AppLanguage)) return stored as AppLanguage
+  if (stored && (UI_LANGS as readonly string[]).includes(stored)) return stored as AppLanguage
   return 'fr'
 }
 

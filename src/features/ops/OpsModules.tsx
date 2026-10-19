@@ -1,50 +1,5 @@
 import { useTranslation } from 'react-i18next'
 import { ModuleCrud } from '../../components/ui/module-crud'
-import { useActiveSociety } from '../../lib/projects/use-active-society'
-
-export function FleetMapPage() {
-  const { t } = useTranslation()
-  const { ville } = useActiveSociety()
-  return (
-    <ModuleCrud
-      module="COURSE"
-      permission="VIEW_FLEET_MAP"
-      kicker={t('pages.ops.kicker')}
-      title={t('ops.fleet.title')}
-      subtitle={ville ? t('ops.fleet.subtitleCity', { ville }) : t('ops.fleet.subtitle')}
-      createLabel={t('ops.fleet.create')}
-    />
-  )
-}
-
-export function IncidentsPage() {
-  const { t } = useTranslation()
-  return (
-    <ModuleCrud
-      module="INCIDENT"
-      permission="RESOLVE_INCIDENTS"
-      kicker={t('pages.ops.kicker')}
-      title={t('ops.incidents.title')}
-      subtitle={t('ops.incidents.subtitle')}
-      createLabel={t('ops.incidents.create')}
-    />
-  )
-}
-
-export function CouriersPage() {
-  const { t } = useTranslation()
-  return (
-    <ModuleCrud
-      module="COURIER"
-      permission="VALIDATE_COURIER"
-      kicker={t('nav.section.commercial')}
-      title={t('ops.couriers.title')}
-      subtitle={t('ops.couriers.subtitle')}
-      createLabel={t('ops.couriers.create')}
-      archiveLabel={t('ops.couriers.archive')}
-    />
-  )
-}
 
 export function EnterprisesPage() {
   const { t } = useTranslation()
@@ -170,7 +125,7 @@ export function MediaLibraryPage() {
       permission="MANAGE_MEDIA_LIBRARY"
       kicker={t('pages.media.kicker')}
       title={t('ops.media.title')}
-      subtitle={t('ops.media.subtitle')}
+      subtitle={t('opsui.media.subtitle', 'Pièces créatives. Tout retrait demande un motif.')}
       createLabel={t('ops.media.create')}
       archiveLabel={t('ops.media.archive')}
     />

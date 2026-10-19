@@ -1,12 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Check, Lock } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Check, Circle, KeyRound, Lock, ShieldCheck, UserRound } from 'lucide-react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AgentPhotoField } from '../../components/ui/AgentPhotoField'
+import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
+import { Card } from '../../components/ui/card'
 import { Feedback } from '../../components/ui/feedback'
-import { Input } from '../../components/ui/input'
+import { FieldLabel, Input } from '../../components/ui/input'
 import { Modal } from '../../components/ui/modal'
+import { RoleScopeBadges } from '../../components/ui/role-scope-badges'
+import { Skeleton } from '../../components/ui/skeleton'
+import { SectionCard } from '../../components/ui/toolbar'
 import { Toast } from '../../components/ui/toast'
 import { ApiError } from '../../lib/api/client'
 import { changePassword, fetchMe, updateMe } from '../../lib/api/auth'
@@ -19,9 +24,9 @@ const FR = {
   prenom: 'Prénom',
   nom: 'Nom',
   email: 'E-mail professionnel',
-  emailHint: 'Identifiant de connexion — non modifiable.',
+  emailHint: 'Identifiant de connexion, non modifiable.',
   telephone: 'Téléphone',
-        passwordSection: 'Sécurité',
+  passwordSection: 'Sécurité',
   currentPassword: 'Mot de passe actuel',
   newPassword: 'Nouveau mot de passe',
   confirmPassword: 'Confirmation du nouveau mot de passe',
@@ -37,9 +42,23 @@ type Props = {
   compact?: boolean
   hideFooter?: boolean
   french?: boolean
+  /** `page` : en-tête avec grand avatar et sections en cartes (page Mon compte). */
+  variant?: 'page' | 'modal'
+  /** Contenu affiché à droite des sections sur grand écran (variante page). */
+  aside?: ReactNode
 }
 
-export function ProfileEditor({ onCancel, hideFooter, french }: Props) {
+/** Règle du mot de passe, cochée au fil de la saisie. */
+function Rule({ ok, children }: { ok: boolean; children: ReactNode }) {
+  return (
+    <li className={cn('flex items-center gap-1.5 text-[12.5px] transition-colors duration-200', ok ? 'text-status-success' : 'text-ink-3')}>
+      {ok ? <Check className="h-3.5 w-3.5" strokeWidth={2.6} /> : <Circle className="h-3 w-3" strokeWidth={2} />}
+      {children}
+    </li>
+  )
+}
+
+export function ProfileEditor({ onCancel, hideFooter, french, variant = 'modal', aside }: Props) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const applyTokens = useAuthStore((s) => s.applyTokens)
@@ -51,7 +70,7 @@ export function ProfileEditor({ onCancel, hideFooter, french }: Props) {
         prenom: t('profile.prenom'),
         nom: t('profile.nom'),
         email: t('profile.email'),
-        emailHint: t('profile.emailHint'),
+        emailHint: t('acces.profile.emailHint', 'Identifiant de connexion, non modifiable.'),
         telephone: t('profile.telephone'),
         passwordSection: t('profile.passwordSection'),
         currentPassword: t('profile.currentPassword'),
@@ -113,6 +132,8 @@ export function ProfileEditor({ onCancel, hideFooter, french }: Props) {
       setNewPassword('')
       setConfirmPassword('')
       void queryClient.setQueryData(['agents-me'], result.updated)
+      void queryClient.invalidateQueries({ queryKey: ['agents-me'] })
+      void queryClient.invalidateQueries({ queryKey: ['agent-photo'] })
     },
     onError: (err) => {
       setSuccess(null)
@@ -120,68 +141,190 @@ export function ProfileEditor({ onCancel, hideFooter, french }: Props) {
     },
   })
 
-  const labelClass = 'mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.14em] text-ma-muted'
+  const page = variant === 'page'
+  const fullName = `${prenom || agent?.prenom || ''} ${nom || agent?.nom || ''}`.trim()
+  const mismatch = Boolean(confirmPassword) && confirmPassword !== newPassword
+
+  const photoField = (
+    <AgentPhotoField
+      prenom={prenom || agent?.prenom || ''}
+      nom={nom || agent?.nom || ''}
+      value={photo}
+      error={photoError}
+      onError={setPhotoError}
+      onChange={setPhoto}
+      size="lg"
+      showCaption={!page}
+      layout={page ? 'avatar' : 'row'}
+    />
+  )
+
+  const identityFields = (
+    <div className="space-y-4">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="block min-w-0">
+          <FieldLabel>{L.prenom}</FieldLabel>
+          <Input value={prenom} autoComplete="given-name" onChange={(e) => setPrenom(e.target.value)} />
+        </label>
+        <label className="block min-w-0">
+          <FieldLabel>{L.nom}</FieldLabel>
+          <Input value={nom} autoComplete="family-name" onChange={(e) => setNom(e.target.value)} />
+        </label>
+      </div>
+      <label className="block">
+        <FieldLabel>{L.email}</FieldLabel>
+        <div className="relative">
+          <Input className="pr-10" value={agent?.email ?? ''} readOnly disabled />
+          <Lock className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" />
+        </div>
+        <span className="mt-1.5 block text-[12px] text-ink-3">{L.emailHint}</span>
+      </label>
+      <label className="block">
+        <FieldLabel>{L.telephone}</FieldLabel>
+        <Input type="tel" autoComplete="tel" placeholder="+243 81 234 5678" value={telephone} onChange={(e) => setTelephone(e.target.value)} />
+      </label>
+    </div>
+  )
+
+  const passwordFields = (
+    <div className="space-y-4">
+      <label className="block">
+        <FieldLabel>{L.currentPassword}</FieldLabel>
+        <Input type="password" autoComplete="current-password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+      </label>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="block min-w-0">
+          <FieldLabel>{L.newPassword}</FieldLabel>
+          <Input type="password" autoComplete="new-password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+        </label>
+        <label className="block min-w-0">
+          <FieldLabel>{L.confirmPassword}</FieldLabel>
+          <Input
+            type="password"
+            autoComplete="new-password"
+            aria-invalid={mismatch}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </label>
+      </div>
+      <ul className="flex flex-wrap gap-x-4 gap-y-1.5" aria-label={L.complexity}>
+        <Rule ok={newPassword.length >= 8}>{t('acces.profile.ruleLength', '8 caractères minimum')}</Rule>
+        <Rule ok={/[A-Za-z]/.test(newPassword)}>{t('acces.profile.ruleLetter', 'Une lettre')}</Rule>
+        <Rule ok={/\d/.test(newPassword)}>{t('acces.profile.ruleDigit', 'Un chiffre')}</Rule>
+        <Rule ok={Boolean(newPassword) && confirmPassword === newPassword}>{t('acces.profile.ruleMatch', 'Confirmation identique')}</Rule>
+      </ul>
+    </div>
+  )
+
+  const submit = (
+    <Button type="submit" disabled={save.isPending || !agent} className={cn(savedFlash && '[background:linear-gradient(180deg,#34c172,#16a34a)] text-white')}>
+      {savedFlash ? <Check className="h-4 w-4" /> : null}
+      {save.isPending ? L.saving : savedFlash ? L.saved : L.save}
+    </Button>
+  )
+
+  if (page) {
+    return (
+      <form
+        id="ma-profile-form"
+        className="space-y-5"
+        onSubmit={(e) => {
+          e.preventDefault()
+          save.mutate()
+        }}
+      >
+        {profile.isError && <Feedback tone="danger">{t('profile.loadError')}</Feedback>}
+
+        <Card className="overflow-hidden">
+          <div className="relative flex flex-col items-center gap-5 px-5 py-6 text-center sm:flex-row sm:items-center sm:px-7 sm:text-left">
+            {photoField}
+            <div className="min-w-0 flex-1">
+              {profile.isLoading ? (
+                <div className="space-y-2.5">
+                  <Skeleton className="mx-auto h-7 w-56 sm:mx-0" />
+                  <Skeleton className="mx-auto h-4 w-44 sm:mx-0" />
+                </div>
+              ) : (
+                <>
+                  <h2 className="text-[24px] font-bold leading-tight tracking-[-0.03em] text-ink sm:text-[26px]">{fullName || '–'}</h2>
+                  <p className="mt-1 truncate text-[14px] text-ink-3">
+                    {agent?.email}
+                    {agent?.departement ? ` · ${agent.departement}` : ''}
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5 sm:justify-start">
+                    <Badge dot tone={agent?.statut === 'ACTIF' ? 'success' : 'danger'}>
+                      {agent?.statut === 'ACTIF' ? t('common.active') : t('common.inactive')}
+                    </Badge>
+                    {agent?.twoFactorEnabled && (
+                      <Badge tone="info">
+                        <ShieldCheck className="h-3 w-3" aria-hidden />
+                        {t('acces.profile.twoFactor', 'Double authentification')}
+                      </Badge>
+                    )}
+                    {(agent?.roles ?? []).map((r, i) => (
+                      <RoleScopeBadges key={`${r.role}-${r.projectCode}-${i}`} role={r.role} projectCode={r.projectCode} />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </Card>
+
+        <div className={cn('grid gap-5', aside && 'xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]')}>
+          <div className="min-w-0 space-y-5">
+            <SectionCard
+              title={t('acces.profile.identity', 'Informations personnelles')}
+              subtitle={t('acces.profile.identityHint', 'Visibles par vos collègues dans l’annuaire.')}
+              icon={<UserRound />}
+              tone="navy"
+            >
+              {identityFields}
+            </SectionCard>
+            <SectionCard title={L.passwordSection} subtitle={L.complexity} icon={<KeyRound />} tone="gold">
+              {passwordFields}
+            </SectionCard>
+            {error && <Feedback tone="danger">{error}</Feedback>}
+            {!hideFooter && (
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {onCancel && (
+                  <Button variant="outline" onClick={onCancel}>
+                    {L.cancel}
+                  </Button>
+                )}
+                {submit}
+              </div>
+            )}
+          </div>
+          {aside && <div className="min-w-0">{aside}</div>}
+        </div>
+        <Toast message={success} onDismiss={() => setSuccess(null)} />
+      </form>
+    )
+  }
 
   return (
     <form
       id="ma-profile-form"
-      className="space-y-5"
+      className="space-y-6"
       onSubmit={(e) => {
         e.preventDefault()
         save.mutate()
       }}
     >
       {profile.isError && <Feedback tone="danger">{t('profile.loadError')}</Feedback>}
-      <AgentPhotoField
-        prenom={prenom || agent?.prenom || ''}
-        nom={nom || agent?.nom || ''}
-        value={photo}
-        error={photoError}
-        onError={setPhotoError}
-        onChange={setPhoto}
-        size="lg"
-        showCaption={false}
-      />
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="block">
-          <span className={labelClass}>{L.prenom}</span>
-          <Input value={prenom} onChange={(e) => setPrenom(e.target.value)} />
-        </label>
-        <label className="block">
-          <span className={labelClass}>{L.nom}</span>
-          <Input value={nom} onChange={(e) => setNom(e.target.value)} />
-        </label>
-      </div>
-      <label className="block">
-        <span className={labelClass}>{L.email}</span>
-        <div className="relative">
-          <Input className="opacity-80 pr-10" value={agent?.email ?? ''} readOnly disabled />
-          <Lock className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ma-muted" />
+      {photoField}
+      {identityFields}
+      <div className="space-y-4 border-t border-hairline pt-5">
+        <div>
+          <h3 className="flex items-center gap-2 text-[14.5px] font-semibold tracking-[-0.015em] text-ink">
+            <KeyRound className="h-4 w-4 text-accent-ink" />
+            {L.passwordSection}
+          </h3>
+          <p className="mt-0.5 text-[12.5px] text-ink-3">{L.complexity}</p>
         </div>
-        <span className="mt-1.5 flex items-center gap-1.5 text-xs italic text-ma-muted">
-          <Lock className="h-3 w-3 shrink-0" />
-          {L.emailHint}
-        </span>
-      </label>
-      <label className="block">
-        <span className={labelClass}>{L.telephone}</span>
-        <Input value={telephone} onChange={(e) => setTelephone(e.target.value)} />
-      </label>
-      <div className="space-y-3 border-t border-ma-line pt-4 dark:border-white/10">
-        <h3 className={labelClass}>{L.passwordSection}</h3>
-        <p className="text-xs text-ma-muted">{L.complexity}</p>
-        <label className="block">
-          <span className={labelClass}>{L.currentPassword}</span>
-          <Input type="password" autoComplete="current-password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
-        </label>
-        <label className="block">
-          <span className={labelClass}>{L.newPassword}</span>
-          <Input type="password" autoComplete="new-password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-        </label>
-        <label className="block">
-          <span className={labelClass}>{L.confirmPassword}</span>
-          <Input type="password" autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-        </label>
+        {passwordFields}
       </div>
       {error && <Feedback tone="danger">{error}</Feedback>}
       <Toast message={success} onDismiss={() => setSuccess(null)} />
@@ -192,10 +335,7 @@ export function ProfileEditor({ onCancel, hideFooter, french }: Props) {
               {L.cancel}
             </Button>
           )}
-          <Button type="submit" disabled={save.isPending || !agent} className={cn(savedFlash && 'bg-status-success text-white hover:bg-status-success')}>
-            {savedFlash ? <Check className="h-4 w-4" /> : null}
-            {save.isPending ? L.saving : savedFlash ? L.saved : L.save}
-          </Button>
+          {submit}
         </div>
       )}
     </form>
@@ -209,11 +349,16 @@ export function ProfileModal({ open, onClose }: { open: boolean; onClose: () => 
       open={open}
       onClose={onClose}
       title={t('profile.title')}
+      kicker={t('pages.account.kicker')}
       size="lg"
       footer={(
         <>
-          <Button variant="outline" onClick={onClose}>{t('profile.cancel')}</Button>
-          <Button type="submit" form="ma-profile-form">{t('profile.save')}</Button>
+          <Button variant="outline" onClick={onClose}>
+            {t('profile.cancel')}
+          </Button>
+          <Button type="submit" form="ma-profile-form">
+            {t('profile.save')}
+          </Button>
         </>
       )}
     >

@@ -1,7 +1,10 @@
-import { readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
+import en from '../../locales/en.json'
+import fr from '../../locales/fr.json'
+import ln from '../../locales/ln.json'
+import sw from '../../locales/sw.json'
+
+const LOCALES: Record<string, Record<string, unknown>> = { fr, en, ln, sw }
 
 function flatten(obj: Record<string, unknown>, prefix = ''): string[] {
   const keys: string[] = []
@@ -17,8 +20,7 @@ function flatten(obj: Record<string, unknown>, prefix = ''): string[] {
 }
 
 function load(lang: string) {
-  const file = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'locales', `${lang}.json`)
-  return JSON.parse(readFileSync(file, 'utf8')) as Record<string, unknown>
+  return LOCALES[lang]
 }
 
 describe('locale key parity', () => {

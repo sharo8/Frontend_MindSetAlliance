@@ -1,9 +1,12 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '../../lib/utils'
+import { spring } from '../motion/springs'
 
 type Align = 'left' | 'right'
 
+/** Menu flottant en verre : s'ouvre depuis son bouton avec un ressort. */
 export function HeaderMenu({
   open,
   onOpenChange,
@@ -29,11 +32,11 @@ export function HeaderMenu({
   function place() {
     if (!wrapRef.current) return
     const rect = wrapRef.current.getBoundingClientRect()
-    const pad = 8
+    const pad = 10
     const maxWidth = Math.min(panelRef.current?.offsetWidth || 288, window.innerWidth - pad * 2)
     let left = align === 'right' ? rect.right - maxWidth : rect.left
     left = Math.min(Math.max(pad, left), window.innerWidth - maxWidth - pad)
-    setCoords({ top: rect.bottom + 8, left, width: maxWidth })
+    setCoords({ top: rect.bottom + 10, left, width: maxWidth })
   }
 
   useLayoutEffect(() => {
@@ -45,6 +48,7 @@ export function HeaderMenu({
       cancelAnimationFrame(id)
       window.removeEventListener('resize', place)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, align])
 
   useEffect(() => {
@@ -68,27 +72,61 @@ export function HeaderMenu({
   return (
     <div ref={wrapRef} className="relative shrink-0">
       {trigger}
-      {open &&
+      {typeof document !== 'undefined' &&
         createPortal(
-          <div
-            ref={panelRef}
-            id={menuId}
-            role="menu"
-            aria-labelledby={labelledBy}
-            className={cn(
-              'ma-pop fixed z-[200] max-h-[min(24rem,calc(100vh-5rem))] overflow-y-auto rounded-xl border border-white/10 bg-ma-navy-800 py-1 text-ma-white shadow-2xl',
-              panelClassName,
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                ref={panelRef}
+                id={menuId}
+                role="menu"
+                aria-labelledby={labelledBy}
+                initial={{ opacity: 0, scale: 0.55, y: -14, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', transitionEnd: { filter: 'none' } }}
+                exit={{ opacity: 0, scale: 0.7, y: -10, filter: 'blur(8px)', transition: { duration: 0.18, ease: [0.32, 0.72, 0, 1] } }}
+                transition={{ ...spring.morph, opacity: { duration: 0.16 }, filter: { duration: 0.22 } }}
+                className={cn(
+                  'glass-strong ma-scroll fixed z-[200] max-h-[min(28rem,calc(100vh-5.5rem))] overflow-y-auto rounded-[26px] p-1.5 text-ink [--spec-size:260px]',
+                  panelClassName,
+                )}
+                style={{
+                  top: coords.top,
+                  left: coords.left,
+                  maxWidth: `min(${coords.width}px, calc(100vw - 20px))`,
+                  transformOrigin: align === 'right' ? 'top right' : 'top left',
+                }}
+              >
+                {children}
+              </motion.div>
             )}
-            style={{
-              top: coords.top,
-              left: coords.left,
-              maxWidth: `min(${coords.width}px, calc(100vw - 16px))`,
-            }}
-          >
-            {children}
-          </div>,
+          </AnimatePresence>,
           document.body,
         )}
     </div>
   )
+}
+
+/** Ligne de menu standard. */
+export function MenuItem({ className, active, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
+  return (
+    <button
+      type="button"
+      role="menuitem"
+      className={cn(
+        'press flex w-full items-center gap-3 rounded-[18px] px-3 py-2.5 text-left text-[14.5px] tracking-[-0.012em] text-ink transition-colors duration-150',
+        'hover:bg-ink/[0.06] focus-visible:bg-ink/[0.06] focus-visible:outline-none dark:hover:bg-white/[0.09]',
+        active && 'bg-ma-gold-500/14 dark:bg-ma-gold-400/14',
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+
+export function MenuLabel({ children }: { children: ReactNode }) {
+  return <p className="px-3 pb-1 pt-2 text-[12.5px] font-semibold text-ink-3">{children}</p>
+}
+
+export function MenuSeparator() {
+  return <div className="mx-2 my-1.5 h-px bg-hairline" />
 }

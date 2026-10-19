@@ -1,10 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ChevronDown, Lock, Plus, Unlock } from 'lucide-react'
+import { ChevronDown, ListChecks, Lock, Plus, RotateCcw, SlidersHorizontal, Unlock } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
 import { Feedback } from '../../components/ui/feedback'
-import { Input } from '../../components/ui/input'
+import { Input, Select } from '../../components/ui/input'
+import { Skeleton } from '../../components/ui/skeleton'
+import { Mono } from '../../components/ui/table'
+import { spring } from '../../components/motion/springs'
 import { ApiError } from '../../lib/api/client'
 import {
   addAgentPermissionOverride,
@@ -20,6 +24,7 @@ import {
 } from '../../lib/api/iam-admin'
 import { permissionLabel } from '../../lib/rbac/permissions'
 import { cn } from '../../lib/utils'
+import { CheckBox, Switch } from './access-ui'
 
 function humanLabel(perm: PermissionRow) {
   if (perm.libelle && perm.libelle.trim() && perm.libelle.trim() !== perm.code) {
@@ -261,40 +266,40 @@ export function AccessProjectPermissions({
 
   const ready = Boolean(rolePerms.data) && Boolean(catalog.data)
 
+
   return (
-    <div
-      className={cn(
-        'grid transition-[grid-template-rows] duration-[280ms] ease-out',
-        open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-      )}
-    >
+    <div className={cn('grid transition-[grid-template-rows] duration-[320ms] ease-[var(--ease-ma)]', open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]')}>
       <div className="min-h-0 overflow-hidden">
-        <div className="border-t border-ma-line/80 bg-ma-navy-950/[0.02] px-3 py-3 dark:border-white/10 dark:bg-ma-navy-950/40">
+        <div className="space-y-4 border-t border-hairline bg-ink/[0.02] px-4 py-4 dark:bg-white/[0.02]">
           {error && <Feedback tone="danger">{error}</Feedback>}
           {notice && <Feedback tone="success">{notice}</Feedback>}
-          <p className="mb-3 text-xs text-ma-muted">
-            Cases verrouillées = permissions du rôle sur la matrice. « Personnaliser » ne concerne que {projectNom.trim()}.
+          <p className="flex items-start gap-2 text-[12.5px] leading-snug text-ink-3">
+            <Lock className="mt-px h-3.5 w-3.5 shrink-0" />
+            <span>
+              Interrupteurs verrouillés = permissions du rôle dans la matrice. « Personnaliser » ne concerne que {projectNom.trim()}.
+            </span>
           </p>
-          {!ready && !rolePerms.isError && <p className="text-xs text-ma-muted">Chargement des permissions du rôle…</p>}
-          {rolePerms.isError && (
-            <Feedback tone="danger">Impossible de charger les permissions du rôle depuis la matrice.</Feedback>
+          {!ready && !rolePerms.isError && (
+            <div className="space-y-2" aria-label="Chargement des permissions du rôle">
+              <Skeleton className="h-12 rounded-[14px]" />
+              <Skeleton className="h-12 rounded-[14px]" />
+              <Skeleton className="h-12 rounded-[14px]" />
+            </div>
           )}
+          {rolePerms.isError && <Feedback tone="danger">Impossible de charger les permissions du rôle depuis la matrice.</Feedback>}
           {ready && grouped.length === 0 && (
-            <p className="text-sm text-ma-muted">
-              Aucune permission par défaut pour ce rôle. Utilisez « + Ajouter une permission d’un autre domaine » pour lui en attribuer.
+            <p className="rounded-[14px] bg-surface px-4 py-3 text-[13px] text-ink-3 ring-1 ring-hairline">
+              Aucune permission par défaut pour ce rôle. Utilisez « Autre domaine » ci-dessous pour lui en attribuer.
             </p>
           )}
-          <div className="max-h-[22rem] space-y-3 overflow-y-auto pr-1">
+          <div className="space-y-4">
             {grouped.map(([module, perms]) => (
-              <div
-                key={`${roleId}-${module}`}
-                className="translate-y-0 opacity-100 transition-[opacity,transform] duration-[280ms] ease-out"
-                style={{ animation: 'ma-perm-section 280ms ease-out' }}
-              >
-                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-ma-navy-800 dark:text-ma-gold-300">
+              <div key={`${roleId}-${module}`} style={{ animation: 'ma-perm-section 280ms ease-out' }}>
+                <p className="mb-2 flex items-center gap-2 px-1 text-[12.5px] font-semibold text-ink-2">
                   {module}
+                  <span className="font-medium tabular-nums text-ink-3">{perms.length}</span>
                 </p>
-                <ul className="space-y-1.5">
+                <ul className="divide-y divide-hairline overflow-hidden rounded-[14px] bg-surface ring-1 ring-hairline">
                   {perms.map((perm) => {
                     const on = isChecked(perm.code)
                     const custom = isUnlocked(perm.code)
@@ -310,131 +315,138 @@ export function AccessProjectPermissions({
                     const count = actionCount(actions)
                     const actionsDirty = JSON.stringify(actions) !== JSON.stringify(savedActions(perm.code))
                     const actionsOpen = Boolean(expandedActions[perm.code])
+                    const canRestore = Boolean(override) || pendingExtras.includes(perm.code)
                     return (
-                      <li
-                        key={perm.id}
-                        className="rounded-lg border border-ma-line/80 bg-white px-2.5 py-2 dark:border-white/10 dark:bg-ma-navy-900"
-                      >
-                        <div className="flex items-start gap-2">
-                          <span className="mt-0.5 shrink-0">
-                            {custom ? <Unlock className="h-3.5 w-3.5 text-ma-gold-600" /> : <Lock className="h-3.5 w-3.5 text-ma-muted" />}
-                          </span>
-                          <label className="flex min-w-0 flex-1 items-start gap-2 text-sm">
-                            <input
-                              type="checkbox"
-                              className="mt-0.5 shrink-0 accent-ma-gold-500 disabled:cursor-not-allowed"
-                              checked={on}
-                              disabled={!custom}
-                              onChange={(e) => setChecked((current) => ({ ...current, [perm.code]: e.target.checked }))}
-                            />
-                            <span className="min-w-0">
-                              <span className="block font-medium leading-tight">{humanLabel(perm)}</span>
-                              <span className="font-mono text-[10px] text-slate-400">{perm.code}</span>
-                            </span>
-                          </label>
-                          <div className="flex w-[13.5rem] shrink-0 flex-wrap items-center justify-end gap-1.5">
-                            {showGrant && <Badge tone="success">GRANT</Badge>}
-                            {showDeny && <Badge tone="danger">DENY</Badge>}
-                            {decomposable && count < 4 && (
-                              <Badge tone="gold" className="normal-case tracking-normal">{count}/4 actions</Badge>
-                            )}
+                      <li key={perm.id} className={cn('px-3.5 py-3 transition-colors duration-200', custom && 'bg-ma-gold-500/[0.035]')}>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                          <Switch
+                            size="sm"
+                            label={humanLabel(perm)}
+                            checked={on}
+                            disabled={!custom}
+                            onChange={(next) => setChecked((current) => ({ ...current, [perm.code]: next }))}
+                          />
+                          <div className="min-w-0 flex-1">
+                            <p className="flex items-center gap-1.5 text-[13.5px] font-medium leading-tight text-ink">
+                              <span className="truncate">{humanLabel(perm)}</span>
+                              <span className="shrink-0" title={custom ? 'Permission personnalisée pour cette société' : 'Permission du rôle'}>
+                                {custom ? <Unlock className="h-3 w-3 text-accent-ink" /> : <Lock className="h-3 w-3 text-ink-3" />}
+                              </span>
+                            </p>
+                            <Mono className="text-[11px] text-ink-3">{perm.code}</Mono>
+                          </div>
+                          <div className="flex flex-wrap items-center justify-end gap-1.5">
+                            {showGrant && <Badge tone="success">Accordée</Badge>}
+                            {showDeny && <Badge tone="danger">Retirée</Badge>}
+                            {decomposable && count < 4 && <Badge tone="gold">{count}/4 actions</Badge>}
                             {decomposable && (
-                              <button
-                                type="button"
-                                className="text-xs font-medium text-ma-navy-800 underline-offset-2 hover:underline dark:text-ma-gold-400"
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                aria-expanded={actionsOpen}
                                 onClick={() => setExpandedActions((current) => ({ ...current, [perm.code]: !current[perm.code] }))}
                               >
-                                Détailler les actions
-                              </button>
+                                <ListChecks className="h-3.5 w-3.5" />
+                                Détailler
+                              </Button>
                             )}
                             {!custom && native && (
-                              <button
-                                type="button"
-                                className="text-xs font-medium text-ma-navy-800 underline-offset-2 hover:underline dark:text-ma-gold-400"
-                                onClick={() => setUnlocked((current) => ({ ...current, [perm.code]: true }))}
-                              >
+                              <Button variant="ghost" size="sm" onClick={() => setUnlocked((current) => ({ ...current, [perm.code]: true }))}>
+                                <SlidersHorizontal className="h-3.5 w-3.5" />
                                 Personnaliser
-                              </button>
+                              </Button>
                             )}
-                            <Button
-                              className="px-3 py-1.5 text-xs"
-                              disabled={save.isPending || !dirty || denyNeedsMotif}
-                              onClick={() => save.mutate({ code: perm.code })}
+                            {canRestore && (
+                              <Button variant="outline" size="sm" disabled={save.isPending} onClick={() => restore(perm.code)}>
+                                <RotateCcw className="h-3.5 w-3.5" />
+                                Rétablir
+                              </Button>
+                            )}
+                            {dirty && (
+                              <Button size="sm" disabled={save.isPending || denyNeedsMotif} onClick={() => save.mutate({ code: perm.code })}>
+                                Enregistrer
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+
+                        <AnimatePresence initial={false}>
+                          {decomposable && actionsOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={spring.snappy}
+                              className="overflow-hidden"
                             >
-                              Enregistrer
-                            </Button>
-                            <Button
-                              className="px-3 py-1.5 text-xs"
-                              variant="outline"
-                              disabled={save.isPending || (!override && !pendingExtras.includes(perm.code))}
-                              onClick={() => restore(perm.code)}
+                              <div className="mt-3 rounded-[12px] bg-ink/[0.03] p-3 ring-1 ring-inset ring-hairline dark:bg-white/[0.03]">
+                                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                                  {(
+                                    [
+                                      ['VIEW', 'Consulter'],
+                                      ['CREATE', 'Ajouter'],
+                                      ['UPDATE', 'Modifier'],
+                                      ['DELETE', 'Supprimer'],
+                                    ] as const
+                                  ).map(([key, label]) => {
+                                    const changedAction = actions[key] !== savedActions(perm.code)[key]
+                                    return (
+                                      <label
+                                        key={key}
+                                        className={cn(
+                                          'flex cursor-pointer items-center gap-2 rounded-[10px] px-2.5 py-2 text-[13px] text-ink ring-1 ring-inset transition-colors',
+                                          changedAction
+                                            ? actions[key]
+                                              ? 'bg-status-success/[0.07] ring-status-success/25'
+                                              : 'bg-status-danger/[0.06] ring-status-danger/25'
+                                            : 'bg-surface ring-hairline',
+                                        )}
+                                      >
+                                        <CheckBox
+                                          label={label}
+                                          checked={actions[key]}
+                                          onChange={(next) =>
+                                            setActionDrafts((current) => ({
+                                              ...current,
+                                              [perm.code]: { ...actions, [key]: next },
+                                            }))
+                                          }
+                                        />
+                                        {label}
+                                      </label>
+                                    )
+                                  })}
+                                </div>
+                                <div className="mt-3 flex justify-end">
+                                  <Button size="sm" disabled={saveActions.isPending || !actionsDirty} onClick={() => saveActions.mutate(perm.code)}>
+                                    Enregistrer les actions
+                                  </Button>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+
+                        <AnimatePresence initial={false}>
+                          {denyDraft && dirty && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={spring.snappy}
+                              className="overflow-hidden"
                             >
-                              Rétablir
-                            </Button>
-                          </div>
-                        </div>
-                        <div
-                          className={cn(
-                            'grid transition-[grid-template-rows,opacity] duration-200 ease-out',
-                            decomposable && actionsOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
-                          )}
-                        >
-                          <div className="min-h-0 overflow-hidden">
-                            <div className="mt-2 rounded-lg border border-ma-line/80 bg-slate-50 px-2.5 py-2 dark:border-white/10 dark:bg-ma-navy-950/60">
-                              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                                {([
-                                  ['VIEW', 'Consulter'],
-                                  ['CREATE', 'Ajouter'],
-                                  ['UPDATE', 'Modifier'],
-                                  ['DELETE', 'Supprimer'],
-                                ] as const).map(([key, label]) => (
-                                  <label key={key} className="flex items-center gap-1.5 text-xs">
-                                    <input
-                                      type="checkbox"
-                                      className="accent-ma-gold-500"
-                                      checked={actions[key]}
-                                      onChange={(e) => setActionDrafts((current) => ({
-                                        ...current,
-                                        [perm.code]: { ...actions, [key]: e.target.checked },
-                                      }))}
-                                    />
-                                    {label}
-                                    {actions[key] !== savedActions(perm.code)[key] && (
-                                      <Badge tone={actions[key] ? 'success' : 'danger'} className="normal-case">
-                                        {actions[key] ? 'GRANT' : 'DENY'}
-                                      </Badge>
-                                    )}
-                                  </label>
-                                ))}
+                              <div className="pt-3">
+                                <Input
+                                  placeholder="Motif de la restriction (obligatoire)"
+                                  aria-invalid={denyNeedsMotif}
+                                  value={motifs[perm.code] ?? ''}
+                                  onChange={(e) => setMotifs((current) => ({ ...current, [perm.code]: e.target.value }))}
+                                />
                               </div>
-                              <div className="mt-2 flex justify-end">
-                                <Button
-                                  className="px-3 py-1.5 text-xs"
-                                  disabled={saveActions.isPending || !actionsDirty}
-                                  onClick={() => saveActions.mutate(perm.code)}
-                                >
-                                  Enregistrer les actions
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          className={cn(
-                            'grid transition-[grid-template-rows,opacity] duration-[280ms] ease-out',
-                            denyDraft && dirty ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
+                            </motion.div>
                           )}
-                        >
-                          <div className="min-h-0 overflow-hidden">
-                            <div className="pt-2">
-                              <Input
-                                placeholder="Motif (obligatoire)"
-                                value={motifs[perm.code] ?? ''}
-                                onChange={(e) => setMotifs((current) => ({ ...current, [perm.code]: e.target.value }))}
-                              />
-                            </div>
-                          </div>
-                        </div>
+                        </AnimatePresence>
                       </li>
                     )
                   })}
@@ -443,24 +455,19 @@ export function AccessProjectPermissions({
             ))}
           </div>
           {ready && (
-            <div className="mt-3 space-y-2 border-t border-ma-line/70 pt-3 dark:border-white/10">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ma-muted">Autre domaine</p>
-              <div className="flex flex-wrap items-center gap-2">
-                <select
-                  className="min-w-[14rem] flex-1 rounded-xl border border-ma-line bg-white px-3 py-2 text-sm dark:border-white/10 dark:bg-ma-navy-900"
-                  value={picker}
-                  onChange={(e) => setPicker(e.target.value)}
-                >
+            <div className="border-t border-hairline pt-4">
+              <p className="mb-2 px-1 text-[12.5px] font-semibold text-ink-2">Autre domaine</p>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <Select className="min-w-0 flex-1" aria-label="Permission hors rôle" value={picker} onChange={(e) => setPicker(e.target.value)}>
                   <option value="">Choisir une permission hors rôle</option>
                   {addablePerms.map((perm) => (
                     <option key={perm.id} value={perm.code}>
                       {perm.module} · {humanLabel(perm)}
                     </option>
                   ))}
-                </select>
+                </Select>
                 <Button
                   variant="outline"
-                  className="px-3 py-2 text-xs"
                   disabled={!picker}
                   onClick={() => {
                     setPendingExtras((current) => (current.includes(picker) ? current : [...current, picker]))
@@ -469,8 +476,8 @@ export function AccessProjectPermissions({
                     setPicker('')
                   }}
                 >
-                  <Plus className="h-3.5 w-3.5" />
-                  Ajouter une permission d’un autre domaine
+                  <Plus className="h-4 w-4" />
+                  Ajouter
                 </Button>
               </div>
             </div>
@@ -493,21 +500,23 @@ export function ProjectPermissionsToggle({
   onToggle: () => void
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <Button
+      variant="ghost"
+      size="sm"
+      disabled={disabled}
+      aria-expanded={open}
+      aria-label="Permissions détaillées"
+      title={count > 0 ? `Permissions détaillées · ${count > 1 ? `${count} personnalisations` : '1 personnalisation'}` : 'Permissions détaillées'}
+      onClick={onToggle}
+      className={cn(open && 'bg-ink/[0.05] text-ink dark:bg-white/[0.07]')}
+    >
+      Permissions
       {count > 0 && (
-        <Badge tone="gold" className="normal-case tracking-normal">
-          Permissions personnalisées : {count}
-        </Badge>
+        <span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-ma-gold-500/18 px-1 text-[11px] font-semibold tabular-nums text-accent-ink">
+          {count}
+        </span>
       )}
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={onToggle}
-        className="inline-flex items-center gap-1 text-xs font-medium text-ma-navy-800 underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:opacity-50 dark:text-ma-gold-400"
-      >
-        Voir/modifier les permissions détaillées
-        <ChevronDown className={cn('h-3.5 w-3.5 transition-transform duration-[280ms]', open && 'rotate-180')} />
-      </button>
-    </div>
+      <ChevronDown className={cn('h-3.5 w-3.5 transition-transform duration-300 ease-[var(--ease-ma)]', open && 'rotate-180')} />
+    </Button>
   )
 }
