@@ -364,6 +364,8 @@ export type CnnItineraire = {
   chronologie: { status: string; at: string | null; role: string | null; stopOrder: number }[] | null
   /** Tracé GPS enregistré pendant la course ; null si la table n'existe pas encore côté Colis na Nga. */
   trace: { lat: number; lng: number; at: string | null }[] | null
+  /** Trace GPS collée aux routes (Roads API de Google, via le backend Colis na Nga), si disponible. */
+  traceRoute?: { lat: number; lng: number }[] | null
 }
 
 export const fetchCnnTraceSearch = (search?: string, status?: string) =>

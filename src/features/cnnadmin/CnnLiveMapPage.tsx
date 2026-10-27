@@ -380,6 +380,9 @@ export function CnnLiveMapPage() {
       const stale = !snap || (snap.count !== path.length && (!active || Date.now() - snap.at > 60_000))
       if (stale && snap?.path !== undefined && snap?.count === -1) {
         // calcul déjà en cours
+      } else if (stale && (itin.data?.traceRoute?.length ?? 0) >= 2) {
+        // Trace déjà collée aux routes par la Roads API (serveur) : rien à recalculer ici.
+        snappedRoutes.current.set(o.id, { count: path.length, at: Date.now(), path: itin.data!.traceRoute!.map((p) => ({ lat: p.lat, lng: p.lng })) })
       } else if (stale) {
         const count = path.length
         snappedRoutes.current.set(o.id, { count: -1, at: Date.now(), path: snap?.path ?? null })
